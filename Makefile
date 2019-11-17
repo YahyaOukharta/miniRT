@@ -1,0 +1,23 @@
+NAME = miniRT
+
+GNL_SRCS = gnl/get_next_line.c gnl/get_next_line_utils.c
+
+SRCS = minirt.c
+
+all: $(NAME)
+
+$(NAME): 
+	make -C ft_printf/ re
+	gcc $(SRCS) $(GNL_SRCS) -DBUFFER_SIZE=80 -Lft_printf -lftprintf -o $(NAME)
+
+clean: 
+	make -C ft_printf/ clean
+
+fclean: clean
+	rm -rf miniRT
+
+re: fclean all
+
+c : re
+	clear
+	./$(NAME) asdf.rt
