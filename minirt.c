@@ -13,6 +13,7 @@
 
 #include "minirt.h"
 
+char		*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 
 int	print_file_content(int fd)
 {
@@ -39,7 +40,7 @@ int	print_file_content(int fd)
 
 int check_element_details(char **tab, int n)
 {
-	//ft_printf("details of object %d : \n", n);
+//	ft_printf("details of object %d : \n", n);
 	int index;
 	char **tmp;
 
@@ -50,7 +51,7 @@ int check_element_details(char **tab, int n)
 	}else
 	{
 		index = index_of_in_tab(tab[0], tmp);
-		return (g_file_checker[index](tab));
+		return (g_file_checker[index](tab, n));
 	}
 	//ft_printf("Object identifier :  '%s'  [ OK ]\n",tab[0]);
 	return (1);
@@ -73,9 +74,9 @@ int process_file(int fd)
 			{	
 				return (0);
 		//		store_element(tab);
-			}
-			n++;
+			}	
 		}
+		n++;
 	}
 	return (1);
 }

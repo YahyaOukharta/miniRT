@@ -55,6 +55,8 @@ float	ft_atof(const char *str)
 		sign = -1;
 		str++;
 	}
+	if (!ft_strchr(str, '.'))
+		return ((float)(ft_atoi(str) * sign));
 	n_digits = count_digits(str);
 	while (ft_isdigit(*str))
 	{

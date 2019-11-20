@@ -1,6 +1,6 @@
 #ifndef __UTILS_H__
 # define __UTILS_H__
- #include "../ft_printf/ft_printf.h"
+# include "../minirt.h"
 int min(int a, int b);
 int max(int a, int b);
 

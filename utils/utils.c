@@ -60,9 +60,11 @@ int is_float(char *str)
 {
     int f;
 
+    if (!ft_strchr(str, '.'))
+        return (is_int(str));
     f = 0;
     if(*str == '-')
-    str++;
+        str++;
     while (*str)
     {
         if (!ft_isdigit(*str))
@@ -137,7 +139,7 @@ int is_norm_dir_vector(char *str)
         return (0);
     while (*tab)
     {
-        if (!is_float(*tab) || ft_atof(*tab) < -1 || ft_atof(*tab) > 1)
+        if (!is_float(*tab) || ft_atof(*tab) < -1.0 || ft_atof(*tab) > 1.0)
             return(0);
         tab++;
     }

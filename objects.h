@@ -98,9 +98,7 @@ struct g_resolution
 	int y;
 };
 
-char		*g_supported_objects = "R;A;c;l;pl;sp;sq;cy;tr";
 t_object	*g_objects;
-
 
 
 #endif
