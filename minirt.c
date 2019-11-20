@@ -6,23 +6,13 @@
 /*   By: youkhart <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2019/11/17 02:30:26 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/11/17 09:10:37 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include "gnl/get_next_line.h"
-#include "ft_printf/ft_printf.h"
-#include "objects.h"
-int tab_len(char **tab)
-{
-	int i;
-	
-	i = 0;
-	while (tab[i])
-		i++;
-	return (i);
-}
+
+#include "minirt.h"
+
 
 int	print_file_content(int fd)
 {
@@ -45,6 +35,49 @@ int	print_file_content(int fd)
 		free (line);
 	}
 	return (n);
+}
+
+int check_element_details(char **tab, int n)
+{
+	//ft_printf("details of object %d : \n", n);
+	int index;
+	char **tmp;
+
+	if (!exists_in_tab(tab[0], (tmp = ft_split(g_supported_objects,';'))))
+	{
+		ft_printf("Error\nWrong object identifier '%s'\n",tab[0]);
+		return (0);
+	}else
+	{
+		index = index_of_in_tab(tab[0], tmp);
+		return (g_file_checker[index](tab));
+	}
+	//ft_printf("Object identifier :  '%s'  [ OK ]\n",tab[0]);
+	return (1);
+}
+
+int process_file(int fd)
+{
+	int n;
+	char *line;
+	char **tab;
+
+	n = 1;
+	init_file_checker();
+	while (get_next_line(fd, &line))
+	{
+		if (ft_strlen(line))
+		{
+			tab = ft_split(line, ' ');
+			if (!check_element_details(tab , n))
+			{	
+				return (0);
+		//		store_element(tab);
+			}
+			n++;
+		}
+	}
+	return (1);
 }
 
 int main (int argc, char **argv)
@@ -71,8 +104,12 @@ int main (int argc, char **argv)
 		ft_printf("Error\nError opening the file '%s', it probably doesnt exit\n", argv[1]);
 		return (0);
 	}
-	n_lines = print_file_content(fd);	
-	n_lines = print_file_content(fd);	
-	printf("n_lines = %d\ngood !\n",n_lines);
+
+	if(!process_file(fd))
+		return (0);
+
+	//n_lines = print_file_content(fd);		
+	//printf("n_lines = %d\ngood !\n",n_lines);
+	printf("[ GOOD ]");
 	return (0);
 }
