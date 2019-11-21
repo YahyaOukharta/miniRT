@@ -10,6 +10,7 @@
 # include "gnl/get_next_line.h"
 # include "ft_printf/ft_printf.h"
 #include "object_printer/obj_printer.h"
+#include "object_liberator/object_liberator.h"
 
 
 

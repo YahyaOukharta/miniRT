@@ -3,7 +3,7 @@ NAME = miniRT
 GNL_SRCS = gnl/get_next_line.c gnl/get_next_line_utils.c
 
 SRCS = minirt.c utils/utils.c ft_atof.c file_checker/file_checker.c \
-	objects/objects.c object_printer/obj_printer.c
+	objects/objects.c object_printer/obj_printer.c object_liberator/object_liberator.c
 
 all: $(NAME)
 

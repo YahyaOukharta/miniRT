@@ -92,70 +92,115 @@ int how_many_in(char c, char *str)
     return (i);
 }
 
+int free_s_tab(char **tab)
+{
+    int i;
+
+    i = 0;
+    if (tab)
+    {
+        while (tab[i])
+        {
+            free(tab[i]);
+            i++;
+        }
+        free(tab);
+    }
+    return (0);
+}
+
 int is_color(char *str)
 {
     char **tab;
+    int i;
 
+    i = 0;
     if (how_many_in(',',str) != 2)
         return (0);
     tab = ft_split(str, ',');
     if (tab_len(tab) != 3)
-        return (0);
-    while (*tab)
     {
-        if (!is_int(*tab) || ft_atoi(*tab) < 0 || ft_atoi(*tab) > 255)
-            return(0);
-        tab++;
+        free_s_tab(tab);
+        return (0);
     }
+    while (tab[i])
+    {
+        if (!is_int(tab[i]) || ft_atoi(tab[i]) < 0 || ft_atoi(tab[i]) > 255)
+        {
+            free_s_tab(tab);
+            return (0);
+        }
+        i++;
+    }
+    free_s_tab(tab);
     return (1);
 }
 
 int is_pos_vector(char *str)
 {
     char **tab;
+    int i;
 
+    i = 0;
     if (how_many_in(',',str) != 2)
         return (0);
     tab = ft_split(str, ',');
     if (tab_len(tab) != 3)
         return (0);
-    while (*tab)
+    while (tab[i])
     {
-        if (!is_float(*tab))
-            return(0);
-        tab++;
+        if (!is_float(tab[i]))
+        {
+            free_s_tab(tab);
+            return(0);}
+        i++;
     }
+    free_s_tab(tab);
     return (1);
 }
 
 int is_norm_dir_vector(char *str)
 {
     char **tab;
+    int i;
 
+    i = 0;
     if (how_many_in(',',str) != 2)
         return (0);
     tab = ft_split(str, ',');
     if (tab_len(tab) != 3)
-        return (0);
-    while (*tab)
     {
-        if (!is_float(*tab) || ft_atof(*tab) < -1.0 || ft_atof(*tab) > 1.0)
-            return(0);
-        tab++;
+        free_s_tab(tab);
+        return (0);
     }
+    while (tab[i])
+    {
+        if (!is_float(tab[i]) || ft_atof(tab[i]) < -1.0 || ft_atof(tab[i]) > 1.0)
+        {
+            free_s_tab(tab);
+            return(0);
+        }
+        i++;
+    }
+    free_s_tab(tab);
     return (1);
 }
 
 int rgb_to_int(char *s)
 {
     char **tab;
+    char **tmp;
     int res;
+
     tab = ft_split(s, ',');
+    tmp = tab;
     res = 0;
     while (*tab)
     {
         res = res * 256 + ft_atoi(*tab);
+        free (*tab);
         tab++; 
     }
+    free(tmp);
     return (res);
 }
