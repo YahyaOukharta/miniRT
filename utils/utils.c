@@ -145,3 +145,17 @@ int is_norm_dir_vector(char *str)
     }
     return (1);
 }
+
+int rgb_to_int(char *s)
+{
+    char **tab;
+    int res;
+    tab = ft_split(s, ',');
+    res = 0;
+    while (*tab)
+    {
+        res = res * 256 + ft_atoi(*tab);
+        tab++; 
+    }
+    return (res);
+}

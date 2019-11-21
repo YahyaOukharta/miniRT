@@ -14,5 +14,7 @@ int tab_len(char **tab);
 int exists_in_tab(char *s,char **tab);
 int index_of_in_tab(char *s, char **tab);
 
+int rgb_to_int(char *rgb);
+
 float ft_atof(const char *str);
 #endif

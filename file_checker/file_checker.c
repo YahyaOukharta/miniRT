@@ -2,6 +2,11 @@
 
 int check_info_resolution(char **tab, int n)
 {
+	if (g_resolution.is_set)
+	{
+		ft_printf("Error in line %d:\n [!] Resolution can only be defined once\n", n);
+		return (0);
+	}
 	if (tab_len(tab) != 3)
 	{
 		ft_printf("Error in line %d:\n [!] Incorrect number of arguments for resolution, correct format 'R 1920 1080'\n", n);
@@ -27,6 +32,11 @@ int check_info_resolution(char **tab, int n)
 
 int check_info_ambient_light(char **tab, int n)
 {
+	if (g_ambient_light.is_set)
+	{
+		ft_printf("Error in line %d:\n [!] Ambient lightning can only be defined once\n", n);
+		return (0);
+	}
 	if (tab_len(tab) != 3)
 	{
 		ft_printf("Error in line %d:\n [!] Incorrect number of arguments for ambient lightning, correct format 'A 0.2 255,255,255'\n", n);
