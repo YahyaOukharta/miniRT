@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include "../mlx/mlx.h"
 
 char	*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 struct s_ambient_light g_ambient_light;
@@ -24,8 +25,23 @@ void init_objects(void)
 	init_obj_constructor();
 }
 
+typedef struct    data_s
+{
+    void          *mlx_ptr;
+    void          *mlx_win;
+}                 data_t;
+
 int main (int argc, char **argv)
 {
+	//mlx 
+	data_t        data;
+
+    if (!(data.mlx_ptr = mlx_init()))
+        return (EXIT_FAILURE);
+    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
+        return (EXIT_FAILURE);
+
+	//
 	if (argc != 2)
 		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
 	if(!process_file(argv))
@@ -66,9 +82,22 @@ int main (int argc, char **argv)
 			ray.dir.z = -1;
 			ray.dir = vec_normalize(ray.dir);
 			//if( !(x))
-				printf("(x %.4f y %.4f)\t",ray.dir.x,ray.dir.y);
+				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
 			//compute intersection 
 				//with sphere
+			int inter;
+			t_list *objs = objects;
+			while (objs)
+			{
+				t_object *sph = (t_object *)(objs->content);
+				inter = intersects_with_sphere(ray, sph);
+				if(inter)
+					break;
+				objs = objs->next;
+			}
+
+			//mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,inter * 255*255*255);
+			//ft_printf("%d",inter);
 			//set pixel to one or zero 
 			//image[y][x] = value;
 			x++;
@@ -78,5 +107,6 @@ int main (int argc, char **argv)
 	}
 	ft_lstclear(&objects,free_object);
 	ft_printf("[ GOOD ]");
-	return (0);
+	mlx_loop(data.mlx_ptr);
+    return (EXIT_SUCCESS);
 }

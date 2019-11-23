@@ -12,5 +12,5 @@ typedef struct s_ray
     t_vector pos;
     t_vector dir;
 }               t_ray;
-
+int intersects_with_sphere(t_ray ray, t_object *obj);
 #endif
