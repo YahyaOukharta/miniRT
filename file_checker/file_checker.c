@@ -1,5 +1,91 @@
 #include "file_checker.h"
 
+extern char *g_supported_objects;
+extern t_list *objects;
+
+int check_element_details(char **tab, int n)
+{
+//	ft_printf("details of object %d : \n", n);
+	int index;
+	char **tmp;
+
+	if (!exists_in_tab(tab[0], (tmp = ft_split(g_supported_objects,';'))))
+	{
+		ft_printf("Error\nWrong object identifier '%s'\n",tab[0]);
+		free_s_tab(tmp);
+		return (0);
+	}else
+	{
+		index = index_of_in_tab(tab[0], tmp);
+		free_s_tab(tmp);
+		return (g_file_checker[index](tab, n));
+	}
+	//ft_printf("Object identifier :  '%s'  [ OK ]\n",tab[0]);
+	return (1);
+}
+
+int store_element(char **tab)
+{
+	int index;
+	char **tmp;
+
+	tmp = ft_split(g_supported_objects, ';');
+	index = index_of_in_tab(tab[0], tmp);
+	free_s_tab(tmp);
+	return (g_obj_constructor[index](tab));
+}
+
+int process_file(char **av)
+{
+	int		n;
+	char	*line;
+	char	**tab;
+	int fd;
+	n = 1;
+
+	tab = ft_split(av[1], '.');
+	if (tab_len(tab) != 2 || ft_memcmp(tab[1], "rt", max(ft_strlen(tab[1]),2)))
+	{
+		ft_printf("Error\n [!] Wrong argument format, must be *.rt\n");
+		free_s_tab(tab);
+		return(0);
+	}
+	free_s_tab(tab);
+	fd = open(av[1], O_RDONLY);
+	if (fd < 0)
+	{
+		ft_printf("Error\n [!] Error opening the file '%s', it probably doesnt exit\n", av[1]);
+		return (0);
+	}
+	init_file_checker();
+	init_objects();
+	while (get_next_line(fd, &line))
+	{
+		if (ft_strlen(line))
+		{
+			tab = ft_split(line, ' ');
+			if (!check_element_details(tab , n))
+			{
+				free_s_tab(tab);
+				free(line);
+				ft_lstclear(&objects,free_object);
+				return(0);
+			}
+			if(!store_element(tab)) //treat malloc error cases 
+			{
+				free_s_tab(tab);
+				free(line);
+				return(0);
+			}
+			free_s_tab(tab);
+		}
+		n++;
+		free(line);
+	}
+	free(line);
+	return (1);
+}
+
 int check_info_resolution(char **tab, int n)
 {
 	if (g_resolution.is_set)

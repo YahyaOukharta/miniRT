@@ -1,5 +1,6 @@
 #include "objects.h"
 
+#include "../minirt.h"
 extern t_list *objects;
 
 int set_resolution(char **tab)

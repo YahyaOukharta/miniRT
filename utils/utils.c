@@ -1,6 +1,5 @@
 #include "utils.h"
 
-
 int min(int a, int b)
 {
     return (a < b ? a : b);
@@ -203,4 +202,15 @@ int rgb_to_int(char *s)
     }
     free(tmp);
     return (res);
+}
+
+void free_object(void *object)
+{
+    t_object *obj;
+    char **tmp;
+    int index;
+    obj = (t_object *)object;
+    free(obj->details);
+    free(obj->type);
+    free(obj);
 }

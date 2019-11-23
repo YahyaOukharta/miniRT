@@ -3,6 +3,9 @@
 
 #include "../minirt.h"
 
+int process_file(char **av);
+
+
 int check_info_resolution(char **tab, int n);
 int check_info_ambient_light(char **tab, int n);
 int check_info_camera(char **tab, int n);

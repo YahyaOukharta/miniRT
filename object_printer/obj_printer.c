@@ -7,7 +7,11 @@ int print_objects(t_list *objects)
     t_object *obj;
     int index;
     char **tmp;
-
+	
+    if (g_resolution.is_set)
+		ft_printf("Resolution    = %dx%d\t\t", g_resolution.x,g_resolution.y);
+	if (g_ambient_light.is_set)
+		printf("Ambient light = %.2f, %d\n\n", g_ambient_light.brightness, g_ambient_light.color);
     init_object_printer();
     while (objects)
     {

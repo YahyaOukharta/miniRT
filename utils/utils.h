@@ -1,6 +1,8 @@
-#ifndef __UTILS_H__
-# define __UTILS_H__
+#ifndef UTILS_H
+# define UTILS_H
+
 # include "../minirt.h"
+
 int min(int a, int b);
 int max(int a, int b);
 
@@ -18,4 +20,8 @@ int free_s_tab(char **tab);
 int rgb_to_int(char *rgb);
 
 float ft_atof(const char *str);
+void free_object(void *object);
+
+
+
 #endif
