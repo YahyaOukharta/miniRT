@@ -54,7 +54,7 @@ int main (int argc, char **argv)
 	int y = 0;
 	int aspect_ratio = g_resolution.x / g_resolution.y;
 	int value;
-	int fov = 70;
+	int fov = 45;
 	t_ray ray;
 	while (y < g_resolution.y)
 	{
@@ -79,7 +79,7 @@ int main (int argc, char **argv)
 			ray.pos.z = 0;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
-			ray.dir.z = -1;
+			ray.dir.z = -0.2; // ZOOM 
 			ray.dir = vec_normalize(ray.dir);
 			//if( !(x))
 				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
@@ -96,7 +96,8 @@ int main (int argc, char **argv)
 				if(inter < min_t && inter > (float)0.01)
 				{	
 					min_t = inter;
-					color = ((t_sphere *)(sph->details))->color;
+					color = (((t_sphere *)(sph->details))->color *( 1 - g_ambient_light.brightness)) + g_ambient_light.brightness * g_ambient_light.color;
+					//color += g_ambient_light.color * ;
 				}
 				objs = objs->next;
 			}
