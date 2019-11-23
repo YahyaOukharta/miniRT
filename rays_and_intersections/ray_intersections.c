@@ -14,7 +14,7 @@ int solveQuadratic(float a,float b,float c, float *t1, float *t2)
     return 1; 
 }
 
-int intersects_with_sphere(t_ray ray, t_object *obj)
+float intersects_with_sphere(t_ray ray, t_object *obj)
 {
     t_sphere *sphere;
     t_ray tmp_ray;
@@ -29,13 +29,12 @@ int intersects_with_sphere(t_ray ray, t_object *obj)
 	float b = 2 * vec_dot(tmp_ray.dir, tmp_ray.pos);
 	float c = vec_len2(tmp_ray.pos) - sphere->diameter * sphere->diameter;
 
-	return (solveQuadratic(a,b,c, &t1,&t2));
-
-
+	if (!(solveQuadratic(a,b,c, &t1,&t2)))
+		return (0);
 	// Find two points of intersection, t1 close and t2 far
 	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
-		return 1;
+		return t1;
 	if (t2 > RAY_T_MIN && t2 < RAY_T_MAX)
-		return 1;
+		return t2;
 	return 0;
 }

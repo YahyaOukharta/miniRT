@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include "../mlx/mlx.h"
+#include "mlx.h"
 
 char	*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 struct s_ambient_light g_ambient_light;
@@ -36,10 +36,7 @@ int main (int argc, char **argv)
 	//mlx 
 	data_t        data;
 
-    if (!(data.mlx_ptr = mlx_init()))
-        return (EXIT_FAILURE);
-    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
-        return (EXIT_FAILURE);
+
 
 	//
 	if (argc != 2)
@@ -47,7 +44,10 @@ int main (int argc, char **argv)
 	if(!process_file(argv))
 		return (0);
 	print_objects(objects);
-
+    if (!(data.mlx_ptr = mlx_init()))
+        return (EXIT_FAILURE);
+    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
+        return (EXIT_FAILURE);
 	// RENDER HERE
 	int image[g_resolution.y][g_resolution.x];
 	int x = 0;
@@ -85,20 +85,25 @@ int main (int argc, char **argv)
 				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
 			//compute intersection 
 				//with sphere
-			int inter;
+			float inter;
+			int color = 0;
+			float min_t = INFINITY;
 			t_list *objs = objects;
 			while (objs)
 			{
 				t_object *sph = (t_object *)(objs->content);
 				inter = intersects_with_sphere(ray, sph);
-				if(inter)
-					break;
+				if(inter < min_t && inter > (float)0.01)
+				{	
+					min_t = inter;
+					color = ((t_sphere *)(sph->details))->color;
+				}
 				objs = objs->next;
 			}
 
-			//mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,inter * 255*255*255);
+			mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,color);
 			//ft_printf("%d",inter);
-			//set pixel to one or zero 
+			//set pixel to one or zero
 			//image[y][x] = value;
 			x++;
 		}
@@ -107,6 +112,7 @@ int main (int argc, char **argv)
 	}
 	ft_lstclear(&objects,free_object);
 	ft_printf("[ GOOD ]");
-	mlx_loop(data.mlx_ptr);
+		mlx_loop(data.mlx_ptr);
+
     return (EXIT_SUCCESS);
 }
