@@ -12,5 +12,16 @@ typedef struct s_ray
     t_vector pos;
     t_vector dir;
 }               t_ray;
-float intersects_with_sphere(t_ray ray, t_object *obj);
+
+typedef struct s_intersection
+{
+    t_vector point;
+    t_vector normal;
+    
+    float t;
+    int object_color;
+    float diffuse;
+    float specular;
+}               t_intersection;
+t_intersection *intersects_with_sphere(t_ray ray, t_object *obj);
 #endif

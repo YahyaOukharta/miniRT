@@ -14,11 +14,13 @@ int solveQuadratic(float a,float b,float c, float *t1, float *t2)
     return 1; 
 }
 
-float intersects_with_sphere(t_ray ray, t_object *obj)
+t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 {
+	t_intersection *inter;
     t_sphere *sphere;
     t_ray tmp_ray;
-	float t1,t2;
+	float t1,t2,t;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
     sphere = (t_sphere *)obj->details;
     	// Transform ray so we can consider origin-centred sphere
 	tmp_ray = ray;
@@ -29,12 +31,19 @@ float intersects_with_sphere(t_ray ray, t_object *obj)
 	float b = 2 * vec_dot(tmp_ray.dir, tmp_ray.pos);
 	float c = vec_len2(tmp_ray.pos) - sphere->diameter * sphere->diameter;
 
+	
 	if (!(solveQuadratic(a,b,c, &t1,&t2)))
 		return (0);
 	// Find two points of intersection, t1 close and t2 far
 	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
-		return t1;
+		t = t1;
 	if (t2 > RAY_T_MIN && t2 < RAY_T_MAX)
-		return t2;
-	return 0;
+		t = t2;
+	inter->point = vec_mult(tmp_ray.dir , t);
+	inter->t = t;
+	inter->object_color = sphere->color;
+	inter->normal = vec_normalize(vec_sub(inter->point,sphere->pos));
+	inter->diffuse = 0.9;
+	inter->specular = 0;
+	return inter;
 }

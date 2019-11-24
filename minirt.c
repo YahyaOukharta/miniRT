@@ -35,15 +35,12 @@ int main (int argc, char **argv)
 {
 	//mlx 
 	data_t        data;
-
-
-
 	//
 	if (argc != 2)
 		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
 	if(!process_file(argv))
 		return (0);
-	print_objects(objects);
+	//print_objects(objects);
     if (!(data.mlx_ptr = mlx_init()))
         return (EXIT_FAILURE);
     if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
@@ -56,6 +53,8 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 45;
 	t_ray ray;
+	t_vector light = {0.2,1,-1};
+	int light_color = rgb_to_int("255,255,255");
 	while (y < g_resolution.y)
 	{
 		x = 0;
@@ -79,36 +78,78 @@ int main (int argc, char **argv)
 			ray.pos.z = 0;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
-			ray.dir.z = -0.2; // ZOOM 
+			ray.dir.z = -1; // ZOOM 
 			ray.dir = vec_normalize(ray.dir);
 			//if( !(x))
 				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
 			//compute intersection 
 				//with sphere
-			float inter;
+			t_intersection* inter;
 			int color = 0;
 			float min_t = INFINITY;
+			t_intersection* closest = NULL;
+
 			t_list *objs = objects;
 			while (objs)
 			{
 				t_object *sph = (t_object *)(objs->content);
 				inter = intersects_with_sphere(ray, sph);
-				if(inter < min_t && inter > (float)0.01)
+				// closest intersection
+				if(inter && inter->t < min_t && inter->t > (float)0.0001)
 				{	
-					min_t = inter;
-					color = (((t_sphere *)(sph->details))->color *( 1 - g_ambient_light.brightness)) + g_ambient_light.brightness * g_ambient_light.color;
-					//color += g_ambient_light.color * ;
+					min_t = inter->t;
+					closest = inter;
 				}
 				objs = objs->next;
 			}
+			if (closest)
+			{
+				color += closest->object_color * g_ambient_light.brightness;
+				//ft_printf("closest color =%d\n",closest->object_color);
+				//return (0);
+				//cast shadow ray
+				t_ray shadow_ray;
+				shadow_ray.pos = vec_add(closest->point,vec_mult(closest->normal,0.0001));
+				shadow_ray.dir = vec_sub(light , shadow_ray.pos);
+				int blocked = 0;
+				objs = objects;
+				 while (objs)
+				{
+					t_object *sph = (t_object *)(objs->content);
+					if (intersects_with_sphere(shadow_ray, sph))
+					{
+						//printf("shadow!");
+						blocked = 1;
+						//break;
+						//objs->next = NULL;
+					}
+					objs = objs->next;
+				}
+				if(!blocked)
+				{
+					t_vector light_dir = vec_normalize(vec_sub(light,shadow_ray.pos));
+					//printf("diffused (x %.4f y %.4f z %.4f)\n",light_dir.x,light_dir.y,light_dir.z);
+					//printf("color %d\n",color);
+					float  f = (float)fmax(0, vec_dot(closest->normal, light_dir));
+					printf("f %.4f\n",f);
 
+					color += closest->diffuse * light_color * f;
+					color = min(0xFFFFFF, color);
+					//printf("newcolor %d\n",color);
+					//return (0);
+
+				}
+			}
+			else 
+				color = 0;
+				
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,color);
 			//ft_printf("%d",inter);
 			//set pixel to one or zero
 			//image[y][x] = value;
 			x++;
 		}
-		printf("\n");
+		//printf("\n");
 		y++;
 	}
 	ft_lstclear(&objects,free_object);
