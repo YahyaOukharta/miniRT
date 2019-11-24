@@ -24,7 +24,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
     sphere = (t_sphere *)obj->details;
     	// Transform ray so we can consider origin-centred sphere
 	tmp_ray = ray;
-	tmp_ray.pos = vec_sub(ray.pos,sphere->pos);;
+	tmp_ray.pos = vec_sub(ray.pos,sphere->pos);
 	//printf("(%.4f,%.4f,%.4f)\t",tmp_ray.dir.x,tmp_ray.dir.y,tmp_ray.dir.z);
 	// Calculate quadratic coefficients
 	float a = vec_len2(tmp_ray.dir); //tmp_ray.direction.length2();
@@ -37,13 +37,13 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	// Find two points of intersection, t1 close and t2 far
 	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
 		t = t1;
-	if (t2 > RAY_T_MIN && t2 < RAY_T_MAX)
+	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
 		t = t2;
 	inter->point = vec_mult(tmp_ray.dir , t);
 	inter->t = t;
 	inter->object_color = sphere->color;
 	inter->normal = vec_normalize(vec_sub(inter->point,sphere->pos));
-	inter->diffuse = 0.9;
+	inter->diffuse = 0.5;
 	inter->specular = 0;
 	return inter;
 }

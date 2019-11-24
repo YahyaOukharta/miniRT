@@ -85,7 +85,7 @@ int main (int argc, char **argv)
 			//compute intersection 
 				//with sphere
 			t_intersection* inter;
-			int color = 0;
+			int color,a_color,d_color = 0;
 			float min_t = INFINITY;
 			t_intersection* closest = NULL;
 
@@ -104,13 +104,13 @@ int main (int argc, char **argv)
 			}
 			if (closest)
 			{
-				color += closest->object_color * g_ambient_light.brightness;
+				a_color = closest->object_color * g_ambient_light.brightness;
 				//ft_printf("closest color =%d\n",closest->object_color);
 				//return (0);
 				//cast shadow ray
 				t_ray shadow_ray;
-				shadow_ray.pos = vec_add(closest->point,vec_mult(closest->normal,0.0001));
-				shadow_ray.dir = vec_sub(light , shadow_ray.pos);
+				shadow_ray.pos = vec_add(closest->point, vec_mult(closest->normal, 0.0000000001));
+				shadow_ray.dir = vec_normalize(vec_sub(light , shadow_ray.pos));
 				int blocked = 0;
 				objs = objects;
 				 while (objs)
@@ -120,7 +120,7 @@ int main (int argc, char **argv)
 					{
 						//printf("shadow!");
 						blocked = 1;
-						//break;
+						break;
 						//objs->next = NULL;
 					}
 					objs = objs->next;
@@ -129,16 +129,17 @@ int main (int argc, char **argv)
 				{
 					t_vector light_dir = vec_normalize(vec_sub(light,shadow_ray.pos));
 					//printf("diffused (x %.4f y %.4f z %.4f)\n",light_dir.x,light_dir.y,light_dir.z);
-					//printf("color %d\n",color);
-					float  f = (float)fmax(0, vec_dot(closest->normal, light_dir));
-					printf("f %.4f\n",f);
+					//printf("color %d ",light_color);
+					float  f = fmax(0,vec_dot(closest->normal,light_dir));
+					//printf("f %.4f ",f);
 
-					color += closest->diffuse * light_color * f;
-					color = min(0xFFFFFF, color);
+					d_color = closest->diffuse * light_color * f;
 					//printf("newcolor %d\n",color);
 					//return (0);
 
 				}
+				//color = d_color + a_color;
+				color = min(d_color + a_color / 2, rgb_to_int("255,255,255"));
 			}
 			else 
 				color = 0;
