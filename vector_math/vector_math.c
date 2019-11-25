@@ -70,6 +70,6 @@ t_vector vec_normalize(t_vector v)
 {
     float len;
 
-    len = vec_len2(v);
+    len = vec_len(v);
     return (vec_div(v, len));
 }

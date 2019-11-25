@@ -204,6 +204,41 @@ int rgb_to_int(char *s)
     return (res);
 }
 
+int add_colors(int c1, int c2)
+{
+    int r1,g1,b1,r2,g2,b2;
+    int r3,g3,b3;
+    int result;
+
+    b1 = c1 % 256;
+    c1 /=256;    
+    g1 = c1 % 256;
+    c1 /=256;    
+    r1 = c1 % 256;
+    c1 /=256;
+    
+    b2 = c2 % 256;
+    c2 /=256;    
+    g2 = c2 % 256;
+    c2 /=256;    
+    r2 = c2 % 256;
+    c2 /=256;
+
+    // r3 = (r1 + r2) / 2;
+    // g3 = (g1 + g2) / 2;
+    // b3 = (b1 + b2) / 2;
+    
+    r3 = min((r1 + r2), 255);
+    g3 = min((g1 + g2), 255);
+    b3 = min((b1 + b2), 255);
+
+    result = r3 * 256;
+    result = (result + g3) * 256;     
+    result = result + b3;
+
+    return (result);
+}
+
 void free_object(void *object)
 {
     t_object *obj;
@@ -214,3 +249,4 @@ void free_object(void *object)
     free(obj->type);
     free(obj);
 }
+

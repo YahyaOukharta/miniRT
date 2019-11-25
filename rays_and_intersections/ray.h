@@ -2,7 +2,7 @@
 # define RAY_H
 #include "../minirt.h"
 // In order to prevent bouncing rays self-intersecting
-#define RAY_T_MIN 0.0001
+#define RAY_T_MIN 0.00000001
 
 // 'Infinite' distance, used as a default value
 #define RAY_T_MAX 1.0e30

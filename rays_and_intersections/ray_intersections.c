@@ -22,7 +22,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	float t1,t2,t;
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
     sphere = (t_sphere *)obj->details;
-    	// Transform ray so we can consider origin-centred sphere
+    // Transform ray so we can consider origin-centred sphere
 	tmp_ray = ray;
 	tmp_ray.pos = vec_sub(ray.pos,sphere->pos);
 	//printf("(%.4f,%.4f,%.4f)\t",tmp_ray.dir.x,tmp_ray.dir.y,tmp_ray.dir.z);
@@ -39,11 +39,12 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 		t = t1;
 	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
 		t = t2;
-	inter->point = vec_mult(tmp_ray.dir , t);
+	else return (0);
+	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
 	inter->object_color = sphere->color;
-	inter->normal = vec_normalize(vec_sub(inter->point,sphere->pos));
-	inter->diffuse =0.4;
+	inter->normal = vec_normalize(vec_sub(vec_add(ray.pos,vec_mult(ray.dir, t)), sphere->pos));
+	inter->diffuse = 0.7;
 	inter->specular = 0;
 	return inter;
 }

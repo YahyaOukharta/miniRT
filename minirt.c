@@ -53,8 +53,8 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 70;
 	t_ray ray;
-	t_vector light = {0.2,1,-0.9};
-	int light_color = rgb_to_int("255,0,0");
+	t_vector light = {0.2,1,-0.5};
+	int light_color = rgb_to_int("255,255,255");
 	while (y < g_resolution.y)
 	{
 		x = 0;
@@ -78,7 +78,7 @@ int main (int argc, char **argv)
 			ray.pos.z = 0;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
-			ray.dir.z = -2; // ZOOM 
+			ray.dir.z = -1.7; // ZOOM 
 			ray.dir = vec_normalize(ray.dir);
 			//if( !(x))
 				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
@@ -95,54 +95,61 @@ int main (int argc, char **argv)
 				t_object *sph = (t_object *)(objs->content);
 				inter = intersects_with_sphere(ray, sph);
 				// closest intersection
-				if(inter && inter->t < min_t && inter->t > (float)0.1)
+				if(inter && inter->t < min_t && inter->t > 0.0001)
 				{	
 					min_t = inter->t;
 					closest = inter;
 				}
 				objs = objs->next;
 			}
+			//ft_printf("inter %p\n",closest);
 			if (closest)
 			{
+				//printf("closest = %p\n",closest);
 				a_color = closest->object_color * g_ambient_light.brightness;
-				//ft_printf("closest color =%d\n",closest->object_color);
+				//ft_printf("closest color = %d\n",closest->object_color);
 				//return (0);
 				//cast shadow ray
 				t_ray shadow_ray;
-				shadow_ray.pos = vec_add(closest->point, vec_mult(closest->normal, 0.0000001));
+				shadow_ray.pos = vec_add(vec_add(ray.pos,vec_mult(ray.dir, closest->t)),vec_mult(closest->normal, 0.00001));
 				shadow_ray.dir = vec_normalize(vec_sub(light , shadow_ray.pos));
 				int blocked = 0;
 				objs = objects;
 				t_vector tmp = shadow_ray.pos;
-				 while (objs)
+				while (objs)
 				{
 					t_object *sph = (t_object *)(objs->content);
-					shadow_ray.pos = vec_add(shadow_ray.pos, ((t_sphere *)(sph->details))->pos);
+					//shadow_ray.pos = vec_add(shadow_ray.pos, ((t_sphere *)(sph->details))->pos);
 					if (intersects_with_sphere(shadow_ray, sph))
 					{
-						//printf("shadow!");
+						printf("sha");
 						blocked = 1;
-						//break;
-						objs->next = NULL;
+						break;
 					}
 					objs = objs->next;
 				}
 				if(!blocked)
 				{
 					t_vector light_dir = vec_normalize(vec_sub(light,tmp));
-					//printf("diffused (x %.4f y %.4f z %.4f)\n",light_dir.x,light_dir.y,light_dir.z);
+					printf("diffused from (x %.4f y %.4f z %.4f)\n",shadow_ray.pos.x,shadow_ray.pos.y,shadow_ray.pos.z);
 					//printf("c %d ",light_color);
-					float  f = fmax(0,vec_dot(closest->normal, light_dir));
-					//printf("f %.4f ",f);
-
-					d_color = (int)floorf(closest->diffuse *light_color * f) ;
-		 
-					//printf("newcolor %d\n",color);
-					//return (0);
+					float  f = fmax(0,(double)vec_dot(closest->normal, light_dir));
+					printf("a %.4f ",f);
+					d_color = closest->diffuse * add_colors(a_color,light_color * f);// light_color;// * f;
+					color = d_color;
+					printf("diffused color %d\n",color);
+				//	return (0);
 
 				}
-				color = (a_color + d_color) % rgb_to_int("255,255,255");
-			}
+				else
+				{
+					printf("dow\n");
+					color = a_color;
+				//return(0);
+				}
+				
+
+			}				
 			else 
 				color = 0;
 				
@@ -158,7 +165,7 @@ int main (int argc, char **argv)
 	}
 	ft_lstclear(&objects,free_object);
 	ft_printf("[ GOOD ]");
-		mlx_loop(data.mlx_ptr);
+	mlx_loop(data.mlx_ptr);
 
     return (EXIT_SUCCESS);
 }
