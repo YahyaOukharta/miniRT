@@ -51,10 +51,10 @@ int main (int argc, char **argv)
 	int y = 0;
 	int aspect_ratio = g_resolution.x / g_resolution.y;
 	int value;
-	int fov = 45;
+	int fov = 70;
 	t_ray ray;
-	t_vector light = {0.2,1,-1};
-	int light_color = rgb_to_int("255,255,255");
+	t_vector light = {0.2,1,-0.9};
+	int light_color = rgb_to_int("255,0,0");
 	while (y < g_resolution.y)
 	{
 		x = 0;
@@ -78,7 +78,7 @@ int main (int argc, char **argv)
 			ray.pos.z = 0;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
-			ray.dir.z = -1; // ZOOM 
+			ray.dir.z = -2; // ZOOM 
 			ray.dir = vec_normalize(ray.dir);
 			//if( !(x))
 				//printf(" (x %.4f y %.4f) vs ",ray.dir.x,ray.dir.y);
@@ -95,7 +95,7 @@ int main (int argc, char **argv)
 				t_object *sph = (t_object *)(objs->content);
 				inter = intersects_with_sphere(ray, sph);
 				// closest intersection
-				if(inter && inter->t < min_t && inter->t > (float)0.0001)
+				if(inter && inter->t < min_t && inter->t > (float)0.1)
 				{	
 					min_t = inter->t;
 					closest = inter;
@@ -109,43 +109,46 @@ int main (int argc, char **argv)
 				//return (0);
 				//cast shadow ray
 				t_ray shadow_ray;
-				shadow_ray.pos = vec_add(closest->point, vec_mult(closest->normal, 0.0000000001));
+				shadow_ray.pos = vec_add(closest->point, vec_mult(closest->normal, 0.0000001));
 				shadow_ray.dir = vec_normalize(vec_sub(light , shadow_ray.pos));
 				int blocked = 0;
 				objs = objects;
+				t_vector tmp = shadow_ray.pos;
 				 while (objs)
 				{
 					t_object *sph = (t_object *)(objs->content);
+					shadow_ray.pos = vec_add(shadow_ray.pos, ((t_sphere *)(sph->details))->pos);
 					if (intersects_with_sphere(shadow_ray, sph))
 					{
 						//printf("shadow!");
 						blocked = 1;
-						break;
-						//objs->next = NULL;
+						//break;
+						objs->next = NULL;
 					}
 					objs = objs->next;
 				}
 				if(!blocked)
 				{
-					t_vector light_dir = vec_normalize(vec_sub(light,shadow_ray.pos));
+					t_vector light_dir = vec_normalize(vec_sub(light,tmp));
 					//printf("diffused (x %.4f y %.4f z %.4f)\n",light_dir.x,light_dir.y,light_dir.z);
-					//printf("color %d ",light_color);
-					float  f = fmax(0,vec_dot(closest->normal,light_dir));
+					//printf("c %d ",light_color);
+					float  f = fmax(0,vec_dot(closest->normal, light_dir));
 					//printf("f %.4f ",f);
 
-					d_color = closest->diffuse * light_color * f;
+					d_color = (int)floorf(closest->diffuse *light_color * f) ;
+		 
 					//printf("newcolor %d\n",color);
 					//return (0);
 
 				}
-				//color = d_color + a_color;
-				color = min(d_color + a_color / 2, rgb_to_int("255,255,255"));
+				color = (a_color + d_color) % rgb_to_int("255,255,255");
 			}
 			else 
 				color = 0;
 				
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,color);
-			//ft_printf("%d",inter);
+			if (color > rgb_to_int("255,255,255"))
+				ft_printf("%d > white ",color);
 			//set pixel to one or zero
 			//image[y][x] = value;
 			x++;

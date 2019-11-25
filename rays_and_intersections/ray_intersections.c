@@ -43,7 +43,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	inter->t = t;
 	inter->object_color = sphere->color;
 	inter->normal = vec_normalize(vec_sub(inter->point,sphere->pos));
-	inter->diffuse = 0.5;
+	inter->diffuse =0.4;
 	inter->specular = 0;
 	return inter;
 }
