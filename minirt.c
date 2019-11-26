@@ -53,7 +53,7 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 70;
 	t_ray ray;
-	t_vector light = {0.2,1,-0.5};
+	t_vector light = {-0.5,1,-0.5};
 	int light_color = rgb_to_int("255,255,255");
 	while (y < g_resolution.y)
 	{
@@ -85,7 +85,7 @@ int main (int argc, char **argv)
 			//compute intersection 
 				//with sphere
 			t_intersection* inter;
-			int color,a_color,d_color = 0;
+			float color,a_color,d_color = 0;
 			float min_t = INFINITY;
 			t_intersection* closest = NULL;
 
@@ -95,7 +95,7 @@ int main (int argc, char **argv)
 				t_object *sph = (t_object *)(objs->content);
 				inter = intersects_with_sphere(ray, sph);
 				// closest intersection
-				if(inter && inter->t < min_t && inter->t > 0.0001)
+				if(inter && inter->t < min_t && inter->t > 0.0000001)
 				{	
 					min_t = inter->t;
 					closest = inter;
@@ -132,20 +132,25 @@ int main (int argc, char **argv)
 				{
 					t_vector light_dir = vec_normalize(vec_sub(light,tmp));
 					printf("diffused from (x %.4f y %.4f z %.4f)\n",shadow_ray.pos.x,shadow_ray.pos.y,shadow_ray.pos.z);
-					//printf("c %d ",light_color);
-					float  f = fmax(0,(double)vec_dot(closest->normal, light_dir));
-					printf("a %.4f ",f);
-					d_color = closest->diffuse * add_colors(a_color,light_color * f);// light_color;// * f;
+					printf("c %d ",light_color);
+					float  dot = vec_dot(closest->normal, light_dir);
+					if (dot < 0.0001)
+						dot = -1;
+					//dot = floor(dot * 1000) / 10;
+					printf("a %.4f ",dot);
+
+					//dot = 0.4;
+					d_color = add_colors(a_color,mult_colors(light_color, fmax(dot ,0)*closest->diffuse));
 					color = d_color;
-					printf("diffused color %d\n",color);
-				//	return (0);
+					printf("diffused color %f\n",color);
+					//return (0);
 
 				}
 				else
 				{
 					printf("dow\n");
 					color = a_color;
-				//return(0);
+					//return(0);
 				}
 				
 
@@ -153,9 +158,9 @@ int main (int argc, char **argv)
 			else 
 				color = 0;
 				
-			mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,color);
+			mlx_pixel_put(data.mlx_ptr,data.mlx_win,x,y,(int)floor(color));
 			if (color > rgb_to_int("255,255,255"))
-				ft_printf("%d > white ",color);
+				ft_printf("%d > white ",(int)color);
 			//set pixel to one or zero
 			//image[y][x] = value;
 			x++;

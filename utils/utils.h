@@ -19,6 +19,7 @@ int free_s_tab(char **tab);
 
 int rgb_to_int(char *rgb);
 int add_colors(int c1, int c2);
+int mult_colors(int c1, float value);
 
 float ft_atof(const char *str);
 void free_object(void *object);

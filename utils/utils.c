@@ -238,6 +238,31 @@ int add_colors(int c1, int c2)
 
     return (result);
 }
+int mult_colors(int c1, float value)
+{
+    int r1,g1,b1,r2,g2,b2;
+    int r3,g3,b3;
+    int result;
+
+    b1 = c1 % 256;
+    c1 /=256;    
+    g1 = c1 % 256;
+    c1 /=256;    
+    r1 = c1 % 256;
+    c1 /=256;
+
+
+    
+    r3 = r1 * value;
+    g3 = g1 * value;
+    b3 = b1 * value;
+
+    result = r3 * 256;
+    result = (result + g3) * 256;     
+    result = result + b3;
+
+    return (result);
+}
 
 void free_object(void *object)
 {
