@@ -1,5 +1,6 @@
 #ifndef VECTOR_MATH_H
 #define VECTOR_MATH_H
+
 #include "../objects/objects.h"
 t_vector vec_add(t_vector v1, t_vector v2);
 t_vector vec_sub(t_vector v1, t_vector v2);

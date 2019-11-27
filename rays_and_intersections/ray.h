@@ -1,5 +1,6 @@
 #ifndef RAY_H
 # define RAY_H
+
 #include "../minirt.h"
 // In order to prevent bouncing rays self-intersecting
 #define RAY_T_MIN 0.00000001
@@ -22,6 +23,8 @@ typedef struct s_intersection
     int object_color;
     float diffuse;
     float specular;
+    float s_power;
 }               t_intersection;
+
 t_intersection *intersects_with_sphere(t_ray ray, t_object *obj);
 #endif
