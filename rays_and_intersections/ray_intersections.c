@@ -59,21 +59,22 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	float t;
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
     plane = (t_plane *)obj->details;
-
+	t_vector p_normal = vec_normalize(plane->orientation);
     // assuming vectors are all normalized
-    float denom = vec_dot(plane->orientation, ray.dir); 
-    if (denom > 1e-6) { 
+    float denom = vec_dot(p_normal, ray.dir); 
+    if (denom > 1e-6)
+	{ 
         t_vector p_origin_dir = vec_sub(plane->pos, ray.pos); //plane origin
-        t = vec_dot(p_origin_dir, plane->orientation) / denom; 
+        t = vec_dot(p_origin_dir, p_normal) / denom; 
 		if (t < RAY_T_MIN)
 			return (0);
 	}
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
 	inter->object_color = plane->color;
-	inter->normal = plane->orientation;
+	inter->normal = p_normal;
 	inter->diffuse = 0.4;
-	inter->specular = 0.2;
-	inter->s_power = 4;
+	inter->specular = 0.4;
+	inter->s_power = 2;
 	return inter;
 } 

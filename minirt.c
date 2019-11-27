@@ -47,7 +47,6 @@ int get_specular_color(t_intersection *closest, t_ray ray, int light_color, t_ve
 	float dot =  fmax(vec_dot(reflection_dir, light_dir), 0);
 	return(mult_colors(light_color, closest->specular * pow(dot, closest->s_power)));
 }
-//
 t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 {
 	t_list *objs = objects;
@@ -57,10 +56,13 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	while (objs)
 	{
 		t_object *sph = (t_object *)(objs->content);
-		inter = intersects_with_sphere(ray, sph);
+		if (!ft_memcmp(sph->type,"sp",2))
+		 	inter = intersects_with_sphere(ray, sph);
+		if (!ft_strncmp(sph->type,"pl",2))
+			inter = intersects_with_plane(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
-		{	
+		{
 			min_t = inter->t;
 			closest = inter;
 		}
@@ -86,11 +88,14 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_vector light_pos, i
 	while (objs)
 	{
 		t_object *sph = (t_object *)(objs->content);
-		if (intersects_with_sphere(shadow_ray, sph))
+	
+		if((!ft_memcmp(sph->type,"sp",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
+			|| (!ft_memcmp(sph->type,"pl",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph)))
 		{
 			blocked = 1;
 			break;
 		}
+
 		objs = objs->next;
 	}
 	if(!blocked)
@@ -102,6 +107,7 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_vector light_pos, i
 		//specular lighting
 		s_color = get_specular_color(closest, ray, light_color, light_dir);
 		color = add_colors(color, s_color);
+		printf("color = %d\n",(int)color);
 	}
 	return (color);
 }
@@ -115,6 +121,7 @@ int main (int argc, char **argv)
 		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
 	if(!process_file(argv))
 		return (0);
+		print_objects(objects);
     if (!(data.mlx_ptr = mlx_init()))
         return (EXIT_FAILURE);
     if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
@@ -157,7 +164,6 @@ int main (int argc, char **argv)
 			ray.dir.z = -1; // ZOOM 
 			ray.dir = vec_normalize(ray.dir);
 
-			
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)
 				color = compute_pixel_color(closest,ray,light,light_color);

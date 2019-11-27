@@ -27,4 +27,6 @@ typedef struct s_intersection
 }               t_intersection;
 
 t_intersection *intersects_with_sphere(t_ray ray, t_object *obj);
+t_intersection *intersects_with_plane(t_ray ray, t_object *obj);
+
 #endif
