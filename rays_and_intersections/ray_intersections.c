@@ -78,3 +78,67 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	inter->s_power = 2;
 	return inter;
 } 
+
+t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
+{ 
+	float t;
+	t_triangle *tri;
+	t_intersection* inter;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+	tri = (t_triangle *)obj->details;
+    // compute plane's normal
+    t_vector p1p2 = vec_sub(tri->p2 , tri->p1); 
+    t_vector p1p3 = vec_sub(tri->p3 , tri->p1); 
+    // no need to normalize
+    t_vector N = vec_cross(p1p2, p1p3); // N 
+    float area2 = vec_len(N); 
+ 
+    // Step 1: finding P
+ 
+    // check if ray and plane are parallel ?
+    float NdotRayDirection = vec_dot(N, ray.dir); 
+    if (fabs(NdotRayDirection) < RAY_T_MIN) // almost 0 
+        return 0; // they are parallel so they don't intersect ! 
+ 
+    // compute d parameter using equation 2
+    float d = vec_dot(N,tri->p1); 
+ 
+    // compute t (equation 3)
+    t = (vec_dot(N,ray.pos) + d) / NdotRayDirection; 
+    // check if the triangle is in behind the ray
+    if (t < 0)return 0; // the triangle is behind 
+ 
+    // compute the intersection point using equation 1
+    t_vector P = vec_add(ray.pos , vec_mult(ray.dir, t)); 
+ 
+    // Step 2: inside-outside test
+    t_vector C; // vector perpendicular to triangle's plane 
+ 
+    // edge 0
+    t_vector edge0 = vec_sub(tri->p2 , tri->p1); 
+    t_vector vp0 = vec_sub(P , tri->p1); 
+    C = vec_cross(edge0, vp0); 
+    if (vec_dot(N,C) < 0) return 0; // P is on the right side 
+ 
+    // edge 1
+    t_vector edge1 = vec_sub(tri->p3 , tri->p2); 
+    t_vector vp1 = vec_sub(P , tri->p2); 
+    C = vec_cross(edge1, vp1); 
+    if (vec_dot(N,C) < 0)  return 0; // P is on the right side 
+ 
+    // edge 2
+    t_vector edge2 = vec_sub(tri->p1 , tri->p3); 
+    t_vector vp2 = vec_sub(P , tri->p3); 
+    C = vec_cross(edge2, vp2); 
+    if (vec_dot(N,C) < 0) return 0; // P is on the right side; 
+ 
+
+	inter->point = P;
+	inter->normal = N;
+	inter->t = t;
+	inter->object_color = tri->color;
+	inter->diffuse = 0.4;
+	inter->specular = 0.2;
+	inter->s_power = 4;
+    return inter; // this ray hits the triangle 
+} 

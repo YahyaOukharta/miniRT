@@ -53,13 +53,16 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	t_intersection *closest = NULL;
 	t_intersection *inter = NULL;
 	float min_t = INFINITY;
+
 	while (objs)
 	{
 		t_object *sph = (t_object *)(objs->content);
 		if (!ft_memcmp(sph->type,"sp",2))
 		 	inter = intersects_with_sphere(ray, sph);
 		if (!ft_strncmp(sph->type,"pl",2))
-			inter = intersects_with_plane(ray, sph);
+			inter = intersects_with_plane(ray, sph);		
+		if (!ft_strncmp(sph->type,"tr",2))
+			inter = intersects_with_triangle(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
 		{
@@ -90,7 +93,8 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_vector light_pos, i
 		t_object *sph = (t_object *)(objs->content);
 	
 		if((!ft_memcmp(sph->type,"sp",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
-			|| (!ft_memcmp(sph->type,"pl",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph)))
+			|| (!ft_memcmp(sph->type,"pl",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
+			|| (!ft_memcmp(sph->type,"tr",max(ft_strlen(sph->type),2)) && intersects_with_triangle(shadow_ray, sph)))
 		{
 			blocked = 1;
 			break;
@@ -134,7 +138,7 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 70;
 	t_ray ray;
-	t_vector light = {0.4,1,-1};
+	t_vector light = {1.6,4,-1};
 	int light_color = rgb_to_int("255,255,255");
 	while (y < g_resolution.y)
 	{
