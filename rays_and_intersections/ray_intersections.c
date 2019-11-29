@@ -80,17 +80,17 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 } 
 
 t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
-{ 
+{
 	float t;
 	t_triangle *tri;
 	t_intersection* inter;
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
 	tri = (t_triangle *)obj->details;
     // compute plane's normal
-    t_vector p1p2 = vec_sub(tri->p2 , tri->p1); 
-    t_vector p1p3 = vec_sub(tri->p3 , tri->p1); 
+    t_vector p1p2 = vec_sub(tri->p2 , tri->p1);
+    t_vector p1p3 = vec_sub(tri->p3 , tri->p1);
     // no need to normalize
-    t_vector N = vec_cross(p1p2, p1p3); // N 
+    t_vector N = vec_cross(p1p2, p1p3); // N
     float area2 = vec_len(N); 
  
     // Step 1: finding P
@@ -106,7 +106,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     // compute t (equation 3)
     t = (vec_dot(N,ray.pos) + d) / NdotRayDirection; 
     // check if the triangle is in behind the ray
-    if (t < 0)return 0; // the triangle is behind 
+    if (t < RAY_T_MIN)return 0; // the triangle is behind 
  
     // compute the intersection point using equation 1
     t_vector P = vec_add(ray.pos , vec_mult(ray.dir, t)); 

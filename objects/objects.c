@@ -2,6 +2,8 @@
 
 #include "../minirt.h"
 extern t_list *objects;
+extern t_list *objects;
+extern t_list *lights;
 
 int set_resolution(char **tab)
 {   
@@ -81,9 +83,10 @@ int add_light(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_light(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&lights, ft_lstnew(obj));
     return (1);
 }
+
 t_sphere *new_sphere(char **info)
 {
     t_sphere *new_sphere;
@@ -176,6 +179,7 @@ int add_square(char **tab)
     ft_lstadd_back(&objects, ft_lstnew(obj));
     return (1);
 }
+
 t_cylinder *new_cylinder(char **info)
 {
     t_cylinder *new_cylinder;

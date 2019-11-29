@@ -17,6 +17,7 @@ char	*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 struct s_ambient_light g_ambient_light;
 struct s_resolution g_resolution;
 t_list *objects;
+t_list *lights;
 
 void init_objects(void)
 {
@@ -60,7 +61,7 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 		if (!ft_memcmp(sph->type,"sp",2))
 		 	inter = intersects_with_sphere(ray, sph);
 		if (!ft_strncmp(sph->type,"pl",2))
-			inter = intersects_with_plane(ray, sph);		
+			inter = intersects_with_plane(ray, sph);
 		if (!ft_strncmp(sph->type,"tr",2))
 			inter = intersects_with_triangle(ray, sph);
 		// closest intersection
@@ -74,18 +75,19 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	return (closest);
 }
 
-int compute_pixel_color(t_intersection *closest,t_ray ray, t_vector light_pos, int light_color)
+int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
 {
 	int blocked = 0;
 	float color,a_color,d_color,s_color = 0;
 	t_ray shadow_ray;
+	t_light* light = ((t_light *)((t_object *)(lights->content))->details); ////
 
 	//ambient lighting
 	a_color = get_ambient_color(closest);
 	color = a_color;
 	//cast shadow ray towards light
 	shadow_ray.pos = vec_add(vec_add(ray.pos,vec_mult(ray.dir, closest->t)),vec_mult(closest->normal, 0.00000001));
-	shadow_ray.dir = vec_normalize(vec_sub(light_pos , shadow_ray.pos));
+	shadow_ray.dir = vec_normalize(vec_sub(light->pos , shadow_ray.pos));
 
 	t_list *objs = objects;
 	while (objs)
@@ -104,12 +106,12 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_vector light_pos, i
 	}
 	if(!blocked)
 	{
-		t_vector light_dir = vec_normalize(vec_sub(light_pos,shadow_ray.pos));
+		t_vector light_dir = vec_normalize(vec_sub(light->pos,shadow_ray.pos));
 		//diffuse lighting
-		d_color = get_diffuse_color(closest, light_pos, light_color, light_dir);
+		d_color = get_diffuse_color(closest, light->pos, light->color, light_dir);
 		color = add_colors(color, d_color);
 		//specular lighting
-		s_color = get_specular_color(closest, ray, light_color, light_dir);
+		s_color = get_specular_color(closest, ray, light->color, light_dir);
 		color = add_colors(color, s_color);
 		printf("color = %d\n",(int)color);
 	}
@@ -138,8 +140,8 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 70;
 	t_ray ray;
-	t_vector light = {1.6,4,-1};
-	int light_color = rgb_to_int("255,255,255");
+	//t_vector light = {2,2,-2};
+	//int light_color = rgb_to_int("255,255,255");
 	while (y < g_resolution.y)
 	{
 		x = 0;
@@ -165,12 +167,12 @@ int main (int argc, char **argv)
 			ray.pos.z = 0;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
-			ray.dir.z = -1; // ZOOM 
+			ray.dir.z = -1; // ZOOM
 			ray.dir = vec_normalize(ray.dir);
 
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)
-				color = compute_pixel_color(closest,ray,light,light_color);
+				color = compute_pixel_color(closest,ray,lights);
 			else
 				color = 0;
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win, x, y, (int)floor(color));
