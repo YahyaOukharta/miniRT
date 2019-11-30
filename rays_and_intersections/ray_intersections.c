@@ -46,8 +46,8 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	inter->object_color = sphere->color;
 	inter->normal = vec_normalize(vec_sub(vec_add(ray.pos,vec_mult(ray.dir, t)), sphere->pos));
 	inter->diffuse = 0.4;
-	inter->specular = 0.2;
-	inter->s_power = 4;
+	inter->specular = 0.5;
+	inter->s_power = 8;
 	return inter;
 }
 
@@ -106,7 +106,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     // compute t (equation 3)
     t = (vec_dot(N,ray.pos) + d) / NdotRayDirection; 
     // check if the triangle is in behind the ray
-    if (t < RAY_T_MIN)return 0; // the triangle is behind 
+    if (fabs(t) < RAY_T_MIN)return 0; // the triangle is behind 
  
     // compute the intersection point using equation 1
     t_vector P = vec_add(ray.pos , vec_mult(ray.dir, t)); 

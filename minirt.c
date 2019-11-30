@@ -36,17 +36,20 @@ int get_ambient_color(t_intersection *closest)
 {
 	return (add_colors(g_ambient_light.color, mult_colors(closest->object_color, g_ambient_light.brightness)));
 }
-int get_diffuse_color(t_intersection *closest, t_vector light_pos ,int light_color, t_vector light_dir)
+
+int get_diffuse_color(t_intersection *closest, t_ray shadow_ray, t_light *light)
 {	
+	t_vector light_dir = vec_normalize(vec_sub(light->pos,shadow_ray.pos));
 	float  dot = fmax(vec_dot(closest->normal, light_dir),0);
-	return (mult_colors(light_color, dot * closest->diffuse));
+	return (mult_colors(light->color, dot * closest->diffuse * light->brightness));
 }
-int get_specular_color(t_intersection *closest, t_ray ray, int light_color, t_vector light_dir)
+int get_specular_color(t_intersection *closest, t_ray ray, t_ray shadow_ray, t_light *light)
 {
+	t_vector light_dir = vec_normalize(vec_sub(light->pos,shadow_ray.pos));
 	t_vector reflection_dir = vec_sub(ray.dir, vec_mult(closest->normal, 2 * vec_dot(ray.dir,closest->normal)));
 	t_vector view_dir = vec_mult(ray.dir,-1);
 	float dot =  fmax(vec_dot(reflection_dir, light_dir), 0);
-	return(mult_colors(light_color, closest->specular * pow(dot, closest->s_power)));
+	return(mult_colors(light->color, closest->specular * pow(dot, closest->s_power) * light->brightness));
 }
 t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 {
@@ -75,20 +78,8 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	return (closest);
 }
 
-int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
+int is_ray_blocked(t_ray shadow_ray)
 {
-	int blocked = 0;
-	float color,a_color,d_color,s_color = 0;
-	t_ray shadow_ray;
-	t_light* light = ((t_light *)((t_object *)(lights->content))->details); ////
-
-	//ambient lighting
-	a_color = get_ambient_color(closest);
-	color = a_color;
-	//cast shadow ray towards light
-	shadow_ray.pos = vec_add(vec_add(ray.pos,vec_mult(ray.dir, closest->t)),vec_mult(closest->normal, 0.00000001));
-	shadow_ray.dir = vec_normalize(vec_sub(light->pos , shadow_ray.pos));
-
 	t_list *objs = objects;
 	while (objs)
 	{
@@ -98,23 +89,38 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
 			|| (!ft_memcmp(sph->type,"pl",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
 			|| (!ft_memcmp(sph->type,"tr",max(ft_strlen(sph->type),2)) && intersects_with_triangle(shadow_ray, sph)))
 		{
-			blocked = 1;
-			break;
+			return(1);
 		}
-
 		objs = objs->next;
-	}
-	if(!blocked)
+	}return (0);
+}
+
+int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
+{
+	int blocked = 0;
+	float color,a_color,d_color,s_color = 0;
+	t_ray shadow_ray;
+
+	//ambient lighting
+	a_color = get_ambient_color(closest);
+	color = a_color;
+	//cast shadow ray towards lights
+	while (lights)
 	{
-		t_vector light_dir = vec_normalize(vec_sub(light->pos,shadow_ray.pos));
-		//diffuse lighting
-		d_color = get_diffuse_color(closest, light->pos, light->color, light_dir);
-		color = add_colors(color, d_color);
-		//specular lighting
-		s_color = get_specular_color(closest, ray, light->color, light_dir);
-		color = add_colors(color, s_color);
-		printf("color = %d\n",(int)color);
+		t_light* light = ((t_light *)((t_object *)(lights->content))->details);
+		shadow_ray.pos = vec_add(vec_add(ray.pos,vec_mult(ray.dir, closest->t)),vec_mult(closest->normal, 0.00000001));
+		shadow_ray.dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
+		if(!is_ray_blocked(shadow_ray))
+		{
+			//diffuse lighting
+			d_color = add_colors(d_color, get_diffuse_color(closest, shadow_ray, light));
+			//specular lighting
+			s_color = add_colors(s_color, get_specular_color(closest, ray, shadow_ray, light));
+		}
+		lights = lights->next;
 	}
+	color = add_colors(d_color,s_color);
+	color = add_colors(color , a_color);
 	return (color);
 }
 
@@ -128,6 +134,7 @@ int main (int argc, char **argv)
 	if(!process_file(argv))
 		return (0);
 		print_objects(objects);
+		print_objects(lights);
     if (!(data.mlx_ptr = mlx_init()))
         return (EXIT_FAILURE);
     if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
@@ -140,8 +147,7 @@ int main (int argc, char **argv)
 	int value;
 	int fov = 70;
 	t_ray ray;
-	//t_vector light = {2,2,-2};
-	//int light_color = rgb_to_int("255,255,255");
+
 	while (y < g_resolution.y)
 	{
 		x = 0;
