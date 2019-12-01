@@ -11,5 +11,6 @@ t_vector vec_cross(t_vector v1, t_vector v2);
 float    vec_len2(t_vector v);
 float    vec_len(t_vector v);
 t_vector vec_normalize(t_vector v);
+t_vector vec_rotate(t_vector v, t_vector cam_dir);
 
 #endif

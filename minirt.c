@@ -145,7 +145,7 @@ int main (int argc, char **argv)
 	int y = 0;
 	int aspect_ratio = g_resolution.x / g_resolution.y;
 	int value;
-	int fov = 70;
+	int fov = 45;
 	t_ray ray;
 
 	while (y < g_resolution.y)
@@ -175,6 +175,8 @@ int main (int argc, char **argv)
 			ray.dir.y = Py;
 			ray.dir.z = -1; // ZOOM
 			ray.dir = vec_normalize(ray.dir);
+			t_vector cam_dir = {0.2,0.2,-0.1};
+			ray.dir = vec_rotate(ray.dir,cam_dir);
 
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)

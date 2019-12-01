@@ -73,3 +73,12 @@ t_vector vec_normalize(t_vector v)
     len = vec_len(v);
     return (vec_div(v, len));
 }
+
+t_vector vec_rotate(t_vector v, t_vector cam_dir)
+{
+    t_vector res;
+    res.x = v.x + cam_dir.x;
+    res.y = v.y + cam_dir.y;
+    res.z = v.z + cam_dir.z;
+    return (vec_normalize(res));
+}
