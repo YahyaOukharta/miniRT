@@ -46,8 +46,8 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	inter->object_color = sphere->color;
 	inter->normal = vec_normalize(vec_sub(vec_add(ray.pos,vec_mult(ray.dir, t)), sphere->pos));
 	inter->diffuse = 0.4;
-	inter->specular = 0.5;
-	inter->s_power = 8;
+	inter->specular = 0.4;
+	inter->s_power = 40;
 	return inter;
 }
 
@@ -113,19 +113,19 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
  
     // Step 2: inside-outside test
     t_vector C; // vector perpendicular to triangle's plane 
- 
+
     // edge 0
     t_vector edge0 = vec_sub(tri->p2 , tri->p1); 
     t_vector vp0 = vec_sub(P , tri->p1); 
     C = vec_cross(edge0, vp0); 
     if (vec_dot(N,C) < 0) return 0; // P is on the right side 
- 
+
     // edge 1
     t_vector edge1 = vec_sub(tri->p3 , tri->p2); 
     t_vector vp1 = vec_sub(P , tri->p2); 
     C = vec_cross(edge1, vp1); 
     if (vec_dot(N,C) < 0)  return 0; // P is on the right side 
- 
+
     // edge 2
     t_vector edge2 = vec_sub(tri->p1 , tri->p3); 
     t_vector vp2 = vec_sub(P , tri->p3); 

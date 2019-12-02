@@ -4,6 +4,7 @@
 extern t_list *objects;
 extern t_list *objects;
 extern t_list *lights;
+extern t_list *cameras;
 
 int set_resolution(char **tab)
 {   
@@ -56,7 +57,7 @@ int add_camera(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_camera(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&cameras, ft_lstnew(obj));
     return (1);
 }
 t_light *new_light(char **info)

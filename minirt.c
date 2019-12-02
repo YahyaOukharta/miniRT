@@ -18,6 +18,8 @@ struct s_ambient_light g_ambient_light;
 struct s_resolution g_resolution;
 t_list *objects;
 t_list *lights;
+t_list *cameras;
+t_list *current_camera;
 
 void init_objects(void)
 {
@@ -122,37 +124,21 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
 	color = add_colors(d_color,s_color);
 	color = add_colors(color , a_color);
 	return (color);
-}
-
-int main (int argc, char **argv)
+}	
+int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 {
-	//mlx 
-	data_t        data;
-	//file processing and scene objects storing
-	if (argc != 2)
-		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
-	if(!process_file(argv))
-		return (0);
-		print_objects(objects);
-		print_objects(lights);
-    if (!(data.mlx_ptr = mlx_init()))
-        return (EXIT_FAILURE);
-    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
-        return (EXIT_FAILURE);
-	// RENDER HERE
-	int image[g_resolution.y][g_resolution.x];
+	int aspect_ratio = g_resolution.x / g_resolution.y;
+	t_ray ray;
+	t_camera *current_cam = (t_camera *)((t_object *)current_camera->content)->details;	
+	int fov = current_cam->fov;
+
 	int x = 0;
 	int y = 0;
-	int aspect_ratio = g_resolution.x / g_resolution.y;
-	int value;
-	int fov = 45;
-	t_ray ray;
-
 	while (y < g_resolution.y)
 	{
 		x = 0;
 		while (x < g_resolution.x)
-		{
+		{	
 			//colors for different types of lighting
 			float color,a_color,d_color,s_color = 0;
 			//convert raster space to Normalized Device Coordinates (NDC)
@@ -167,31 +153,86 @@ int main (int argc, char **argv)
 			float Px = screen_x * tan(fov / 2 * M_PI / 180) * aspect_ratio;
 			float Py = screen_y * tan(fov / 2 * M_PI / 180);
 
+			t_vector camera_pos = current_cam->pos;
+			t_vector cam_dir = current_cam->dir;
 			//cast ray
-			ray.pos.x = 0;
-			ray.pos.y = 0;
-			ray.pos.z = 0;
+			// ray.pos.x = 0;
+			// ray.pos.y = 0;
+			// ray.pos.z = 0;
+			ray.pos = camera_pos;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
 			ray.dir.z = -1; // ZOOM
 			ray.dir = vec_normalize(ray.dir);
-			t_vector cam_dir = {0.2,0.2,-0.1};
-			ray.dir = vec_rotate(ray.dir,cam_dir);
+
+			//ray.dir = vec_rotate(ray.dir,vec_normalize(cam_dir));
 
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)
 				color = compute_pixel_color(closest,ray,lights);
 			else
 				color = 0;
+
+		// int index = (x * bpp / 8) + (y * size_line);
+		// img_data[index] = color;
+		// img_data[++index] = (int)color >> 8;
+		// img_data[++index] = (int)color >> 16;
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win, x, y, (int)floor(color));
 			x++;
 		}
-		//printf("\n");
 		y++;
 	}
-	ft_lstclear(&objects,free_object);
-	ft_printf("[ GOOD ]");
+	return (1);
+}
+	data_t        data;
+
+int	move_sph(int key,void *param)
+{
+	t_light *sph;
+	sph = (t_light *)param;
+	if (key == 125)
+		sph->pos.y -= 0.1;
+	else if (key == 126)
+		sph->pos.y += 0.1;
+	else if (key == 123)
+		sph->pos.x -= 0.1;
+	else if (key == 124)
+		sph->pos.x += 0.1;
+
+	mlx_clear_window(data.mlx_ptr, data.mlx_win);
+	render(data,objects,lights,current_camera);
+	return (0);
+}
+
+int main (int argc, char **argv)
+{
+	//mlx 
+	//file processing and scene objects storing
+	if (argc != 2)
+		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
+	if(!process_file(argv))
+		return (0);
+	print_objects(objects);
+	print_objects(lights); 
+	print_objects(cameras);
+
+    if (!(data.mlx_ptr = mlx_init()))
+        return (EXIT_FAILURE);
+    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
+        return (EXIT_FAILURE);
+	// RENDER HERE
+	
+	
+	
+	current_camera = cameras;
+	if(!render(data,objects,lights,current_camera))
+		return (0);
+
+	t_light *li = (t_light *)((t_object *)lights->content)->details;
+	mlx_key_hook(data.mlx_win, move_sph,li);
 	mlx_loop(data.mlx_ptr);
 
+	ft_lstclear(&objects,free_object);
+	ft_printf("[ GOOD ]");
     return (EXIT_SUCCESS);
 }
