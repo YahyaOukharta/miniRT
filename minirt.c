@@ -126,6 +126,32 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
 	color = add_colors(color , a_color);
 	return (color);
 }	
+t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
+{
+	t_ray ray;
+	float NDC_x = (x + 0.5) / g_resolution.x; //adding 0.5 to align with middle of the pixel ...
+	float NDC_y = (y + 0.5) / g_resolution.y;
+
+	// //convert NDC to screen space // values from -1 to 1
+	float screen_x =   2 * NDC_x - 1;
+	float screen_y = -(2 * NDC_y - 1); // to make y values above x axis (screen space) positive .....
+
+	// //convert screen space to camera space, 
+	float Px = screen_x * tan(cam->fov / 2 * M_PI / 180) * g_resolution.x / g_resolution.y;
+	float Py = screen_y * tan(cam->fov / 2 * M_PI / 180);
+
+	t_vector camera_pos = cam->pos;
+	t_vector cam_dir = cam->dir;
+	//cast ray
+	ray.pos = camera_pos;
+	ray.dir.x = Px;
+	ray.dir.y = Py;
+	ray.dir.z = zoom; // ZOOM
+	ray.dir = vec_normalize(ray.dir);
+
+	ray.dir = vec_rotate(ray.dir, cam);
+	return (ray);
+}
 int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 {
 	int aspect_ratio = g_resolution.x / g_resolution.y;
@@ -145,27 +171,7 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 			//colors for different types of lighting
 			float color,a_color,d_color,s_color = 0;
 			//convert raster space to Normalized Device Coordinates (NDC)
-			 float NDC_x = (x + 0.5) / g_resolution.x; //adding 0.5 to align with middle of the pixel ...
-			 float NDC_y = (y + 0.5) / g_resolution.y;
-
-			// //convert NDC to screen space // values from -1 to 1
-			 float screen_x =   2 * NDC_x - 1;
-			 float screen_y = -(2 * NDC_y - 1); // to make y values above x axis (screen space) positive .....
-
-			// //convert screen space to camera space, 
-			float Px = screen_x * tan(fov / 2 * M_PI / 180) * aspect_ratio;
-			float Py = screen_y * tan(fov / 2 * M_PI / 180);
-
-			t_vector camera_pos = current_cam->pos;
-			t_vector cam_dir = current_cam->dir;
-			//cast ray
-			ray.pos = camera_pos;
-			ray.dir.x = Px;
-			ray.dir.y = Py;
-			ray.dir.z = -1; // ZOOM
-			ray.dir = vec_normalize(ray.dir);
-
-			ray.dir = vec_rotate(ray.dir, current_cam);
+			ray = cast_ray(x,y,current_cam, -1);
 			//return (0);
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)
