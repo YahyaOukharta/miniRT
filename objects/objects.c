@@ -20,14 +20,6 @@ int set_ambient_light(char **tab)
     g_ambient_light.color = rgb_to_int(tab[2]);
     return (1);
 }
-
-// typedef struct	s_camera
-// {
-// 	t_vector pos;
-// 	t_vector dir;
-
-// 	int		fov; //probably
-// }				t_camera;
 t_camera *new_camera(char **info)
 {
     t_camera *new_cam;
@@ -47,6 +39,8 @@ t_camera *new_camera(char **info)
     free_s_tab(tab);
 
     new_cam->fov = ft_atof(info[3]);
+
+    new_cam->rot = vec_create(0,0,0);
     return (new_cam);
 }
 

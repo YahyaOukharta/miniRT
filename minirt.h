@@ -1,6 +1,7 @@
 #ifndef MINIRT_H
 # define MINIRT_H
 
+# include "keys.h"
 # include "utils/utils.h"
 # include "file_checker/file_checker.h"
 # include "objects/objects.h"

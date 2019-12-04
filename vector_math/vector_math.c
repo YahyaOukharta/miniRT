@@ -74,11 +74,50 @@ t_vector vec_normalize(t_vector v)
     return (vec_div(v, len));
 }
 
-t_vector vec_rotate(t_vector v, t_vector cam_dir)
+t_vector vec_create(float x,float y, float z)
 {
-    t_vector res;
-    res.x = v.x + cam_dir.x;
-    res.y = v.y + cam_dir.y;
-    res.z = v.z + cam_dir.z;
+    t_vector v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return v;
+}
+
+static void	rotate_x(float *y, float *z, double alpha)
+{
+	float previous_y;
+
+	previous_y = *y;
+	*y = previous_y * cos(alpha) + *z * sin(alpha);
+	*z = -previous_y * sin(alpha) + *z * cos(alpha);
+}
+
+static void	rotate_y(float *x, float *z, double beta)
+{
+	float previous_x;
+
+	previous_x = *x;
+	*x = previous_x * cos(beta) + *z * sin(beta);
+	*z = -previous_x * sin(beta) + *z * cos(beta);
+}
+
+static void	rotate_z(float *x, float *y, double gamma)
+{
+	float previous_x;
+	float previous_y;
+
+	previous_x = *x;
+	previous_y = *y;
+	*x = previous_x * cos(gamma) - previous_y * sin(gamma);
+	*y = previous_x * sin(gamma) + previous_y * cos(gamma);
+}
+
+t_vector vec_rotate(t_vector vec, t_camera *cam)
+{
+    t_vector res,from;
+    rotate_x(&vec.y,&vec.z,cam->rot.x);
+    rotate_y(&vec.x,&vec.z,cam->rot.y);
+    rotate_z(&vec.x,&vec.y,cam->rot.z);
+    res = vec;
     return (vec_normalize(res));
 }

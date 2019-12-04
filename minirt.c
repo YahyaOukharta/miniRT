@@ -33,6 +33,7 @@ typedef struct    data_s
     void          *mlx_ptr;
     void          *mlx_win;
 }                 data_t;
+
 //lighting function
 int get_ambient_color(t_intersection *closest)
 {
@@ -134,6 +135,8 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 
 	int x = 0;
 	int y = 0;
+
+	//mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	while (y < g_resolution.y)
 	{
 		x = 0;
@@ -156,27 +159,19 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 			t_vector camera_pos = current_cam->pos;
 			t_vector cam_dir = current_cam->dir;
 			//cast ray
-			// ray.pos.x = 0;
-			// ray.pos.y = 0;
-			// ray.pos.z = 0;
 			ray.pos = camera_pos;
 			ray.dir.x = Px;
 			ray.dir.y = Py;
 			ray.dir.z = -1; // ZOOM
 			ray.dir = vec_normalize(ray.dir);
 
-			//ray.dir = vec_rotate(ray.dir,vec_normalize(cam_dir));
-
+			ray.dir = vec_rotate(ray.dir, current_cam);
+			//return (0);
 			t_intersection* closest = get_closest_intersection(objects, ray);
 			if (closest)
 				color = compute_pixel_color(closest,ray,lights);
 			else
 				color = 0;
-
-		// int index = (x * bpp / 8) + (y * size_line);
-		// img_data[index] = color;
-		// img_data[++index] = (int)color >> 8;
-		// img_data[++index] = (int)color >> 16;
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win, x, y, (int)floor(color));
 			x++;
 		}
@@ -186,23 +181,51 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 }
 	data_t        data;
 
-int	move_sph(int key,void *param)
+//event handling
+int	re_render(int key,void *param)
 {
-	t_light *sph;
-	sph = (t_light *)param;
-	if (key == 125)
-		sph->pos.y -= 0.1;
-	else if (key == 126)
-		sph->pos.y += 0.1;
-	else if (key == 123)
-		sph->pos.x -= 0.1;
-	else if (key == 124)
-		sph->pos.x += 0.1;
-
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	render(data,objects,lights,current_camera);
 	return (0);
 }
+int	rotate_camera(int key,void *param)
+{
+	t_camera *cam = (t_camera *)param;
+	if (key == KEY_RIGHT)
+		cam->rot.y -= 0.1;
+	if (key == KEY_LEFT)
+		cam->rot.y += 0.1;
+	if (key == KEY_UP)
+		cam->rot.x -= 0.1;
+	if (key == KEY_DOWN)
+		cam->rot.x += 0.1;
+	re_render(key, NULL);
+	return (0);
+}
+int	move_camera(int key,void *param)
+{
+	t_camera *cam = (t_camera *)param;
+	float vel = 0.1;
+	if (key == KEY_D)
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+	if (key == KEY_A)
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+	if (key == KEY_W)
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam),vel));
+	if (key == KEY_S)
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam),-vel));
+	re_render(key, NULL);
+	return (0);
+}
+int handle_keys(int key, void *param)
+{
+	if (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_UP || key == KEY_DOWN)
+		return (rotate_camera(key, param));
+	else if (key == KEY_D || key == KEY_A || key == KEY_W || key == KEY_S)
+		return (move_camera(key,param));
+	return (0);
+}
+
 
 int main (int argc, char **argv)
 {
@@ -210,7 +233,7 @@ int main (int argc, char **argv)
 	//file processing and scene objects storing
 	if (argc != 2)
 		return (ft_printf("Error\n [!] Wrong numbers of arguments, Enter only one argument\n") ? 0 : 0);
-	if(!process_file(argv))
+	if (!process_file(argv))
 		return (0);
 	print_objects(objects);
 	print_objects(lights); 
@@ -228,8 +251,12 @@ int main (int argc, char **argv)
 	if(!render(data,objects,lights,current_camera))
 		return (0);
 
-	t_light *li = (t_light *)((t_object *)lights->content)->details;
-	mlx_key_hook(data.mlx_win, move_sph,li);
+	 t_light *li  = (t_light *)((t_object *)lights->content)->details;
+	t_sphere *sph = (t_sphere *)((t_object *)objects->content)->details;
+	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+
+
+	mlx_key_hook(data.mlx_win, handle_keys, cam);
 	mlx_loop(data.mlx_ptr);
 
 	ft_lstclear(&objects,free_object);

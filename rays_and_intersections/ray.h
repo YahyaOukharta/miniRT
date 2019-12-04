@@ -6,7 +6,7 @@
 #define RAY_T_MIN 0.00000001
 
 // 'Infinite' distance, used as a default value
-#define RAY_T_MAX 1.0e30
+#define RAY_T_MAX 100
 
 typedef struct s_ray
 {
