@@ -66,9 +66,9 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 		t_object *sph = (t_object *)(objs->content);
 		if (!ft_memcmp(sph->type,"sp",2))
 		 	inter = intersects_with_sphere(ray, sph);
-		if (!ft_strncmp(sph->type,"pl",2))
+		else if (!ft_strncmp(sph->type,"pl",2))
 			inter = intersects_with_plane(ray, sph);
-		if (!ft_strncmp(sph->type,"tr",2))
+		else if (!ft_strncmp(sph->type,"tr",2))
 			inter = intersects_with_triangle(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
@@ -95,7 +95,8 @@ int is_ray_blocked(t_ray shadow_ray)
 			return(1);
 		}
 		objs = objs->next;
-	}return (0);
+	}
+	return (0);
 }
 
 int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
@@ -140,10 +141,8 @@ t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
 	float Px = screen_x * tan(cam->fov / 2 * M_PI / 180) * g_resolution.x / g_resolution.y;
 	float Py = screen_y * tan(cam->fov / 2 * M_PI / 180);
 
-	t_vector camera_pos = cam->pos;
-	t_vector cam_dir = cam->dir;
 	//cast ray
-	ray.pos = camera_pos;
+	ray.pos = cam->pos;
 	ray.dir.x = Px;
 	ray.dir.y = Py;
 	ray.dir.z = zoom; // ZOOM

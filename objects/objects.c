@@ -20,6 +20,7 @@ int set_ambient_light(char **tab)
     g_ambient_light.color = rgb_to_int(tab[2]);
     return (1);
 }
+
 t_camera *new_camera(char **info)
 {
     t_camera *new_cam;
@@ -39,11 +40,22 @@ t_camera *new_camera(char **info)
     free_s_tab(tab);
 
     new_cam->fov = ft_atof(info[3]);
+    //calculate rotation angles around x and y axis
+    t_vector tmp;
 
-    new_cam->rot = vec_create(0,0,0);
+    tmp = vec_normalize(new_cam->dir);
+    tmp.x = 0;
+    tmp = vec_normalize(tmp);
+    float Rx = -acos(vec_dot(vec_create(0,0,-1),tmp));
+    printf("%f \n", Rx);
+
+    tmp = vec_normalize(new_cam->dir);
+    tmp.y = 0;
+    tmp = vec_normalize(tmp);
+    float Ry = acos(vec_dot(vec_create(0,0,-1),tmp));
+    new_cam->rot = vec_create(Rx,Ry,0);
     return (new_cam);
 }
-
 int add_camera(char **tab)
 {
     t_object *obj;
@@ -54,6 +66,7 @@ int add_camera(char **tab)
     ft_lstadd_back(&cameras, ft_lstnew(obj));
     return (1);
 }
+
 t_light *new_light(char **info)
 {
     t_light *new_light;
@@ -92,7 +105,7 @@ t_sphere *new_sphere(char **info)
     new_sphere->pos.x = ft_atof(tab[0]);
     new_sphere->pos.y = ft_atof(tab[1]);
     new_sphere->pos.z = ft_atof(tab[2]);
-   free_s_tab(tab);
+    free_s_tab(tab);
 
     new_sphere->diameter = ft_atof(info[2]);
     new_sphere->color = rgb_to_int(info[3]);
