@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include "mlx.h"
 
 char	*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 struct s_ambient_light g_ambient_light;
@@ -20,6 +19,8 @@ t_list *objects;
 t_list *lights;
 t_list *cameras;
 t_list *current_camera;
+struct s_menu g_menu;
+data_t        data; // mlx struct 
 
 void init_objects(void)
 {
@@ -27,12 +28,7 @@ void init_objects(void)
     g_ambient_light.is_set = 0;
 	init_obj_constructor();
 }
-//mlx struct
-typedef struct    data_s
-{
-    void          *mlx_ptr;
-    void          *mlx_win;
-}                 data_t;
+
 
 //lighting function
 int get_ambient_color(t_intersection *closest)
@@ -167,6 +163,7 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 		x = 0;
 		while (x < g_resolution.x)
 		{	
+
 			//colors for different types of lighting
 			float color,a_color,d_color,s_color = 0;
 			//convert raster space to Normalized Device Coordinates (NDC)
@@ -177,14 +174,20 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 				color = compute_pixel_color(closest,ray,lights);
 			else
 				color = 0;
+			if (g_menu.on && x < g_menu.menu_w)
+			{
+				color = mult_colors(color, g_menu.opacity);
+			}
 			mlx_pixel_put(data.mlx_ptr,data.mlx_win, x, y, (int)floor(color));
 			x++;
 		}
 		y++;
 	}
+	menu_toggle_msg();
+	show_menu();
 	return (1);
 }
-	data_t        data;
+
 
 //event handling
 int	re_render(int key,void *param)
@@ -196,7 +199,7 @@ int	re_render(int key,void *param)
 }
 int	rotate_camera(int key,void *param)
 {
-	t_camera *cam = (t_camera *)param;
+	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	if (key == KEY_RIGHT)
 		cam->rot.y -= 0.1;
 	if (key == KEY_LEFT)
@@ -210,7 +213,7 @@ int	rotate_camera(int key,void *param)
 }
 int	move_camera(int key,void *param)
 {
-	t_camera *cam = (t_camera *)param;
+	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
@@ -231,7 +234,16 @@ int change_camera(int key, void *param)
 	else
 		current_camera = cameras;
 	re_render(key,NULL);
+	return (0);
 }
+
+int toggle_menu(int key, void *param)
+{
+	g_menu.on = !g_menu.on;
+	re_render(key,NULL);
+	return (0);
+}
+
 int handle_keys(int key, void *param)
 {
 	if (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_UP || key == KEY_DOWN)
@@ -240,6 +252,8 @@ int handle_keys(int key, void *param)
 		return (move_camera(key,param));
 	else if (key == KEY_C)
 		return (change_camera(key,param));
+	else if (key == KEY_M)
+		return (toggle_menu(key,param));
 	return (0);
 }
 
@@ -255,25 +269,21 @@ int main (int argc, char **argv)
 	print_objects(objects);
 	print_objects(lights); 
 	print_objects(cameras);
-
     if (!(data.mlx_ptr = mlx_init()))
         return (EXIT_FAILURE);
     if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
         return (EXIT_FAILURE);
 	// RENDER HERE
-	
-	
+	init_menu();
 	
 	current_camera = cameras;
 	if(!render(data,objects,lights,current_camera))
 		return (0);
-
 	 t_light *li  = (t_light *)((t_object *)lights->content)->details;
 	t_sphere *sph = (t_sphere *)((t_object *)objects->content)->details;
-	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 
 
-	mlx_key_hook(data.mlx_win, handle_keys, cam);
+	mlx_key_hook(data.mlx_win, handle_keys, NULL);
 	mlx_loop(data.mlx_ptr);
 
 	ft_lstclear(&objects,free_object);

@@ -29,7 +29,7 @@ int print_objects(t_list *objects)
 int print_camera(void *obj)
 {   
     t_camera *cam = (t_camera *)obj;
-    printf("camera      pos %.2f %.2f %.2f fov %d\n",cam->pos.x,cam->pos.y,cam->pos.z,cam->fov);
+    printf("camera      pos %.2f %.2f %.2f dir %.2f %.2f %.2f fov %d\n",cam->pos.x,cam->pos.y,cam->pos.z,cam->dir.x,cam->dir.y,cam->dir.z,cam->fov);
 	return (1);
 }
 int print_light(void *object)

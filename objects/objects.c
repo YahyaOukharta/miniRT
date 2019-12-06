@@ -46,7 +46,7 @@ t_camera *new_camera(char **info)
     tmp = vec_normalize(new_cam->dir);
     tmp.x = 0;
     tmp = vec_normalize(tmp);
-    float Rx = -acos(vec_dot(vec_create(0,0,-1),tmp));
+    float Rx = acos(vec_dot(vec_create(0,0,-1),tmp));
     printf("%f \n", Rx);
 
     tmp = vec_normalize(new_cam->dir);
