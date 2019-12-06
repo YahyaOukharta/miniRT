@@ -189,6 +189,7 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 //event handling
 int	re_render(int key,void *param)
 {
+	print_objects(cameras);
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	render(data,objects,lights,current_camera);
 	return (0);
@@ -222,12 +223,23 @@ int	move_camera(int key,void *param)
 	re_render(key, NULL);
 	return (0);
 }
+
+int change_camera(int key, void *param)
+{
+	if (current_camera->next)
+		current_camera = current_camera->next;
+	else
+		current_camera = cameras;
+	re_render(key,NULL);
+}
 int handle_keys(int key, void *param)
 {
 	if (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_UP || key == KEY_DOWN)
 		return (rotate_camera(key, param));
 	else if (key == KEY_D || key == KEY_A || key == KEY_W || key == KEY_S)
 		return (move_camera(key,param));
+	else if (key == KEY_C)
+		return (change_camera(key,param));
 	return (0);
 }
 
