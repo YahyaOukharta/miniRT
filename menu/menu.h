@@ -5,5 +5,6 @@
 int init_menu(void);
 int show_menu(void);
 int menu_toggle_msg(void);
+int selected_objects_msg(void);
 
 #endif

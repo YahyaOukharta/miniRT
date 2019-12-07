@@ -19,6 +19,7 @@ typedef struct s_intersection
     t_vector point;
     t_vector normal;
     
+    t_object *obj;
     float t;
     int object_color;
     float diffuse;

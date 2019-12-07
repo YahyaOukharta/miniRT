@@ -21,7 +21,7 @@ t_list *cameras;
 t_list *current_camera;
 struct s_menu g_menu;
 data_t        data; // mlx struct 
-
+struct s_object *selected_object;
 void init_objects(void)
 {
     g_resolution.is_set = 0;
@@ -185,6 +185,7 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 	}
 	menu_toggle_msg();
 	show_menu();
+	selected_objects_msg();
 	return (1);
 }
 
@@ -192,7 +193,8 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 //event handling
 int	re_render(int key,void *param)
 {
-	print_objects(cameras);
+	//print_objects(cameras);
+
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	render(data,objects,lights,current_camera);
 	return (0);
@@ -256,7 +258,21 @@ int handle_keys(int key, void *param)
 		return (toggle_menu(key,param));
 	return (0);
 }
-
+int select_object(int button, int x, int y, void * param)
+{
+	printf("btn = %d x = %d y = %d \n",button,x,y);
+	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_ray ray = cast_ray(x,y,cam, -1);
+	t_intersection* closest = get_closest_intersection(objects, ray);
+	t_object *tmp = (closest ? closest->obj : NULL);
+	if (selected_object != tmp)
+	{
+		selected_object = tmp;
+		re_render(0, NULL);
+	}
+	printf("selected object = %s\n",(closest ? closest->obj->type : 0 ));
+	return (1);
+}
 
 int main (int argc, char **argv)
 {
@@ -271,7 +287,7 @@ int main (int argc, char **argv)
 	print_objects(cameras);
     if (!(data.mlx_ptr = mlx_init()))
         return (EXIT_FAILURE);
-    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "Hello world !!!")))
+    if (!(data.mlx_win = mlx_new_window(data.mlx_ptr, g_resolution.x, g_resolution.y, "miniRT")))
         return (EXIT_FAILURE);
 	// RENDER HERE
 	init_menu();
@@ -284,6 +300,7 @@ int main (int argc, char **argv)
 
 
 	mlx_key_hook(data.mlx_win, handle_keys, NULL);
+	mlx_mouse_hook(data.mlx_win,select_object,NULL);
 	mlx_loop(data.mlx_ptr);
 
 	ft_lstclear(&objects,free_object);

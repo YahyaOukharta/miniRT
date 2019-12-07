@@ -41,6 +41,8 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 		t = t2;
 	else
 		return (0);
+
+	inter->obj = obj;
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
 	inter->object_color = sphere->color;
@@ -69,6 +71,7 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 		if (t < RAY_T_MIN)
 			return (0);
 	}
+	inter->obj = obj;
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
 	inter->object_color = plane->color;
@@ -109,6 +112,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     if (t < RAY_T_MIN && t > 1/RAY_T_MIN) // ray intersection
         return 0;
 
+	inter->obj = obj;
 	inter->point = vec_add(ray.pos, vec_mult(ray.dir, t));
 	inter->normal = vec_cross(edge1, edge2);
 	inter->t = t;
