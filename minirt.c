@@ -193,8 +193,6 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera)
 //event handling
 int	re_render(int key,void *param)
 {
-	//print_objects(cameras);
-
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	render(data,objects,lights,current_camera);
 	return (0);
@@ -258,6 +256,7 @@ int handle_keys(int key, void *param)
 		return (toggle_menu(key,param));
 	return (0);
 }
+
 int select_object(int button, int x, int y, void * param)
 {
 	printf("btn = %d x = %d y = %d \n",button,x,y);
@@ -270,7 +269,6 @@ int select_object(int button, int x, int y, void * param)
 		selected_object = tmp;
 		re_render(0, NULL);
 	}
-	printf("selected object = %s\n",(closest ? closest->obj->type : 0 ));
 	return (1);
 }
 

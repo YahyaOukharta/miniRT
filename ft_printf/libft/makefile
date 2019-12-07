@@ -25,6 +25,7 @@ SRC = ft_memset.c\
 		  ft_toupper.c\
 		  ft_tolower.c\
 		  ft_strdup.c\
+		  ft_ftoa.c\
 		  ft_calloc.c\
 		  ft_substr.c\
 		  ft_putchar_fd.c\
@@ -32,6 +33,7 @@ SRC = ft_memset.c\
 		  ft_putendl_fd.c\
 		  ft_putnbr_fd.c\
 		  ft_strjoin.c\
+		  ft_strjoin_va.c\
 		  ft_strtrim.c\
 		  ft_split.c\
 		  ft_itoa.c\
@@ -63,6 +65,7 @@ OBG = ft_memset.o\
 		  ft_atoi.o\
 		  ft_itoa_base.o\
 		  ft_utoa.o\
+		  ft_ftoa.o\
 		  ft_isalpha.o\
 		  ft_isdigit.o\
 		  ft_isalnum.o\
@@ -78,6 +81,7 @@ OBG = ft_memset.o\
 		  ft_putendl_fd.o\
 		  ft_putnbr_fd.o\
 		  ft_strjoin.o\
+		  ft_strjoin_va.o\
 		  ft_strtrim.o\
 		  ft_split.o\
 		  ft_itoa.o\
