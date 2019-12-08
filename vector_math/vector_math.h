@@ -13,5 +13,8 @@ float    vec_len(t_vector v);
 t_vector vec_normalize(t_vector v);
 t_vector vec_rotate(t_vector vec, t_camera *current_camera);
 t_vector vec_create(float x,float y,float z);
+void	rotate_x(float *y, float *z, double alpha);
+void	rotate_y(float *x, float *z, double beta);
+void	rotate_z(float *x, float *y, double gamma);
 
 #endif

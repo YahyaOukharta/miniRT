@@ -5,7 +5,8 @@ extern t_list *objects;
 extern t_list *objects;
 extern t_list *lights;
 extern t_list *cameras;
-
+extern t_list *current_camera;
+extern t_object *selected_object;
 int set_resolution(char **tab)
 {   
     g_resolution.is_set = 1;
@@ -234,19 +235,19 @@ t_triangle *new_triangle(char **info)
     new_triangle->p1.x = ft_atof(tab[0]);
     new_triangle->p1.y = ft_atof(tab[1]);
     new_triangle->p1.z = ft_atof(tab[2]);
-  free_s_tab(tab);
+    free_s_tab(tab);
 
     tab = ft_split(info[2], ',');
     new_triangle->p2.x = ft_atof(tab[0]);
     new_triangle->p2.y = ft_atof(tab[1]);
     new_triangle->p2.z = ft_atof(tab[2]);
-   free_s_tab(tab);
+    free_s_tab(tab);
 
     tab = ft_split(info[3], ',');
     new_triangle->p3.x = ft_atof(tab[0]);
     new_triangle->p3.y = ft_atof(tab[1]);
     new_triangle->p3.z = ft_atof(tab[2]);
-   free_s_tab(tab);
+    free_s_tab(tab);
 
     new_triangle->color = rgb_to_int(info[4]);
     return (new_triangle);
@@ -273,4 +274,82 @@ void init_obj_constructor(void){
     g_obj_constructor[6] = add_square;
     g_obj_constructor[7] = add_cylinder;
     g_obj_constructor[8] = add_triangle;
+}
+//
+int	transform_sphere(int key, void *param)
+{
+	t_sphere *sphere = (t_sphere *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+	if (key == KEY_A)
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+	if (key == KEY_W)
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+	if (key == KEY_S)
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+	return (0);
+}
+int	transform_plane(int key, void *param)
+{
+	t_plane *plane = (t_plane *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+	if (key == KEY_A)
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+	if (key == KEY_W)
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+	if (key == KEY_S)
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+    if (key == KEY_RIGHT)
+    	rotate_y(&plane->orientation.x,&plane->orientation.z,vel);
+	if (key == KEY_LEFT)
+    	rotate_y(&plane->orientation.x,&plane->orientation.z,-vel);
+	if (key == KEY_UP)
+    	rotate_x(&plane->orientation.y,&plane->orientation.z,vel);
+	if (key == KEY_DOWN)
+    	rotate_x(&plane->orientation.y,&plane->orientation.z,-vel);
+	return (0);
+}
+int	transform_triangle(int key, void *param)
+{
+	t_triangle *tri = (t_triangle *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+	{	
+        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+    }
+	if (key == KEY_A)
+	{	
+        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+    }
+	if (key == KEY_W)
+	{	
+        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+    }
+    if (key == KEY_S)
+	{	
+        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+    }
+	return (0);
+}
+void init_obj_transformer(void){
+    //g_obj_transformer[0] = transform_light;
+    g_obj_transformer[1] = transform_sphere;
+    g_obj_transformer[2] = transform_plane;
+    //g_obj_transformer[3] = transform_square;
+    //g_obj_transformer[4] = transform_cylinder;
+    g_obj_transformer[5] = transform_triangle;
 }

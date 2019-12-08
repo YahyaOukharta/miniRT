@@ -83,7 +83,7 @@ t_vector vec_create(float x,float y, float z)
     return v;
 }
 
-static void	rotate_x(float *y, float *z, double alpha)
+void	rotate_x(float *y, float *z, double alpha)
 {
 	float previous_y;
 
@@ -92,7 +92,7 @@ static void	rotate_x(float *y, float *z, double alpha)
 	*z = -previous_y * sin(alpha) + *z * cos(alpha);
 }
 
-static void	rotate_y(float *x, float *z, double beta)
+void	rotate_y(float *x, float *z, double beta)
 {
 	float previous_x;
 
@@ -101,7 +101,7 @@ static void	rotate_y(float *x, float *z, double beta)
 	*z = -previous_x * sin(beta) + *z * cos(beta);
 }
 
-static void	rotate_z(float *x, float *y, double gamma)
+void	rotate_z(float *x, float *y, double gamma)
 {
 	float previous_x;
 	float previous_y;

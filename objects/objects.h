@@ -113,5 +113,10 @@ int add_camera(char **tab);
 
 
 void init_obj_constructor(void);
+
+typedef int(*t_obj_trans)(int, void *);
+t_obj_trans g_obj_transformer[10];
+void init_obj_transformer(void);
+
 #endif
 

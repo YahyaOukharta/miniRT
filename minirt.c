@@ -195,8 +195,9 @@ int	re_render(int key,void *param)
 {
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
 	render(data,objects,lights,current_camera);
-	return (0);
+	return (1);
 }
+//camera
 int	rotate_camera(int key,void *param)
 {
 	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
@@ -226,7 +227,6 @@ int	move_camera(int key,void *param)
 	re_render(key, NULL);
 	return (0);
 }
-
 int change_camera(int key, void *param)
 {
 	if (current_camera->next)
@@ -236,27 +236,34 @@ int change_camera(int key, void *param)
 	re_render(key,NULL);
 	return (0);
 }
-
+//objects
+int	transform_object(int key,void *param)
+{
+	t_object *obj = selected_object;
+	int index = index_of_in_tab(obj->type,ft_split(g_supported_objects,';')) - 3;
+	printf("index %d\n",index);
+	g_obj_transformer[index](key,param);
+	re_render(key, NULL);
+	return (0);
+}
 int toggle_menu(int key, void *param)
 {
 	g_menu.on = !g_menu.on;
 	re_render(key,NULL);
 	return (0);
 }
-
 int handle_keys(int key, void *param)
 {
 	if (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_UP || key == KEY_DOWN)
-		return (rotate_camera(key, param));
+		return ((selected_object ? transform_object(key, param) : rotate_camera(key, param)));
 	else if (key == KEY_D || key == KEY_A || key == KEY_W || key == KEY_S)
-		return (move_camera(key,param));
+		return ((selected_object ? transform_object(key, param) : move_camera(key, param)));
 	else if (key == KEY_C)
-		return (change_camera(key,param));
+		return (selected_object ? ((selected_object = NULL) || re_render(key , param)) : change_camera(key,param));
 	else if (key == KEY_M)
 		return (toggle_menu(key,param));
 	return (0);
 }
-
 int select_object(int button, int x, int y, void * param)
 {
 	printf("btn = %d x = %d y = %d \n",button,x,y);
@@ -264,12 +271,31 @@ int select_object(int button, int x, int y, void * param)
 	t_ray ray = cast_ray(x,y,cam, -1);
 	t_intersection* closest = get_closest_intersection(objects, ray);
 	t_object *tmp = (closest ? closest->obj : NULL);
-	if (selected_object != tmp)
+	if (button == 1 && selected_object != tmp)
 	{
 		selected_object = tmp;
 		re_render(0, NULL);
 	}
 	return (1);
+}
+int resize_object(int btn, int x, int y,void *param)
+{
+	float ratio = 0.1;
+	char *type = selected_object->type;
+	if (!ft_memcmp(type,"sp",max(ft_strlen(type),2)))
+	{
+		((t_sphere *)selected_object->details)->diameter += (btn == 4 ? -1 : 1) * ratio;
+		re_render(btn, param);
+	}
+	return (1);
+}
+int handle_mouse(int button, int x, int y, void *param)
+{
+	if (button == 1)
+		return (select_object(button,x,y,param));
+	if (button == 4 || button == 5)
+		return (selected_object && resize_object(button,x,y,param));
+	return (0);
 }
 
 int main (int argc, char **argv)
@@ -289,16 +315,16 @@ int main (int argc, char **argv)
         return (EXIT_FAILURE);
 	// RENDER HERE
 	init_menu();
-	
+	init_obj_transformer();
+
 	current_camera = cameras;
 	if(!render(data,objects,lights,current_camera))
 		return (0);
 	 t_light *li  = (t_light *)((t_object *)lights->content)->details;
 	t_sphere *sph = (t_sphere *)((t_object *)objects->content)->details;
 
-
 	mlx_key_hook(data.mlx_win, handle_keys, NULL);
-	mlx_mouse_hook(data.mlx_win,select_object,NULL);
+	mlx_mouse_hook(data.mlx_win,handle_mouse,NULL);
 	mlx_loop(data.mlx_ptr);
 
 	ft_lstclear(&objects,free_object);
