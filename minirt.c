@@ -66,6 +66,8 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 			inter = intersects_with_plane(ray, sph);
 		else if (!ft_strncmp(sph->type,"tr",2))
 			inter = intersects_with_triangle(ray, sph);
+		else if (!ft_strncmp(sph->type,"sq",2))
+			inter = intersects_with_square(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
 		{
@@ -82,11 +84,12 @@ int is_ray_blocked(t_ray shadow_ray)
 	t_list *objs = objects;
 	while (objs)
 	{
-		t_object *sph = (t_object *)(objs->content);
+		t_object *obj = (t_object *)(objs->content);
 	
-		if((!ft_memcmp(sph->type,"sp",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
-			|| (!ft_memcmp(sph->type,"pl",max(ft_strlen(sph->type),2)) && intersects_with_sphere(shadow_ray, sph))
-			|| (!ft_memcmp(sph->type,"tr",max(ft_strlen(sph->type),2)) && intersects_with_triangle(shadow_ray, sph)))
+		if((!ft_memcmp(obj->type,"sp",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type,"pl",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type,"tr",max(ft_strlen(obj->type),2)) && intersects_with_triangle(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type,"sq",max(ft_strlen(obj->type),2)) && intersects_with_plane(shadow_ray, obj)))
 		{
 			return(1);
 		}
@@ -280,13 +283,13 @@ int select_object(int button, int x, int y, void * param)
 }
 int resize_object(int btn, int x, int y,void *param)
 {
-	float ratio = 0.1;
+	float ratio = 0.05;
 	char *type = selected_object->type;
 	if (!ft_memcmp(type,"sp",max(ft_strlen(type),2)))
-	{
 		((t_sphere *)selected_object->details)->diameter += (btn == 4 ? -1 : 1) * ratio;
-		re_render(btn, param);
-	}
+	if (!ft_memcmp(type,"sq",max(ft_strlen(type),2)))
+		((t_square *)selected_object->details)->side_size += (btn == 4 ? -1 : 1) * ratio;
+	re_render(btn, param);
 	return (1);
 }
 int handle_mouse(int button, int x, int y, void *param)

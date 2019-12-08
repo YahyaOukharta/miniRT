@@ -64,13 +64,12 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	t_vector p_normal = vec_normalize(plane->orientation);
     // assuming vectors are all normalized
     float denom = vec_dot(p_normal, ray.dir); 
-    if (denom > 1e-6)
-	{ 
-        t_vector p_origin_dir = vec_sub(plane->pos, ray.pos); //plane origin
-        t = vec_dot(p_origin_dir, p_normal) / denom; 
-		if (t < RAY_T_MIN)
-			return (0);
-	}
+    if (fabs(denom) < RAY_T_MIN)
+		return (0);
+	t_vector p_origin_dir = vec_sub(plane->pos, ray.pos); //plane origin
+	t = vec_dot(p_origin_dir, p_normal) / denom; 
+	if (t < RAY_T_MIN)
+		return (0);
 	inter->obj = obj;
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
@@ -80,8 +79,43 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	inter->specular = 0.4;
 	inter->s_power = 2;
 	return inter;
-} 
+}
 
+t_intersection *intersects_with_square(t_ray ray, t_object *obj) 
+{
+	t_intersection *inter;
+    t_square *square;
+	float t;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+    square = (t_square *)obj->details;
+	t_vector p_normal = vec_normalize(square->orientation);
+    // assuming vectors are all normalized
+    float denom = vec_dot(p_normal, ray.dir); 
+    if (denom > 1e-6)
+	{ 
+        t_vector p_origin_dir = vec_sub(square->pos, ray.pos); //square origin
+        t = vec_dot(p_origin_dir, p_normal) / denom; 
+		if (t < RAY_T_MIN)
+			return (0);
+	}
+	t_vector p = vec_add(ray.pos,vec_mult(ray.dir,t));
+	float left = square->pos.x - square->side_size / 2;
+	float right = square->pos.x + square->side_size / 2;
+	float top = square->pos.y + square->side_size / 2;
+	float bot = square->pos.y - square->side_size / 2;
+
+	if (p.x < left || p.x > right || p.y < bot || p.y > top)
+		return (0);
+	inter->obj = obj;
+	inter->point = p;
+	inter->t = t;
+	inter->object_color = square->color;
+	inter->normal = p_normal;
+	inter->diffuse = 0.4;
+	inter->specular = 0.4;
+	inter->s_power = 2;
+	return inter;
+} 
 t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
 {
 	float t;

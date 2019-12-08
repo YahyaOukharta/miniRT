@@ -314,6 +314,29 @@ int	transform_plane(int key, void *param)
     	rotate_x(&plane->orientation.y,&plane->orientation.z,-vel);
 	return (0);
 }
+int	transform_square(int key, void *param)
+{
+	t_square *square = (t_square *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+	if (key == KEY_A)
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+	if (key == KEY_W)
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+	if (key == KEY_S)
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+    if (key == KEY_RIGHT)
+    	rotate_y(&square->orientation.x,&square->orientation.z,vel);
+	if (key == KEY_LEFT)
+    	rotate_y(&square->orientation.x,&square->orientation.z,-vel);
+	if (key == KEY_UP)
+    	rotate_x(&square->orientation.y,&square->orientation.z,vel);
+	if (key == KEY_DOWN)
+    	rotate_x(&square->orientation.y,&square->orientation.z,-vel);
+	return (0);
+}
 int	transform_triangle(int key, void *param)
 {
 	t_triangle *tri = (t_triangle *)selected_object->details;
@@ -349,7 +372,7 @@ void init_obj_transformer(void){
     //g_obj_transformer[0] = transform_light;
     g_obj_transformer[1] = transform_sphere;
     g_obj_transformer[2] = transform_plane;
-    //g_obj_transformer[3] = transform_square;
+    g_obj_transformer[3] = transform_square;
     //g_obj_transformer[4] = transform_cylinder;
     g_obj_transformer[5] = transform_triangle;
 }

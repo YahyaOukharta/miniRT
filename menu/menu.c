@@ -14,7 +14,7 @@ void init_obj_details()
 //    g_obj_details[1] = get_light_details;
     g_obj_details[2] = get_sphere_details;
     g_obj_details[3] = get_plane_details;
-//    g_obj_details[4] = get_square_details;
+    g_obj_details[4] = get_square_details;
 //    g_obj_details[5] = get_cylinder_details;
     g_obj_details[6] = get_triangle_details;
 
@@ -28,7 +28,7 @@ char **get_camera_details(t_object *obj)
     tab[0] = ft_strdup("Type = Camera");
     tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(cam->pos.x, PRECISION),",",ft_ftoa(cam->pos.y, PRECISION),",",ft_ftoa(cam->pos.z, PRECISION),")");
     tab[2] = ft_strjoin_va(7,"Dir = (",ft_ftoa(dir.x, PRECISION),",",ft_ftoa(dir.y, PRECISION),",",ft_ftoa(dir.z, PRECISION),")");
-    tab[3] = ft_strjoin_va(2,"fov = ",ft_itoa(cam->fov));
+    tab[3] = ft_strjoin_va(2,"FOV = ",ft_itoa(cam->fov));
     tab[4] = 0;
     return (tab);
 }
@@ -40,35 +40,49 @@ char **get_sphere_details(t_object *obj)
     tab[0] = ft_strdup("Type = Sphere");
     tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(sph->pos.x, PRECISION),",",ft_ftoa(sph->pos.y, PRECISION),",",ft_ftoa(sph->pos.z, PRECISION),")");
     tab[2] = ft_strjoin_va(2,"Radius = ",ft_ftoa(sph->diameter / 2, PRECISION));
-    tab[3] = ft_strjoin_va(2,"color = ",ft_itoa(sph->color));
+    tab[3] = ft_strjoin_va(2,"Color = ",ft_itoa(sph->color));
     tab[4] = 0;
 
     return (tab);
 }
 char **get_plane_details(t_object *obj)
 {
-    int n_details = 3; //type pos radius
+    int n_details = 4; //type pos dir color
     t_plane *plane = (t_plane *)obj->details;
     char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
     tab[0] = ft_strdup("Type = Plane");
     tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(plane->pos.x, PRECISION),",",ft_ftoa(plane->pos.y, PRECISION),",",ft_ftoa(plane->pos.z, PRECISION),")");
     tab[2] = ft_strjoin_va(7,"Dir = (",ft_ftoa(plane->orientation.x, PRECISION),",",ft_ftoa(plane->orientation.y, PRECISION),",",ft_ftoa(plane->orientation.z, PRECISION),")");
-    tab[3] = ft_strjoin_va(2,"color = ",ft_itoa(plane->color));
+    tab[3] = ft_strjoin_va(2,"Color = ",ft_itoa(plane->color));
     tab[4] = 0;
     return (tab);
 }
 char **get_triangle_details(t_object *obj)
 {
-    int n_details = 3; //type p1 p2 p3
+    int n_details = 5; //type p1 p2 p3 color
     t_triangle *tri = (t_triangle *)obj->details;
     char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
-    tab[0] = ft_strdup("Type = triangle");
+    tab[0] = ft_strdup("Type = Triangle");
     tab[1] = ft_strjoin_va(7,"P1 = (",ft_ftoa(tri->p1.x, PRECISION),",",ft_ftoa(tri->p1.y, PRECISION),",",ft_ftoa(tri->p1.z, PRECISION),")");
     tab[2] = ft_strjoin_va(7,"P2 = (",ft_ftoa(tri->p2.x, PRECISION),",",ft_ftoa(tri->p2.y, PRECISION),",",ft_ftoa(tri->p2.z, PRECISION),")");
     tab[3] = ft_strjoin_va(7,"P3 = (",ft_ftoa(tri->p3.x, PRECISION),",",ft_ftoa(tri->p3.y, PRECISION),",",ft_ftoa(tri->p3.z, PRECISION),")");
-    tab[4] = 0;
+    tab[4] = ft_strjoin_va(2,"Color = ",ft_itoa(tri->color));
+    tab[5] = 0;
     return (tab);
 }   
+char **get_square_details(t_object *obj)
+{
+    int n_details = 5; //type pos dir side_size color
+    t_square *square = (t_square *)obj->details;
+    char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
+    tab[0] = ft_strdup("Type = Square");
+    tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(square->pos.x, PRECISION),",",ft_ftoa(square->pos.y, PRECISION),",",ft_ftoa(square->pos.z, PRECISION),")");
+    tab[2] = ft_strjoin_va(7,"Dir = (",ft_ftoa(square->orientation.x, PRECISION),",",ft_ftoa(square->orientation.y, PRECISION),",",ft_ftoa(square->orientation.z, PRECISION),")");
+    tab[3] = ft_strjoin_va(2,"Side size = ",ft_ftoa(square->side_size, PRECISION));
+    tab[4] = ft_strjoin_va(2,"Color = ",ft_itoa(square->color));
+    tab[5] = 0;
+    return (tab);
+}
 int init_menu()
 {
     g_menu.menu_w = 300;
