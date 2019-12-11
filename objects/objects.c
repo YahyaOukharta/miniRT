@@ -341,29 +341,20 @@ int	transform_triangle(int key, void *param)
 	t_triangle *tri = (t_triangle *)selected_object->details;
     t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
-	if (key == KEY_D)
+    t_vector dir;
+	if (key == KEY_D || key == KEY_A)
 	{	
-        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
-        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
-        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+        dir = vec_mult(vec_rotate(vec_create(1,0,0), cam),(key == KEY_D ? 1 : -1) * vel);
+        tri->p1 = vec_add(tri->p1,dir);
+        tri->p2 = vec_add(tri->p2,dir);
+        tri->p3 = vec_add(tri->p3,dir);
     }
-	if (key == KEY_A)
+	if (key == KEY_W || key == KEY_S)
 	{	
-        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
-        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
-        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
-    }
-	if (key == KEY_W)
-	{	
-        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
-        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
-        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
-    }
-    if (key == KEY_S)
-	{	
-        tri->p1 = vec_add(tri->p1,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
-        tri->p2 = vec_add(tri->p2,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
-        tri->p3 = vec_add(tri->p3,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+        dir = vec_mult(vec_rotate(vec_create(0,1,0), cam),(key == KEY_D ? 1 : -1) * vel);
+        tri->p1 = vec_add(tri->p1,dir);
+        tri->p2 = vec_add(tri->p2,dir);
+        tri->p3 = vec_add(tri->p3,dir);
     }
 	return (0);
 }

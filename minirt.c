@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include <pthread.h>
 char	*g_supported_objects = "R;A;c;l;sp;pl;sq;cy;tr";
 struct s_ambient_light g_ambient_light;
 struct s_resolution g_resolution;
@@ -22,7 +23,8 @@ t_list *current_light;
 struct s_menu g_menu;
 data_t        data; // mlx struct 
 struct s_object *selected_object;
-int *g_img;
+static int *img;
+pthread_mutex_t mutex;
 void init_objects(void)
 {
     g_resolution.is_set = 0;
@@ -158,15 +160,39 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 	t_ray ray;
 	t_camera *current_cam = (t_camera *)((t_object *)current_camera->content)->details;	
 	int fov = current_cam->fov;
-
+	int w,h;
 	int x = 0;
 	int y = 0;
-
-	//mlx_clear_window(data.mlx_ptr, data.mlx_win);
-	while (y < g_resolution.y)
+	w = g_resolution.x;
+	h = g_resolution.y;
+	int part = (int)save;
+	if (part == 1)
 	{
-		x = 0;
-		while (x < g_resolution.x)
+		w /= 2;
+		h /= 2;
+	}
+	else if (part == 2)
+	{
+		x = w / 2;
+		h /= 2;
+	}
+	else if (part == 3)
+	{
+		w /= 2;
+		y = h / 2;
+	}
+	else if (part == 4)
+	{
+		x = w / 2;
+		y = h / 2; 
+	}
+	//ft_printf("w %d h %d x %d y %d\n", w, h, x, y);
+	int tmp = x;
+	//mlx_clear_window(data.mlx_ptr, data.mlx_win);
+	while (y < h)
+	{
+		x = tmp;
+		while (x < w)
 		{	
 			//colors for different types of lighting
 			float color,a_color,d_color,s_color = 0;
@@ -181,28 +207,51 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 			{
 				color = mult_colors(color, g_menu.opacity);
 			}
-			if (save)
-				save[(g_resolution.x * g_resolution.y) - y * g_resolution.x + x] = color;
+			if (save && save > 4 )
+				save[(w * h) - y * w + x] = color;
 			else
-				mlx_pixel_put(data.mlx_ptr,data.mlx_win, x, y, (int)floor(color));
+			{
+				pthread_mutex_lock(&mutex);
+				mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, y, (int)floor(color));
+				pthread_mutex_unlock(&mutex);
+			}
 			x++;
 		}
 		y++;
 	}
-	menu_toggle_msg();
-	show_menu();
-	selected_objects_msg();
+	if (save == 0)
+	{	menu_toggle_msg();
+		show_menu();
+		selected_objects_msg();
+	}
 	return (1);
 }
 
-
+void * render_thread(void *part)
+{
+	render(data,objects,lights,current_camera,part);
+	printf("rendered from thread");
+	//pthread_exit(NULL);
+}
 //event handling
 int	re_render(int key,void *param)
 {
+	pthread_t t1,t2,t3,t4;
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
-	render(data,objects,lights,current_camera,param);
+	pthread_mutex_init(&mutex, NULL);
+	pthread_create(&t1, NULL, render_thread, (void *)1);
+	 pthread_create(&t2, NULL, render_thread, (void *)2);
+	 pthread_create(&t3, NULL, render_thread, (void *)3);
+	 pthread_create(&t4, NULL, render_thread, (void *)4);
+	pthread_join(t1,NULL); 	
+	 pthread_join(t2,NULL); 	
+	 pthread_join(t3,NULL); 	
+	 pthread_join(t4,NULL);
+	 pthread_mutex_destroy(&mutex);
+	//render(data,objects,lights,current_camera,param);
 	return (1);
 }
+
 //camera
 int	rotate_camera(int key,void *param)
 {
@@ -270,10 +319,11 @@ int edit_lights(int key, void *param)
 }
 int save_frame(int key,void *param)
 {
-	g_img = malloc(sizeof(int) * g_resolution.x * g_resolution.y);
-	render(data,objects,lights,current_camera, g_img);
-	save_bmp("img.bmp",g_resolution.x,g_resolution.y,72,g_img);
-	free(g_img);
+	ft_printf("saving frame");
+	img = (int *)malloc( g_resolution.x * g_resolution.y * sizeof(int));
+	render(data,objects,lights,current_camera, img);
+	save_bmp("img.bmp",g_resolution.x,g_resolution.y,72,img);
+	free(img);
 	ft_printf("Saved img\n");
 	return (0);
 }
@@ -357,9 +407,9 @@ int main (int argc, char **argv)
 	if (!process_file(argc, argv))
 		return (0);
 
-	print_objects(objects);
-	print_objects(lights); 
-	print_objects(cameras);
+//	print_objects(objects);
+//	print_objects(lights); 
+//	print_objects(cameras);
 	current_camera = cameras;
 	init_menu();
 	init_obj_transformer();
