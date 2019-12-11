@@ -31,4 +31,6 @@ typedef struct    s_menu
     float opacity;
 }               t_menu;
 void init_objects(void);
+int save_frame(int key,void *param);
+
 #endif

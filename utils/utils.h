@@ -24,6 +24,7 @@ int mult_colors(int c1, float value);
 float ft_atof(const char *str);
 void free_object(void *object);
 
+void save_bmp (const char *filename, int w, int h, int dpi, int *image);
 
 
 #endif

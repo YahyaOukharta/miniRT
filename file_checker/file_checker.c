@@ -35,7 +35,7 @@ int store_element(char **tab)
 	return (g_obj_constructor[index](tab));
 }
 
-int process_file(char **av)
+int process_file(int ac, char **av)
 {
 	int		n;
 	char	*line;
@@ -51,6 +51,12 @@ int process_file(char **av)
 		return(0);
 	}
 	free_s_tab(tab);
+
+	if (ac == 3 && ft_memcmp(av[2], "--save", max(ft_strlen(av[2]),6)))
+	{
+		ft_printf("Error\n [!] Wrong option '%s', use --save to save rendered image as .bmp\n",av[2]);
+		return (0);
+	}
 	fd = open(av[1], O_RDONLY);
 	if (fd < 0)
 	{

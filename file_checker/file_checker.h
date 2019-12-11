@@ -3,7 +3,7 @@
 
 #include "../minirt.h"
 
-int process_file(char **av);
+int process_file(int ac,char **av);
 
 
 int check_info_resolution(char **tab, int n);

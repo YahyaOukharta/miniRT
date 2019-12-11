@@ -48,7 +48,6 @@ t_camera *new_camera(char **info)
     tmp.x = 0;
     tmp = vec_normalize(tmp);
     float Rx = acos(vec_dot(vec_create(0,0,-1),tmp));
-    printf("%f \n", Rx);
 
     tmp = vec_normalize(new_cam->dir);
     tmp.y = 0;
@@ -368,8 +367,23 @@ int	transform_triangle(int key, void *param)
     }
 	return (0);
 }
+int	transform_light(int key, void *param)
+{
+	t_light *light = (t_light *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+	if (key == KEY_A)
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+	if (key == KEY_W)
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+	if (key == KEY_S)
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+	return (0);
+}
 void init_obj_transformer(void){
-    //g_obj_transformer[0] = transform_light;
+    g_obj_transformer[0] = transform_light;
     g_obj_transformer[1] = transform_sphere;
     g_obj_transformer[2] = transform_plane;
     g_obj_transformer[3] = transform_square;

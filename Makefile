@@ -10,7 +10,7 @@ all: $(NAME)
 
 $(NAME): 
 	make -C ft_printf/ re
-	gcc $(SRCS) $(GNL_SRCS) -DBUFFER_SIZE=80 -Lft_printf -lftprintf -o $(NAME) -g -L../mlx -lmlx -framework OpenGL -framework Appkit 
+	gcc $(SRCS) $(GNL_SRCS) -DBUFFER_SIZE=80 -Lft_printf -lftprintf -o $(NAME) -g -L../mlx -lmlx -framework OpenGL -framework Appkit -Wframe-larger-than=1024
 
 clean: 
 	make -C ft_printf/ clean

@@ -64,7 +64,7 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	t_vector p_normal = vec_normalize(plane->orientation);
     // assuming vectors are all normalized
     float denom = vec_dot(p_normal, ray.dir); 
-    if (fabs(denom) < RAY_T_MIN)
+    if (denom < 1e-6)
 		return (0);
 	t_vector p_origin_dir = vec_sub(plane->pos, ray.pos); //plane origin
 	t = vec_dot(p_origin_dir, p_normal) / denom; 
@@ -81,41 +81,6 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	return inter;
 }
 
-t_intersection *intersects_with_square(t_ray ray, t_object *obj) 
-{
-	t_intersection *inter;
-    t_square *square;
-	float t;
-	inter = (t_intersection *)malloc(sizeof(t_intersection));
-    square = (t_square *)obj->details;
-	t_vector p_normal = vec_normalize(square->orientation);
-    // assuming vectors are all normalized
-    float denom = vec_dot(p_normal, ray.dir); 
-    if (denom > 1e-6)
-	{ 
-        t_vector p_origin_dir = vec_sub(square->pos, ray.pos); //square origin
-        t = vec_dot(p_origin_dir, p_normal) / denom; 
-		if (t < RAY_T_MIN)
-			return (0);
-	}
-	t_vector p = vec_add(ray.pos,vec_mult(ray.dir,t));
-	float left = square->pos.x - square->side_size / 2;
-	float right = square->pos.x + square->side_size / 2;
-	float top = square->pos.y + square->side_size / 2;
-	float bot = square->pos.y - square->side_size / 2;
-
-	if (p.x < left || p.x > right || p.y < bot || p.y > top)
-		return (0);
-	inter->obj = obj;
-	inter->point = p;
-	inter->t = t;
-	inter->object_color = square->color;
-	inter->normal = p_normal;
-	inter->diffuse = 0.4;
-	inter->specular = 0.4;
-	inter->s_power = 2;
-	return inter;
-} 
 t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
 {
 	float t;
@@ -156,3 +121,96 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
 	inter->s_power = 4;
     return inter; // this ray hits the triangle 
 }
+
+// t_intersection *intersect_with_cylinder (t_ray ray, t_object *obj)
+// {
+// 	float t;
+// 	t_cylinder *cy;
+// 	t_intersection* inter;
+// 	inter = (t_intersection *)malloc(sizeof(t_intersection));
+// 	cy = (t_cylinder *)obj->details;
+// 	// translate the ray origin
+// 	t_vector p0 = vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
+
+// 	// coefficients for the intersection equation
+// 	// got them mathematically intersecting the line equation with the cylinder equation
+// 	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
+// 	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
+// 	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2,2);
+
+// 	double delta = b*b - a*c;
+
+// 	// delta < 0 means no intersections
+// 	if (delta < RAY_T_MIN)
+// 		return 0;
+
+// 	// nearest intersection
+// 	t = (-b - sqrt (delta))/a;
+
+// 	// t<0 means the intersection is behind the ray origin
+// 	if (t <= RAY_T_MIN)
+// 		return 0;
+
+// 	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
+// 	inter->normal = 
+
+
+// 	return inter;
+
+// }
+
+// // Calculate intersection with the base having center c
+// // We do this by calculating the intersection with the plane
+// // and then checking if the intersection is within the base circle
+// bool Cylinder::intersect_base (const Ray& ray, const Point& c, double& t)
+// {
+// 	Vector normal = normal_in (c);
+// 	Point p0 (ray.origin.x-center.x, ray.origin.y-center.y, ray.origin.z-center.z);
+// 	double A = normal[0];
+// 	double B = normal[1];
+// 	double C = normal[2];
+// 	double D = - (A*(c.x-center.x) +B*(c.y-center.y)+C*(c.z-center.z));
+
+// 	if (A*ray.direction[0]+B*ray.direction[1]+C*ray.direction[2]==0)
+// 		return false;
+	
+// 	double dist = - (A*p0.x+B*p0.y+C*p0.z+D)/(A*ray.direction[0]+B*ray.direction[1]+C*ray.direction[2]);
+
+// 	double epsilon = 0.00000001;
+// 	if (dist < epsilon)
+// 		return false;
+
+// 	Point p;
+// 	p.x = p0.x+dist*ray.direction[0];
+// 	p.y = p0.y+dist*ray.direction[1];
+// 	p.z = p0.z+dist*ray.direction[2];
+// 	if (p.x*p.x+p.z*p.z-radius*radius > epsilon)
+// 		return false;
+
+// 	t = dist;
+// 	return true;
+// }
+
+// // Calculate the normal in a point on the surface
+// // it is a vertical vector in the bases and a vector
+// // having the direction of the vector from the axis to the point
+// Vector Cylinder::normal_in (const Point& p)
+// {
+// 	// Point is on one of the bases
+// 	if (p.x<center.x+radius && p.x>center.x-radius && p.z<center.z+radius && p.z>center.z-radius)
+// 	{
+// 		double epsilon = 0.00000001;
+// 		if (p.y < center.y+height+epsilon && p.y>center.y+height-epsilon){
+// 			return Vector (0,1,0);
+// 		}
+// 		if (p.y < center.y+epsilon && p.y>center.y-epsilon){
+// 			return Vector (0,-1,0);
+// 		}
+// 	}
+
+// 	// Point is on lateral surface
+//  	Point c0 (center.x, p.y, center.z);
+//  	Vector v = p-c0;
+//  	v.normalize ();
+//  	return v;
+// }

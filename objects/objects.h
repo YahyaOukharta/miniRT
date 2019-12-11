@@ -110,6 +110,8 @@ t_obj_constr g_obj_constructor[10];
 
 t_camera *new_camera(char **info);
 int add_camera(char **tab);
+t_light *new_light(char **info);
+int add_light(char **tab);
 
 
 void init_obj_constructor(void);
