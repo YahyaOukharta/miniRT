@@ -31,5 +31,6 @@ t_intersection *intersects_with_sphere(t_ray ray, t_object *obj);
 t_intersection *intersects_with_plane(t_ray ray, t_object *obj);
 t_intersection *intersects_with_triangle(t_ray ray, t_object *obj);
 t_intersection *intersects_with_square(t_ray ray, t_object *obj);
+t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj);
 
 #endif

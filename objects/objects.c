@@ -56,6 +56,7 @@ t_camera *new_camera(char **info)
     new_cam->rot = vec_create(Rx,Ry,0);
     return (new_cam);
 }
+
 int add_camera(char **tab)
 {
     t_object *obj;
@@ -281,13 +282,13 @@ int	transform_sphere(int key, void *param)
     t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
 	if (key == KEY_A)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
 	if (key == KEY_W)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
 	if (key == KEY_S)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
 	return (0);
 }
 int	transform_plane(int key, void *param)
@@ -296,13 +297,13 @@ int	transform_plane(int key, void *param)
     t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
-		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
 	if (key == KEY_A)
-		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
 	if (key == KEY_W)
-		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
 	if (key == KEY_S)
-		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
     if (key == KEY_RIGHT)
     	rotate_y(&plane->orientation.x,&plane->orientation.z,vel);
 	if (key == KEY_LEFT)
@@ -319,13 +320,13 @@ int	transform_square(int key, void *param)
     t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
-		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
 	if (key == KEY_A)
-		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
 	if (key == KEY_W)
-		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
 	if (key == KEY_S)
-		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
     if (key == KEY_RIGHT)
     	rotate_y(&square->orientation.x,&square->orientation.z,vel);
 	if (key == KEY_LEFT)
@@ -344,14 +345,14 @@ int	transform_triangle(int key, void *param)
     t_vector dir;
 	if (key == KEY_D || key == KEY_A)
 	{	
-        dir = vec_mult(vec_rotate(vec_create(1,0,0), cam),(key == KEY_D ? 1 : -1) * vel);
+        dir = vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),(key == KEY_D ? 1 : -1) * vel);
         tri->p1 = vec_add(tri->p1,dir);
         tri->p2 = vec_add(tri->p2,dir);
         tri->p3 = vec_add(tri->p3,dir);
     }
 	if (key == KEY_W || key == KEY_S)
 	{	
-        dir = vec_mult(vec_rotate(vec_create(0,1,0), cam),(key == KEY_D ? 1 : -1) * vel);
+        dir = vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),(key == KEY_D ? 1 : -1) * vel);
         tri->p1 = vec_add(tri->p1,dir);
         tri->p2 = vec_add(tri->p2,dir);
         tri->p3 = vec_add(tri->p3,dir);
@@ -364,13 +365,36 @@ int	transform_light(int key, void *param)
     t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
-		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
 	if (key == KEY_A)
-		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
 	if (key == KEY_W)
-		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),vel));
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
 	if (key == KEY_S)
-		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam),-vel));
+		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
+	return (0);
+}
+int	transform_cylinder(int key, void *param)
+{
+	t_cylinder *cylinder = (t_cylinder *)selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	float vel = 0.1;
+	if (key == KEY_D)
+		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
+	if (key == KEY_A)
+		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
+	if (key == KEY_W)
+		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
+	if (key == KEY_S)
+		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
+    if (key == KEY_RIGHT)
+        cylinder->diameter += vel;
+	if (key == KEY_LEFT)
+        cylinder->diameter -= vel;
+	if (key == KEY_UP)
+        cylinder->height += vel;
+	if (key == KEY_DOWN)
+        cylinder->height -= vel;
 	return (0);
 }
 void init_obj_transformer(void){
@@ -378,6 +402,6 @@ void init_obj_transformer(void){
     g_obj_transformer[1] = transform_sphere;
     g_obj_transformer[2] = transform_plane;
     g_obj_transformer[3] = transform_square;
-    //g_obj_transformer[4] = transform_cylinder;
+    g_obj_transformer[4] = transform_cylinder;
     g_obj_transformer[5] = transform_triangle;
 }

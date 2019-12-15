@@ -1,6 +1,6 @@
 #include "ray.h"
 
-int solveQuadratic(float a,float b,float c, float *t1, float *t2) 
+int solveQuadraticSp(float a,float b,float c, float *t1, float *t2) 
 { 
     float discr = b * b - 4 * a * c; 
     if (discr < 0) return 0; 
@@ -10,6 +10,19 @@ int solveQuadratic(float a,float b,float c, float *t1, float *t2)
         float q = (b > 0) ? (-0.5 * (b + sqrt(discr))) : (-0.5 * (b - sqrt(discr))); 
         *t1 = q / a; 
         *t2 = c / q; 
+    } 
+    return 1; 
+}
+int solveQuadraticCy(float a,float b,float c, float *t1, float *t2) 
+{ 
+    float discr = b * b - a * c; 
+    if (discr < 0) return 0; 
+    else if (discr == 0) 
+		*t1  = - b * (float)(b / a); 
+    else { 
+        float q = (b > 0) ? (-b * (b + sqrt(discr))) : (-b * (b - sqrt(discr))); 
+        *t1 = q / a;
+        *t2 = c / q;
     } 
     return 1; 
 }
@@ -30,23 +43,21 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	float a = vec_len2(tmp_ray.dir); //tmp_ray.direction.length2();
 	float b = 2 * vec_dot(tmp_ray.dir, tmp_ray.pos);
 	float c = vec_len2(tmp_ray.pos) - sphere->diameter * sphere->diameter;
-
-	
-	if (!(solveQuadratic(a,b,c, &t1,&t2)))
+	if (!(solveQuadraticSp(a,b,c, &t1,&t2)))
 		return (0);
 	// Find two points of intersection, t1 close and t2 far
+	
 	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
 		t = t1;
 	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
 		t = t2;
 	else
 		return (0);
-
 	inter->obj = obj;
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
 	inter->t = t;
 	inter->object_color = sphere->color;
-	inter->normal = vec_normalize(vec_sub(vec_add(ray.pos,vec_mult(ray.dir, t)), sphere->pos));
+	inter->normal = vec_mult(vec_normalize(vec_sub(vec_add(ray.pos,vec_mult(ray.dir, t)), sphere->pos)),(t1 < RAY_T_MIN && t2 > RAY_T_MIN ? -1 : 1 ));
 	inter->diffuse = 0.4;
 	inter->specular = 0.4;
 	inter->s_power = 40;
@@ -108,9 +119,8 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
         return 0;
     // At this stage we can compute t to find out where the intersection point is on the line.
     t = f * vec_dot(edge2, q);
-    if (t < RAY_T_MIN && t > 1/RAY_T_MIN) // ray intersection
+    if (t < RAY_T_MIN && t > 1 / RAY_T_MIN) // ray intersection
         return 0;
-
 	inter->obj = obj;
 	inter->point = vec_add(ray.pos, vec_mult(ray.dir, t));
 	inter->normal = vec_cross(edge1, edge2);
@@ -122,42 +132,58 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     return inter; // this ray hits the triangle 
 }
 
-// t_intersection *intersect_with_cylinder (t_ray ray, t_object *obj)
-// {
-// 	float t;
-// 	t_cylinder *cy;
-// 	t_intersection* inter;
-// 	inter = (t_intersection *)malloc(sizeof(t_intersection));
-// 	cy = (t_cylinder *)obj->details;
-// 	// translate the ray origin
-// 	t_vector p0 = vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
+t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
+{
+	float t,t1,t2;
+	t_cylinder *cy;
+	t_intersection* inter;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+	cy = (t_cylinder *)obj->details;
+	// translate the ray origin
+	t_vector tmp;
+	float Rx,Rz;
+	tmp = vec_normalize(cy->orientation);
+	tmp.x = 0;
+	tmp = vec_normalize(tmp);
+	Rx = acos(vec_dot(vec_create(0,1,0),tmp));
+	tmp = vec_normalize(cy->orientation);
+	tmp.z = 0;
+	tmp = vec_normalize(tmp);
+	Rz = acos(vec_dot(vec_create(0,1,0),tmp));
+	ray.dir = vec_rotate(ray.dir,vec_create(Rx,0,Rz));
+	t_vector p0 = vec_sub(ray.pos,cy->pos);//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
+	// coefficients for the intersection equation
+	// got them mathematically intersecting the line equation with the cylinder equation
+	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
+	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
+	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2,2);
 
-// 	// coefficients for the intersection equation
-// 	// got them mathematically intersecting the line equation with the cylinder equation
-// 	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
-// 	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
-// 	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2,2);
+	double delta = b*b - a*c;
 
-// 	double delta = b*b - a*c;
+	//delta < 0 means no intersections
+	if (delta < RAY_T_MIN)
+		return 0;
+	// nearest intersection
+	t = (-b - sqrt (delta)) /a;
 
-// 	// delta < 0 means no intersections
-// 	if (delta < RAY_T_MIN)
-// 		return 0;
+	// t<0 means the intersection is behind the ray origin
+	if (t <= RAY_T_MIN)
+		return 0;
 
-// 	// nearest intersection
-// 	t = (-b - sqrt (delta))/a;
+	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
+	if (inter->point.y - cy->pos.y > cy->height || inter->point.y - cy->pos.y < 0)
+		return(0);
+	inter->t = t;
+	inter->diffuse = 0.4;
+	inter->specular = 0.2;
+	inter->s_power = 4;
+	inter->obj = obj;
+	inter->object_color = cy->color;
 
-// 	// t<0 means the intersection is behind the ray origin
-// 	if (t <= RAY_T_MIN)
-// 		return 0;
-
-// 	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
-// 	inter->normal = 
-
-
-// 	return inter;
-
-// }
+  	t_vector proj_p = vec_create(cy->pos.x, inter->point.y, cy->pos.z);
+	inter->normal = vec_normalize(vec_sub(inter->point,proj_p));
+	return inter;
+}
 
 // // Calculate intersection with the base having center c
 // // We do this by calculating the intersection with the plane

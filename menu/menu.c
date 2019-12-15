@@ -18,7 +18,7 @@ void init_obj_details()
     g_obj_details[2] = get_sphere_details;
     g_obj_details[3] = get_plane_details;
     g_obj_details[4] = get_square_details;
-//    g_obj_details[5] = get_cylinder_details;
+    g_obj_details[5] = get_cylinder_details;
     g_obj_details[6] = get_triangle_details;
 
 }
@@ -38,7 +38,7 @@ char **get_camera_details(t_object *obj)
 {
     int n_details = 4; //type pos dir fov;
     t_camera *cam = (t_camera *)obj->details;
-    t_vector dir = vec_rotate(vec_create(0,0,-1),cam);
+    t_vector dir = vec_rotate(vec_create(0,0,-1),cam->rot);
     char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
     tab[0] = ft_strdup("Type = Camera");
     tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(cam->pos.x, PRECISION),",",ft_ftoa(cam->pos.y, PRECISION),",",ft_ftoa(cam->pos.z, PRECISION),")");
@@ -70,6 +70,19 @@ char **get_plane_details(t_object *obj)
     tab[2] = ft_strjoin_va(7,"Dir = (",ft_ftoa(plane->orientation.x, PRECISION),",",ft_ftoa(plane->orientation.y, PRECISION),",",ft_ftoa(plane->orientation.z, PRECISION),")");
     tab[3] = ft_strjoin_va(2,"Color = ",ft_itoa(plane->color));
     tab[4] = 0;
+    return (tab);
+}
+char **get_cylinder_details(t_object *obj)
+{
+    int n_details = 6; //type pos dir diameter height color
+    t_cylinder *cylinder = (t_cylinder *)obj->details;
+    char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
+    tab[0] = ft_strdup("Type = cylinder");
+    tab[1] = ft_strjoin_va(7,"Pos = (",ft_ftoa(cylinder->pos.x, PRECISION),",",ft_ftoa(cylinder->pos.y, PRECISION),",",ft_ftoa(cylinder->pos.z, PRECISION),")");
+    tab[2] = ft_strjoin_va(7,"Dir = (",ft_ftoa(cylinder->orientation.x, PRECISION),",",ft_ftoa(cylinder->orientation.y, PRECISION),",",ft_ftoa(cylinder->orientation.z, PRECISION),")");
+    tab[3] = ft_strjoin_va(4,"Radius = ",ft_ftoa(cylinder->diameter / 2,PRECISION)," Height = ",ft_ftoa(cylinder->height,PRECISION));
+    tab[4] = ft_strjoin_va(2,"Color = ",ft_itoa(cylinder->color));
+    tab[5] = 0;
     return (tab);
 }
 char **get_triangle_details(t_object *obj)
@@ -199,9 +212,10 @@ int show_menu()
 
 int menu_toggle_msg()
 {
-    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 150, g_resolution.y - 10,
+    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 150, g_resolution.y - 22,
         rgb_to_int("255,255,255"), (g_menu.on ? "Press M to hide menu" : "Press M to show menu"));
-
+    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 150, g_resolution.y - 10,
+        rgb_to_int("255,255,255"), "Press ESC to quit");
     return (1);
 }
 int selected_objects_msg()

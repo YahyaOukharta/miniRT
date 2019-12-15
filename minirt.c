@@ -69,8 +69,8 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 			inter = intersects_with_plane(ray, sph);
 		else if (!ft_strncmp(sph->type,"tr",2))
 			inter = intersects_with_triangle(ray, sph);
-		// else if (!ft_strncmp(sph->type,"sq",2))
-		// 	inter = intersects_with_square(ray, sph);
+		 else if (!ft_strncmp(sph->type,"cy",2))
+		 	inter = intersects_with_cylinder(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
 		{
@@ -92,7 +92,7 @@ int is_ray_blocked(t_ray shadow_ray)
 		if((!ft_memcmp(obj->type,"sp",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
 			|| (!ft_memcmp(obj->type,"pl",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
 			|| (!ft_memcmp(obj->type,"tr",max(ft_strlen(obj->type),2)) && intersects_with_triangle(shadow_ray, obj))
-			//|| (!ft_memcmp(obj->type,"sq",max(ft_strlen(obj->type),2)) && intersects_with_plane(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type,"cy",max(ft_strlen(obj->type),2)) && intersects_with_cylinder(shadow_ray, obj))
 			)
 		{
 			return(1);
@@ -151,7 +151,7 @@ t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
 	ray.dir.z = zoom; // ZOOM
 	ray.dir = vec_normalize(ray.dir);
 
-	ray.dir = vec_rotate(ray.dir, cam);
+	ray.dir = vec_rotate(ray.dir, cam->rot);
 	return (ray);
 }
 int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int *save)
@@ -173,18 +173,18 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 	}
 	else if (part == 2)
 	{
-		x = w / 2;
+		x = w / 2 + 1;
 		h /= 2;
 	}
 	else if (part == 3)
 	{
 		w /= 2;
-		y = h / 2;
+		y = h / 2 + 1;
 	}
 	else if (part == 4)
 	{
-		x = w / 2;
-		y = h / 2; 
+		x = w / 2 + 1;
+		y = h / 2 + 1; 
 	}
 	//ft_printf("w %d h %d x %d y %d\n", w, h, x, y);
 	int tmp = x;
@@ -207,13 +207,11 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 			{
 				color = mult_colors(color, g_menu.opacity);
 			}
-			if (save && save > 4 )
+			if ((int)save && (int)save > 4 )
 				save[(w * h) - y * w + x] = color;
 			else
 			{
-				pthread_mutex_lock(&mutex);
 				mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, y, (int)floor(color));
-				pthread_mutex_unlock(&mutex);
 			}
 			x++;
 		}
@@ -227,28 +225,28 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 	return (1);
 }
 
-void * render_thread(void *part)
+void *render_thread(void *part)
 {
 	render(data,objects,lights,current_camera,part);
 	printf("rendered from thread");
-	//pthread_exit(NULL);
+	pthread_exit(NULL);
 }
 //event handling
 int	re_render(int key,void *param)
 {
 	pthread_t t1,t2,t3,t4;
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
-	pthread_mutex_init(&mutex, NULL);
-	pthread_create(&t1, NULL, render_thread, (void *)1);
-	 pthread_create(&t2, NULL, render_thread, (void *)2);
-	 pthread_create(&t3, NULL, render_thread, (void *)3);
-	 pthread_create(&t4, NULL, render_thread, (void *)4);
-	pthread_join(t1,NULL); 	
-	 pthread_join(t2,NULL); 	
-	 pthread_join(t3,NULL); 	
-	 pthread_join(t4,NULL);
-	 pthread_mutex_destroy(&mutex);
-	//render(data,objects,lights,current_camera,param);
+	// pthread_mutex_init(&mutex, NULL);
+	// pthread_create(&t1, NULL, render_thread, (void *)1);
+	//  pthread_create(&t2, NULL, render_thread, (void *)2);
+	// pthread_create(&t3, NULL, render_thread, (void *)3);
+	//  pthread_create(&t4, NULL, render_thread, (void *)4);
+	//   pthread_join(t1,NULL); 	
+	//   pthread_join(t2,NULL); 	
+	//  pthread_join(t3,NULL); 	
+	//   pthread_join(t4,NULL);
+	//  pthread_mutex_destroy(&mutex);
+	 render(data,objects,lights,current_camera,param);
 	return (1);
 }
 
@@ -272,13 +270,13 @@ int	move_camera(int key,void *param)
 	t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
-		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),vel));
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
 	if (key == KEY_A)
-		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam),-vel));
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
 	if (key == KEY_W)
-		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam),vel));
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam->rot),vel));
 	if (key == KEY_S)
-		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam),-vel));
+		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(0,0,-1), cam->rot),-vel));
 	re_render(key, NULL);
 	return (0);
 }

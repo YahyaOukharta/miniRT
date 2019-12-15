@@ -11,7 +11,7 @@ t_vector vec_cross(t_vector v1, t_vector v2);
 float    vec_len2(t_vector v);
 float    vec_len(t_vector v);
 t_vector vec_normalize(t_vector v);
-t_vector vec_rotate(t_vector vec, t_camera *current_camera);
+t_vector vec_rotate(t_vector vec, t_vector rot);
 t_vector vec_create(float x,float y,float z);
 void	rotate_x(float *y, float *z, double alpha);
 void	rotate_y(float *x, float *z, double beta);

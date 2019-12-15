@@ -112,12 +112,10 @@ void	rotate_z(float *x, float *y, double gamma)
 	*y = previous_x * sin(gamma) + previous_y * cos(gamma);
 }
 
-t_vector vec_rotate(t_vector vec, t_camera *cam)
+t_vector vec_rotate(t_vector vec, t_vector rot)
 {
-    t_vector res,from;
-    rotate_x(&vec.y,&vec.z,cam->rot.x);
-    rotate_y(&vec.x,&vec.z,cam->rot.y);
-    rotate_z(&vec.x,&vec.y,cam->rot.z);
-    res = vec;
-    return (vec_normalize(res));
+    rotate_x(&vec.y,&vec.z,rot.x);
+    rotate_y(&vec.x,&vec.z,rot.y);
+    rotate_z(&vec.x,&vec.y,rot.z);
+    return (vec);
 }
