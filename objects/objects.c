@@ -388,9 +388,9 @@ int	transform_cylinder(int key, void *param)
 	if (key == KEY_S)
 		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
     if (key == KEY_RIGHT)
-        cylinder->diameter += vel;
-	if (key == KEY_LEFT)
-        cylinder->diameter -= vel;
+       cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(0,0,vel));
+    if (key == KEY_LEFT)
+        cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(0,0,-vel));
 	if (key == KEY_UP)
         cylinder->height += vel;
 	if (key == KEY_DOWN)

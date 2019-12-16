@@ -71,6 +71,8 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 			inter = intersects_with_triangle(ray, sph);
 		 else if (!ft_strncmp(sph->type,"cy",2))
 		 	inter = intersects_with_cylinder(ray, sph);
+		////else if (!ft_strncmp(sph->type,"sq",2))
+		 //	inter = intersects_with_plane(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
 		{
@@ -93,6 +95,7 @@ int is_ray_blocked(t_ray shadow_ray)
 			|| (!ft_memcmp(obj->type,"pl",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
 			|| (!ft_memcmp(obj->type,"tr",max(ft_strlen(obj->type),2)) && intersects_with_triangle(shadow_ray, obj))
 			|| (!ft_memcmp(obj->type,"cy",max(ft_strlen(obj->type),2)) && intersects_with_cylinder(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type,"sq",max(ft_strlen(obj->type),2)) && intersects_with_square(shadow_ray, obj))
 			)
 		{
 			return(1);
@@ -203,12 +206,12 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 				color = compute_pixel_color(closest,ray,lights);
 			else
 				color = 0;
-			if (!save && g_menu.on && x < g_menu.menu_w)
+			if (g_menu.on && x < g_menu.menu_w)
 			{
 				color = mult_colors(color, g_menu.opacity);
 			}
 			if ((int)save && (int)save > 4 )
-				save[(w * h) - y * w + x] = color;
+				save[y * w + x] = color;
 			else
 			{
 				mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, y, (int)floor(color));
@@ -217,11 +220,11 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 		}
 		y++;
 	}
-	if (save == 0)
-	{	menu_toggle_msg();
-		show_menu();
-		selected_objects_msg();
-	}
+		mlx_put_image_to_window(data.mlx_ptr,data.mlx_win, data.img_ptr, 0 ,0);
+
+	menu_toggle_msg();
+	show_menu();
+	selected_objects_msg();
 	return (1);
 }
 
@@ -246,7 +249,7 @@ int	re_render(int key,void *param)
 	//  pthread_join(t3,NULL); 	
 	//   pthread_join(t4,NULL);
 	//  pthread_mutex_destroy(&mutex);
-	 render(data,objects,lights,current_camera,param);
+	render(data,objects,lights,current_camera,(int *)data.img_data);
 	return (1);
 }
 
@@ -318,10 +321,8 @@ int edit_lights(int key, void *param)
 int save_frame(int key,void *param)
 {
 	ft_printf("saving frame");
-	img = (int *)malloc( g_resolution.x * g_resolution.y * sizeof(int));
-	render(data,objects,lights,current_camera, img);
-	save_bmp("img.bmp",g_resolution.x,g_resolution.y,72,img);
-	free(img);
+	render(data,objects,lights,current_camera, (int *)data.img_data);
+	save_bmp("img.bmp",g_resolution.x,g_resolution.y,72, (int *)data.img_data);
 	ft_printf("Saved img\n");
 	return (0);
 }
@@ -420,6 +421,8 @@ int main (int argc, char **argv)
 
 	if (argc == 3) //save if the save option is on
 		return (save_frame(0,0));
+	data.img_ptr = mlx_new_image(data.mlx_ptr, g_resolution.x, g_resolution.y);
+	data.img_data = mlx_get_data_addr(data.img_ptr,&data.bpp, &data.size_line, &data.endian);
 
 	if(!render(data,objects,lights,current_camera,0))
 		return (0);

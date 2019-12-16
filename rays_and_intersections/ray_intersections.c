@@ -151,12 +151,14 @@ t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
 	tmp = vec_normalize(tmp);
 	Rz = acos(vec_dot(vec_create(0,1,0),tmp));
 	ray.dir = vec_rotate(ray.dir,vec_create(Rx,0,Rz));
+	ray.pos = vec_rotate(ray.pos,vec_create(Rx,0,Rz));
 	t_vector p0 = vec_sub(ray.pos,cy->pos);//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
+
 	// coefficients for the intersection equation
 	// got them mathematically intersecting the line equation with the cylinder equation
 	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
 	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
-	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2,2);
+	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
 
 	double delta = b*b - a*c;
 
@@ -185,6 +187,51 @@ t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
 	return inter;
 }
 
+t_intersection *intersects_with_square(t_ray ray, t_object *obj)
+{
+	float t;
+	t_square *sq;
+	t_intersection* inter;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+	sq = (t_square *)obj->details;
+
+	t_vector tmp;
+	float Rx,Ry;
+	tmp = vec_normalize(sq->orientation);
+	tmp.x = 0;
+	tmp = vec_normalize(tmp);
+	Rx = acos(vec_dot(vec_create(0,0,1),tmp));
+	tmp = vec_normalize(sq->orientation);
+	tmp.z = 0;
+	tmp = vec_normalize(tmp);
+	Ry = acos(vec_dot(vec_create(0,0,1),tmp));
+	ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
+	//
+	float denom = vec_dot(vec_create(0,0,1), ray.dir); 
+    if (denom < 1e-6)
+		return (0);
+	t_vector p_origin_dir = vec_sub(sq->pos, ray.pos); //sq origin
+	t = vec_dot(p_origin_dir, vec_create(0,0,1)) / denom; 
+	if (t < RAY_T_MIN)
+		return (0);
+	t_vector p = vec_add(ray.pos, vec_mult(ray.dir,t));
+	float l,r,d,u;
+	l = sq->pos.x - sq->side_size / 2;
+	r = sq->pos.x + sq->side_size / 2;
+	u = sq->pos.y + sq->side_size / 2;
+	d = sq->pos.y - sq->side_size / 2;
+	if (p.x < l || p.x > r || p.y < d || p.y > u)
+		return (0);
+	inter->point = p;
+	inter->t = t;
+	inter->diffuse = 0.4;
+	inter->specular = 0.2;
+	inter->s_power = 4;
+	inter->obj = obj;
+	inter->object_color = sq->color;
+	inter->normal = sq->orientation;
+	return inter;
+}
 // // Calculate intersection with the base having center c
 // // We do this by calculating the intersection with the plane
 // // and then checking if the intersection is within the base circle

@@ -23,6 +23,12 @@ typedef struct    data_s
 {
     void          *mlx_ptr;
     void          *mlx_win;
+    int     bpp;
+    int     size_line;
+    int     endian;
+    char    *img_data;
+    void    *img_ptr;
+
 }                 data_t;
 typedef struct    s_menu
 {
