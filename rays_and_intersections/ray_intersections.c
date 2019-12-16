@@ -40,7 +40,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	tmp_ray.pos = vec_sub(ray.pos,sphere->pos);
 	//printf("(%.4f,%.4f,%.4f)\t",tmp_ray.dir.x,tmp_ray.dir.y,tmp_ray.dir.z);
 	// Calculate quadratic coefficients
-	float a = vec_len2(tmp_ray.dir); //tmp_ray.direction.length2();
+	float a = vec_len2(tmp_ray.dir); //tmp_ray.ray.dir.length2();
 	float b = 2 * vec_dot(tmp_ray.dir, tmp_ray.pos);
 	float c = vec_len2(tmp_ray.pos) - sphere->diameter * sphere->diameter;
 	if (!(solveQuadraticSp(a,b,c, &t1,&t2)))
@@ -132,60 +132,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     return inter; // this ray hits the triangle 
 }
 
-t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
-{
-	float t,t1,t2;
-	t_cylinder *cy;
-	t_intersection* inter;
-	inter = (t_intersection *)malloc(sizeof(t_intersection));
-	cy = (t_cylinder *)obj->details;
-	// translate the ray origin
-	t_vector tmp;
-	float Rx,Rz;
-	tmp = vec_normalize(cy->orientation);
-	tmp.x = 0;
-	tmp = vec_normalize(tmp);
-	Rx = acos(vec_dot(vec_create(0,1,0),tmp));
-	tmp = vec_normalize(cy->orientation);
-	tmp.z = 0;
-	tmp = vec_normalize(tmp);
-	Rz = acos(vec_dot(vec_create(0,1,0),tmp));
-	ray.dir = vec_rotate(ray.dir,vec_create(Rx,0,Rz));
-	ray.pos = vec_rotate(ray.pos,vec_create(Rx,0,Rz));
-	t_vector p0 = vec_sub(ray.pos,cy->pos);//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
 
-	// coefficients for the intersection equation
-	// got them mathematically intersecting the line equation with the cylinder equation
-	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
-	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
-	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
-
-	double delta = b*b - a*c;
-
-	//delta < 0 means no intersections
-	if (delta < RAY_T_MIN)
-		return 0;
-	// nearest intersection
-	t = (-b - sqrt (delta)) /a;
-
-	// t<0 means the intersection is behind the ray origin
-	if (t <= RAY_T_MIN)
-		return 0;
-
-	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
-	if (inter->point.y - cy->pos.y > cy->height || inter->point.y - cy->pos.y < 0)
-		return(0);
-	inter->t = t;
-	inter->diffuse = 0.4;
-	inter->specular = 0.2;
-	inter->s_power = 4;
-	inter->obj = obj;
-	inter->object_color = cy->color;
-
-  	t_vector proj_p = vec_create(cy->pos.x, inter->point.y, cy->pos.z);
-	inter->normal = vec_normalize(vec_sub(inter->point,proj_p));
-	return inter;
-}
 
 t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 {
@@ -232,58 +179,135 @@ t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 	inter->normal = sq->orientation;
 	return inter;
 }
-// // Calculate intersection with the base having center c
-// // We do this by calculating the intersection with the plane
-// // and then checking if the intersection is within the base circle
-// bool Cylinder::intersect_base (const Ray& ray, const Point& c, double& t)
-// {
-// 	Vector normal = normal_in (c);
-// 	Point p0 (ray.origin.x-center.x, ray.origin.y-center.y, ray.origin.z-center.z);
-// 	double A = normal[0];
-// 	double B = normal[1];
-// 	double C = normal[2];
-// 	double D = - (A*(c.x-center.x) +B*(c.y-center.y)+C*(c.z-center.z));
+t_vector cylinder_normal_at(t_vector point ,t_cylinder *cy)
+{
+	t_vector normalIntersectionPoint = vec_sub(point ,cy->pos);
+	return ((fabs(normalIntersectionPoint.y) < cy->height)
+		? (vec_normalize(vec_create(normalIntersectionPoint.x, 0, normalIntersectionPoint.z)))
+		: vec_normalize(normalIntersectionPoint));
+}t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
+{
+	float t,t1,t2;
+	t_cylinder *cy;
+	t_intersection* inter;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+	cy = (t_cylinder *)obj->details;
+	// translate the ray origin
+	t_vector tmp;
+	float Rx,Rz;
+	tmp = vec_normalize(cy->orientation);
+	tmp.x = 0;
+	tmp = vec_normalize(tmp);
+	Rx = acos(vec_dot(vec_create(0,1,0),tmp));
+	tmp = vec_normalize(cy->orientation);
+	tmp.z = 0;
+	tmp = vec_normalize(tmp);
+	Rz = acos(vec_dot(vec_create(0,1,0),tmp));
+	ray.dir = vec_rotate(ray.dir,vec_create(Rx,0,Rz));
+	//ray.pos = vec_rotate(ray.pos,vec_create(Rx,0,Rz));
+	t_vector p0 = vec_sub(ray.pos,cy->pos);//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
+	int isBelongToCylinderBase = 0;
 
-// 	if (A*ray.direction[0]+B*ray.direction[1]+C*ray.direction[2]==0)
-// 		return false;
-	
-// 	double dist = - (A*p0.x+B*p0.y+C*p0.z+D)/(A*ray.direction[0]+B*ray.direction[1]+C*ray.direction[2]);
+	float ts1 = (cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
+	t_vector point = vec_add(p0 ,vec_mult( ray.dir ,ts1));
+	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
+		isBelongToCylinderBase = 1;
 
-// 	double epsilon = 0.00000001;
-// 	if (dist < epsilon)
-// 		return false;
+	float ts2 = (-cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
+	point = vec_add(p0 ,vec_mult( ray.dir ,ts2));
+	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
+		isBelongToCylinderBase = 1;
 
-// 	Point p;
-// 	p.x = p0.x+dist*ray.direction[0];
-// 	p.y = p0.y+dist*ray.direction[1];
-// 	p.z = p0.z+dist*ray.direction[2];
-// 	if (p.x*p.x+p.z*p.z-radius*radius > epsilon)
-// 		return false;
+	if (isBelongToCylinderBase)
+	{
+		t = fmin(ts1,ts2);
+		point = vec_add(ray.pos ,vec_mult(ray.dir ,t));
+	}else
+	{
+		// coefficients for the intersection equation
+		// got them mathematically intersecting the line equation with the cylinder equation
+		double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
+		double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
+		double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
 
-// 	t = dist;
-// 	return true;
-// }
+		double delta = b * b - a * c;
 
-// // Calculate the normal in a point on the surface
-// // it is a vertical vector in the bases and a vector
-// // having the direction of the vector from the axis to the point
-// Vector Cylinder::normal_in (const Point& p)
-// {
-// 	// Point is on one of the bases
-// 	if (p.x<center.x+radius && p.x>center.x-radius && p.z<center.z+radius && p.z>center.z-radius)
-// 	{
-// 		double epsilon = 0.00000001;
-// 		if (p.y < center.y+height+epsilon && p.y>center.y+height-epsilon){
-// 			return Vector (0,1,0);
-// 		}
-// 		if (p.y < center.y+epsilon && p.y>center.y-epsilon){
-// 			return Vector (0,-1,0);
-// 		}
-// 	}
+		//delta < 0 means no intersections
+		if (delta < RAY_T_MIN)
+				return 0;
+		// nearest intersection
+		t = (-b - sqrt (delta)) /a;
+		// t<0 means the intersection is behind the ray origin
+		if (t <= RAY_T_MIN)
+			return 0;
 
-// 	// Point is on lateral surface
-//  	Point c0 (center.x, p.y, center.z);
-//  	Vector v = p-c0;
-//  	v.normalize ();
-//  	return v;
-// }
+		point = vec_add(ray.pos,vec_mult(ray.dir,t));
+		if (point.y - cy->pos.y > cy->height || point.y - cy->pos.y < 0)
+			return(0);
+	}
+	inter->point = point;
+	inter->t = t;
+	inter->diffuse = 0.4;
+	inter->specular = 0.2;
+	inter->s_power = 4;
+	inter->obj = obj;
+	inter->object_color = cy->color;
+	inter->normal = cylinder_normal_at(inter->point,cy);
+	return inter;
+}
+t_intersection *intersects_with_cyelinder (t_ray ray, t_object *obj)
+{
+	t_cylinder *cy;
+	t_intersection* inter;
+	inter = (t_intersection *)malloc(sizeof(t_intersection));
+	cy = (t_cylinder *)obj->details;
+	t_vector intersectionPoint = vec_sub(ray.pos, cy->pos);
+	float t;
+	int isBelongToCylinderBase = 0;
+	float ts1 = (cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
+	t_vector point = vec_add(intersectionPoint ,vec_mult( ray.dir ,ts1));
+
+	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
+		isBelongToCylinderBase = 1;
+
+	float ts2 = (-cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
+	point = vec_add(intersectionPoint ,vec_mult( ray.dir ,ts2));
+	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
+		isBelongToCylinderBase = 1;
+
+	float a = ray.dir.x * ray.dir.x + ray.dir.z * ray.dir.z;
+	float b = (ray.pos.x * ray.dir.x - ray.dir.x * cy->pos.x + ray.pos.z * ray.dir.z - ray.dir.z * cy->pos.z);
+	float c = ray.pos.x * ray.pos.x + cy->pos.x * cy->pos.x + ray.pos.z * ray.pos.z + cy->pos.z * cy->pos.z -
+			2 * (ray.pos.x * cy->pos.x + ray.pos.z * cy->pos.z) - pow(cy->diameter/2, 2);
+
+	float discriminant = b * b - a * c;
+
+	if (discriminant < RAY_T_MIN)
+	{
+		return 0;
+	}else {
+		float  t1 = (-b - sqrt(discriminant)) / a;
+		float  t2 = (-b + sqrt(discriminant)) / a;
+
+		t = t1;
+		if (t1 < RAY_T_MIN)
+			t = t2;
+		if (t < RAY_T_MIN)
+			return (0);
+		//if (!(fabs(ray.pos.y + t * ray.dir.y - cy->pos.y) > cy->pos.z)) ///////
+		//	return 0;
+		if (isBelongToCylinderBase) 
+			t = fmin(fmin(ts1, ts2),t);
+	}
+	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
+	inter->t = t;
+	inter->diffuse = 0.4;
+	inter->specular = 0.2;
+	inter->s_power = 4;
+	inter->obj = obj;
+	inter->object_color = cy->color;
+	inter->normal = cylinder_normal_at(inter->point, cy);
+	return inter;
+}
+
+

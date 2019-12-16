@@ -324,7 +324,7 @@ void save_bmp (const char *filename, int w, int h, int dpi, int *image) {
 	fwrite(bmpinfoheader,1,40,f);
 	
 	for (int i = 0; i < k; i++) {
-		int rgb = image[k - i];
+		int rgb = image[i];
 		double blue = rgb % 256;
         rgb /= 256;
         double green = rgb % 256;

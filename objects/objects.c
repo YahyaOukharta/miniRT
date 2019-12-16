@@ -392,9 +392,9 @@ int	transform_cylinder(int key, void *param)
     if (key == KEY_LEFT)
         cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(0,0,-vel));
 	if (key == KEY_UP)
-        cylinder->height += vel;
+        cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(vel,0,0));
 	if (key == KEY_DOWN)
-        cylinder->height -= vel;
+        cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(-vel,0,0));
 	return (0);
 }
 void init_obj_transformer(void){
