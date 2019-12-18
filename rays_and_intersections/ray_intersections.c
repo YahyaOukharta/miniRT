@@ -13,19 +13,6 @@ int solveQuadraticSp(float a,float b,float c, float *t1, float *t2)
     } 
     return 1; 
 }
-int solveQuadraticCy(float a,float b,float c, float *t1, float *t2) 
-{ 
-    float discr = b * b - a * c; 
-    if (discr < 0) return 0; 
-    else if (discr == 0) 
-		*t1  = - b * (float)(b / a); 
-    else { 
-        float q = (b > 0) ? (-b * (b + sqrt(discr))) : (-b * (b - sqrt(discr))); 
-        *t1 = q / a;
-        *t2 = c / q;
-    } 
-    return 1; 
-}
 
 t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 {
@@ -141,34 +128,27 @@ t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 	t_intersection* inter;
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
 	sq = (t_square *)obj->details;
-
 	t_vector tmp;
-	float Rx,Ry;
-	tmp = vec_normalize(sq->orientation);
-	tmp.x = 0;
-	tmp = vec_normalize(tmp);
-	Rx = acos(vec_dot(vec_create(0,0,1),tmp));
-	tmp = vec_normalize(sq->orientation);
-	tmp.z = 0;
-	tmp = vec_normalize(tmp);
-	Ry = acos(vec_dot(vec_create(0,0,1),tmp));
-	ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
-	//
-	float denom = vec_dot(vec_create(0,0,1), ray.dir); 
+
+	t_vector p_normal = vec_normalize(sq->orientation);
+    // assuming vectors are all normalized
+    float denom = vec_dot(p_normal, ray.dir); 
     if (denom < 1e-6)
 		return (0);
 	t_vector p_origin_dir = vec_sub(sq->pos, ray.pos); //sq origin
-	t = vec_dot(p_origin_dir, vec_create(0,0,1)) / denom; 
+	t = vec_dot(p_origin_dir, p_normal) / denom; 
 	if (t < RAY_T_MIN)
 		return (0);
-	t_vector p = vec_add(ray.pos, vec_mult(ray.dir,t));
-	float l,r,d,u;
+	float l,r,u,d;
 	l = sq->pos.x - sq->side_size / 2;
 	r = sq->pos.x + sq->side_size / 2;
 	u = sq->pos.y + sq->side_size / 2;
 	d = sq->pos.y - sq->side_size / 2;
-	if (p.x < l || p.x > r || p.y < d || p.y > u)
+
+	t_vector p = vec_add(ray.pos, vec_mult(ray.dir, t));
+	if (p.x < l || p.x > r || p.y > u || p.y < d)
 		return (0);
+
 	inter->point = p;
 	inter->t = t;
 	inter->diffuse = 0.4;
@@ -185,7 +165,8 @@ t_vector cylinder_normal_at(t_vector point ,t_cylinder *cy)
 	return ((fabs(normalIntersectionPoint.y) < cy->height)
 		? (vec_normalize(vec_create(normalIntersectionPoint.x, 0, normalIntersectionPoint.z)))
 		: vec_normalize(normalIntersectionPoint));
-}t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
+		
+}t_intersection *intersects_with_cyelinder (t_ray ray, t_object *obj)
 {
 	float t,t1,t2;
 	t_cylinder *cy;
@@ -205,57 +186,45 @@ t_vector cylinder_normal_at(t_vector point ,t_cylinder *cy)
 	Rz = acos(vec_dot(vec_create(0,1,0),tmp));
 	ray.dir = vec_rotate(ray.dir,vec_create(Rx,0,Rz));
 	//ray.pos = vec_rotate(ray.pos,vec_create(Rx,0,Rz));
-	t_vector p0 = vec_sub(ray.pos,cy->pos);//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
-	int isBelongToCylinderBase = 0;
+	t_vector p0 = vec_sub(ray.pos,cy->pos);
+	//vec_create(ray.pos.x - cy->pos.x, ray.pos.y - cy->pos.y, ray.pos.z - cy->pos.z);
 
-	float ts1 = (cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
-	t_vector point = vec_add(p0 ,vec_mult( ray.dir ,ts1));
-	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
-		isBelongToCylinderBase = 1;
+	// coefficients for the intersection equation
+	// got them mathematically intersecting the line equation with the cylinder equation
+	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
+	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
+	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
 
-	float ts2 = (-cy->height - ray.pos.y + cy->pos.y) / ray.dir.y;
-	point = vec_add(p0 ,vec_mult( ray.dir ,ts2));
-	if (point.x * point.x + point.z * point.z - pow(cy->diameter/2,2) < RAY_T_MIN)
-		isBelongToCylinderBase = 1;
+	double delta = b * b - a * c;
 
-	if (isBelongToCylinderBase)
-	{
-		t = fmin(ts1,ts2);
-		point = vec_add(ray.pos ,vec_mult(ray.dir ,t));
-	}else
-	{
-		// coefficients for the intersection equation
-		// got them mathematically intersecting the line equation with the cylinder equation
-		double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
-		double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
-		double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
-
-		double delta = b * b - a * c;
-
-		//delta < 0 means no intersections
-		if (delta < RAY_T_MIN)
-				return 0;
-		// nearest intersection
-		t = (-b - sqrt (delta)) /a;
-		// t<0 means the intersection is behind the ray origin
-		if (t <= RAY_T_MIN)
+	//delta < 0 means no intersections
+	if (delta < RAY_T_MIN)
 			return 0;
+	// nearest intersection
+	t2 = (-b - sqrt (delta)) /a;
+	t1 = (-b + sqrt (delta)) /a;
 
-		point = vec_add(ray.pos,vec_mult(ray.dir,t));
-		if (point.y - cy->pos.y > cy->height || point.y - cy->pos.y < 0)
-			return(0);
-	}
+	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
+		t = t1;
+	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
+		t = t2;
+	else
+		return (0);
+	t_vector point = vec_add(ray.pos,vec_mult(ray.dir,t));
+	if (point.y - cy->pos.y > cy->height || point.y - cy->pos.y < 0)
+		return(0);
 	inter->point = point;
 	inter->t = t;
 	inter->diffuse = 0.4;
 	inter->specular = 0.2;
-	inter->s_power = 4;
+	inter->s_power = 16;
 	inter->obj = obj;
 	inter->object_color = cy->color;
 	inter->normal = cylinder_normal_at(inter->point,cy);
 	return inter;
 }
-t_intersection *intersects_with_cyelinder (t_ray ray, t_object *obj)
+
+t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
 {
 	t_cylinder *cy;
 	t_intersection* inter;

@@ -26,7 +26,7 @@ typedef struct    data_s
     int     bpp;
     int     size_line;
     int     endian;
-    char    *img_data;
+    int    *img_data;
     void    *img_ptr;
 
 }                 data_t;

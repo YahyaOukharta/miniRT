@@ -23,7 +23,6 @@ t_list *current_light;
 struct s_menu g_menu;
 data_t        data; // mlx struct 
 struct s_object *selected_object;
-static int *img;
 pthread_mutex_t mutex;
 void init_objects(void)
 {
@@ -31,8 +30,6 @@ void init_objects(void)
     g_ambient_light.is_set = 0;
 	init_obj_constructor();
 }
-
-
 //lighting function
 int get_ambient_color(t_intersection *closest)
 {
@@ -71,8 +68,8 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 			inter = intersects_with_triangle(ray, sph);
 		 else if (!ft_strncmp(sph->type,"cy",2))
 		 	inter = intersects_with_cylinder(ray, sph);
-		////else if (!ft_strncmp(sph->type,"sq",2))
-		 //	inter = intersects_with_plane(ray, sph);
+		else if (!ft_strncmp(sph->type,"sq",2))
+		 	inter = intersects_with_square(ray, sph);
 		// closest intersection
 		if(inter && inter->t < min_t && inter->t > 0.0000001)
 		{
@@ -157,7 +154,7 @@ t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
 	ray.dir = vec_rotate(ray.dir, cam->rot);
 	return (ray);
 }
-int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int *save)
+int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int part)
 {
 	int aspect_ratio = g_resolution.x / g_resolution.y;
 	t_ray ray;
@@ -168,7 +165,6 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 	int y = 0;
 	w = g_resolution.x;
 	h = g_resolution.y;
-	int part = (int)save;
 	if (part == 1)
 	{
 		w /= 2;
@@ -207,49 +203,45 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 			else
 				color = 0;
 			if (g_menu.on && x < g_menu.menu_w)
-			{
 				color = mult_colors(color, g_menu.opacity);
-			}
-			if ((int)save && (int)save > 4 )
-				save[y * w + x] = color;
-			else
-			{
-				mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, y, (int)floor(color));
-			}
+			(data.img_data)[y * w + x] = (int)color;
 			x++;
 		}
 		y++;
 	}
+	if (!part)
+	{
 		mlx_put_image_to_window(data.mlx_ptr,data.mlx_win, data.img_ptr, 0 ,0);
-
-	menu_toggle_msg();
-	show_menu();
-	selected_objects_msg();
+		menu_toggle_msg();
+		show_menu();
+		selected_objects_msg();
+	}
 	return (1);
 }
 
 void *render_thread(void *part)
 {
-	render(data,objects,lights,current_camera,part);
-	printf("rendered from thread");
-	pthread_exit(NULL);
+	render(data,objects,lights,current_camera,(int)part);
+	//printf("rendered from thread");
+	//pthread_exit(NULL);
 }
 //event handling
 int	re_render(int key,void *param)
 {
 	pthread_t t1,t2,t3,t4;
 	mlx_clear_window(data.mlx_ptr, data.mlx_win);
-	// pthread_mutex_init(&mutex, NULL);
 	// pthread_create(&t1, NULL, render_thread, (void *)1);
-	//  pthread_create(&t2, NULL, render_thread, (void *)2);
+	// pthread_create(&t2, NULL, render_thread, (void *)2);
 	// pthread_create(&t3, NULL, render_thread, (void *)3);
-	//  pthread_create(&t4, NULL, render_thread, (void *)4);
-	//   pthread_join(t1,NULL); 	
-	//   pthread_join(t2,NULL); 	
-	//  pthread_join(t3,NULL); 	
-	//   pthread_join(t4,NULL);
-	//  pthread_mutex_destroy(&mutex);
-	render(data,objects,lights,current_camera,(int *)data.img_data);
+	// pthread_create(&t4, NULL, render_thread, (void *)4);
+	// pthread_join(t1,NULL); 	
+	// pthread_join(t2,NULL); 	
+	// pthread_join(t3,NULL); 	
+	// pthread_join(t4,NULL);
+
+	render(data,objects,lights,current_camera,0);
+	//mlx_put_image_to_window(data.mlx_ptr,data.mlx_win, data.img_ptr, 0, 0);
+
 	return (1);
 }
 
@@ -422,7 +414,7 @@ int main (int argc, char **argv)
 	if (argc == 3) //save if the save option is on
 		return (save_frame(0,0));
 	data.img_ptr = mlx_new_image(data.mlx_ptr, g_resolution.x, g_resolution.y);
-	data.img_data = mlx_get_data_addr(data.img_ptr,&data.bpp, &data.size_line, &data.endian);
+	data.img_data = (int *)mlx_get_data_addr(data.img_ptr,&data.bpp, &data.size_line, &data.endian);
 
 	if(!render(data,objects,lights,current_camera,0))
 		return (0);
