@@ -20,7 +20,7 @@ typedef struct s_intersection
     t_vector point;
     t_vector normal;
     
-    t_object *obj;
+    t_obj *obj;
     float t;
     int object_color;
     float diffuse;
@@ -28,11 +28,11 @@ typedef struct s_intersection
     float s_power;
 }               t_intersection;
 
-t_intersection *intersects_with_sphere(t_ray ray, t_object *obj);
-t_intersection *intersects_with_plane(t_ray ray, t_object *obj);
-t_intersection *intersects_with_triangle(t_ray ray, t_object *obj);
-t_intersection *intersects_with_square(t_ray ray, t_object *obj);
-t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj);
+t_intersection *intersects_with_sphere(t_ray ray, t_obj *obj);
+t_intersection *intersects_with_plane(t_ray ray, t_obj *obj);
+t_intersection *intersects_with_triangle(t_ray ray, t_obj *obj);
+t_intersection *intersects_with_square(t_ray ray, t_obj *obj);
+t_intersection *intersects_with_cylinder (t_ray ray, t_obj *obj);
 
 
 #endif

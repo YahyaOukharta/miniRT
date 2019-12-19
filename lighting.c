@@ -1,14 +1,14 @@
 #include "minirt.h"
 
-extern struct s_minirt	g_minirt;
+extern struct s_minirt	g_rt;
 
 int						get_ambient_color(t_intersection *i)
 {
 	return (add_colors(
-		mult_colors(g_minirt.g_ambient_light.color,
-			g_minirt.g_ambient_light.brightness),
+		mult_colors(g_rt.g_ambient_light.color,
+			g_rt.g_ambient_light.brightness),
 		mult_colors(i->object_color,
-			g_minirt.g_ambient_light.brightness)));
+			g_rt.g_ambient_light.brightness)));
 }
 
 int						get_diffuse_color(t_intersection *i,

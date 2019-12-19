@@ -12,8 +12,6 @@
 #ifndef OBJECTS_H
 # define OBJECTS_H
 
-//#include "../minirt.h"
-
 typedef struct	s_vector
 {
 	float x;
@@ -25,15 +23,15 @@ typedef struct s_object
 {
 	char *type;
 	void *details;
-}				t_object;
+}				t_obj;
 
 typedef struct	s_camera
 {
 	t_vector pos;
 	t_vector dir;
 	t_vector rot;
-	int		fov; //probably
-}				t_camera;
+	int		fov;
+}				t_cam;
 
 typedef struct	s_light
 {
@@ -103,12 +101,12 @@ struct          s_ambient_light
 };
 
 extern struct s_ambient_light g_ambient_light;
-extern struct s_resolution g_resolution;
+extern struct s_resolution g_res;
 
 typedef int(*t_obj_constr)(char **);
 t_obj_constr g_obj_constructor[10];
 
-t_camera *new_camera(char **info);
+t_cam *new_camera(char **info);
 int add_camera(char **tab);
 t_light *new_light(char **info);
 int add_light(char **tab);

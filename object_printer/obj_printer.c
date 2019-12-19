@@ -1,22 +1,22 @@
 #include "obj_printer.h"
 
-extern struct s_minirt g_minirt;
+extern struct s_minirt g_rt;
 
-int print_objects(t_list *objects)
+int print_objs(t_list *objects)
 {
-    t_object *obj;
+    t_obj *obj;
     int index;
     char **tmp;
 	
-    if (g_minirt.g_resolution.is_set)
-		ft_printf("Resolution    = %dx%d\t\t", g_minirt.g_resolution.x,g_minirt.g_resolution.y);
-	if (g_minirt.g_ambient_light.is_set)
-		printf("Ambient light = %.2f, %d\n\n", g_minirt.g_ambient_light.brightness, g_minirt.g_ambient_light.color);
-    init_object_printer();
+    if (g_rt.g_res.is_set)
+		ft_printf("Resolution    = %dx%d\t\t", g_rt.g_res.x,g_rt.g_res.y);
+	if (g_rt.g_ambient_light.is_set)
+		printf("Ambient light = %.2f, %d\n\n", g_rt.g_ambient_light.brightness, g_rt.g_ambient_light.color);
+    init_obj_printer();
     while (objects)
     {
-        obj = (t_object *)(g_minirt.objects->content);
-        index = index_of_in_tab(obj->type, (tmp = ft_split(g_minirt.g_supported_objects, ';'))) - 2;
+        obj = (t_obj *)(g_rt.objects->content);
+        index = index_of_in_tab(obj->type, (tmp = ft_split(g_rt.g_supported_objects, ';'))) - 2;
         free_s_tab(tmp);
         g_obj_printer[index](obj->details);
         objects = objects->next;
@@ -26,9 +26,9 @@ int print_objects(t_list *objects)
 
 
 
-int print_camera(void *obj)
+int print_cam(void *obj)
 {   
-    t_camera *cam = (t_camera *)obj;
+    t_cam *cam = (t_cam *)obj;
     printf("camera      pos %.2f %.2f %.2f dir %.2f %.2f %.2f fov %d\n",cam->pos.x,cam->pos.y,cam->pos.z,cam->dir.x,cam->dir.y,cam->dir.z,cam->fov);
 	return (1);
 }
@@ -69,9 +69,9 @@ int print_triangle(void *object)
 	printf("triangle    p1 %.2f %.2f %.2f p2 %.2f %.2f %.2f p3 %.2f %.2f %.2f color %d\n",triangle->p1.x,triangle->p1.y,triangle->p1.z, triangle->p2.x,triangle->p2.y,triangle->p2.z,triangle->p3.x,triangle->p3.y,triangle->p3.z,triangle->color);
 	return (1);
 }
-void init_object_printer(void)
+void init_obj_printer(void)
 {
-    g_obj_printer[0] = print_camera;
+    g_obj_printer[0] = print_cam;
     g_obj_printer[1] = print_light;
     g_obj_printer[2] = print_sphere;
     g_obj_printer[3] = print_plane;

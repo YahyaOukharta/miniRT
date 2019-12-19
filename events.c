@@ -1,24 +1,24 @@
 #include "minirt.h"
-extern struct s_minirt g_minirt;
+extern struct s_minirt g_rt;
 
 //event handling
 void *render_thread(void *part)
 {
-	render((int)part);
+	//render((int)part);
 	//printf("rendered from thread");
 	//pthread_exit(NULL);
     return (0);
 }
 int	re_render(int key,void *param)
 {
-	mlx_clear_window(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win);
-	render(0);
+	mlx_clear_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
+	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
 	return (1);
 }
 //camera
-int	rotate_camera(int key,void *param)
+int	rotate_camera(int key, void *param)
 {
-	t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
+	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_RIGHT)
 		cam->rot.y -= 0.1;
 	if (key == KEY_LEFT)
@@ -30,9 +30,9 @@ int	rotate_camera(int key,void *param)
 	re_render(key, NULL);
 	return (0);
 }
-int	move_camera(int key,void *param)
+int	move_camera(int key, void *param)
 {
-	t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
+	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		cam->pos = vec_add(cam->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
@@ -47,10 +47,10 @@ int	move_camera(int key,void *param)
 }
 int change_camera(int key, void *param)
 {
-	if (g_minirt.current_camera->next)
-		g_minirt.current_camera = g_minirt.current_camera->next;
+	if (g_rt.curr_cam->next)
+		g_rt.curr_cam = g_rt.curr_cam->next;
 	else
-		g_minirt.current_camera = g_minirt.cameras;
+		g_rt.curr_cam = g_rt.cameras;
 	re_render(key,NULL);
 	return (0);
 }
@@ -58,8 +58,8 @@ int change_camera(int key, void *param)
 //objects
 int	transform_object(int key,void *param)
 {
-	t_object *obj = g_minirt.selected_object;
-	int index = index_of_in_tab(obj->type,ft_split(g_minirt.g_supported_objects,';')) - 3;
+	t_obj *obj = g_rt.selected_object;
+	int index = index_of_in_tab(obj->type,ft_split(g_rt.g_supported_objects,';')) - 3;
 	printf("index %d\n",index);
 	g_obj_transformer[index](key,param);
 	re_render(key, NULL);
@@ -67,35 +67,35 @@ int	transform_object(int key,void *param)
 }
 int toggle_menu(int key, void *param)
 {
-	g_minirt.g_menu.on = !g_minirt.g_menu.on;
+	g_rt.g_menu.on = !g_rt.g_menu.on;
 	re_render(key,NULL);
 	return (0);
 }
 int edit_lights(int key, void *param)
 {
-	if (g_minirt.current_light)
-		g_minirt.current_light = (g_minirt.current_light->next ? g_minirt.current_light->next : g_minirt.lights);
+	if (g_rt.current_light)
+		g_rt.current_light = (g_rt.current_light->next ? g_rt.current_light->next : g_rt.lights);
 	else
-		g_minirt.current_light = g_minirt.lights;
-	g_minirt.selected_object = (t_object *)g_minirt.current_light->content;
+		g_rt.current_light = g_rt.lights;
+	g_rt.selected_object = (t_obj *)g_rt.current_light->content;
 	return (re_render(key,NULL));
 }
 int save_frame(int key,void *param)
 {
 	ft_printf("saving frame");
-	render(10);
-	save_bmp("img.bmp",g_minirt.g_resolution.x,g_minirt.g_resolution.y,72, (int *)g_minirt.data.img_data);
+	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
+	save_bmp("img.bmp", g_rt.g_res.x,g_rt.g_res.y, 72, (int *)g_rt.data.img_data);
 	ft_printf("Saved img\n");
 	return (0);
 }
 int handle_keys(int key, void *param)
 {
 	if (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_UP || key == KEY_DOWN)
-		return ((g_minirt.selected_object ? transform_object(key, param) : rotate_camera(key, param)));
+		return ((g_rt.selected_object ? transform_object(key, param) : rotate_camera(key, param)));
 	else if (key == KEY_D || key == KEY_A || key == KEY_W || key == KEY_S)
-		return ((g_minirt.selected_object ? transform_object(key, param) : move_camera(key, param)));
+		return ((g_rt.selected_object ? transform_object(key, param) : move_camera(key, param)));
 	else if (key == KEY_C)
-		return (g_minirt.selected_object ? ((g_minirt.selected_object = NULL) ||(g_minirt.current_light = NULL) || re_render(key , param)) : change_camera(key,param));
+		return (g_rt.selected_object ? ((g_rt.selected_object = NULL) ||(g_rt.current_light = NULL) || re_render(key , param)) : change_camera(key,param));
 	else if (key == KEY_M)
 		return (toggle_menu(key,param));
 	else if (key == KEY_L)
@@ -104,15 +104,15 @@ int handle_keys(int key, void *param)
 		return (save_frame(key,param));
 	return (0);
 }
-int select_object(int button, int x, int y, void * param)
+int select_obj(int button, int x, int y, void * param)
 {
-	t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
+	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	t_ray ray = cast_ray(x,y,cam, -1);
-	t_intersection* closest = get_closest_intersection(g_minirt.objects, ray);
-	t_object *tmp = (closest ? closest->obj : NULL);
-	if (button == 1 && g_minirt.selected_object != tmp)
+	t_intersection* closest = get_closest_intersection(g_rt.objects, ray);
+	t_obj *tmp = (closest ? closest->obj : NULL);
+	if (button == 1 && g_rt.selected_object != tmp)
 	{
-		g_minirt.selected_object = tmp;
+		g_rt.selected_object = tmp;
 		re_render(0, NULL);
 	}
 	return (1);
@@ -120,12 +120,12 @@ int select_object(int button, int x, int y, void * param)
 int resize_object(int btn, int x, int y,void *param)
 {
 	float ratio = 0.05;
-	char *type = g_minirt.selected_object->type;
+	char *type = g_rt.selected_object->type;
 	if (!ft_memcmp(type,"sp",max(ft_strlen(type),2)))
-		((t_sphere *)g_minirt.selected_object->details)->diameter +=
+		((t_sphere *)g_rt.selected_object->details)->diameter +=
 			(btn == 4 ? -1 : 1) * ratio;
 	if (!ft_memcmp(type,"sq",max(ft_strlen(type),2)))
-		((t_square *)g_minirt.selected_object->details)->side_size +=
+		((t_square *)g_rt.selected_object->details)->side_size +=
 			(btn == 4 ? -1 : 1) * ratio;
 	re_render(btn, param);
 	return (1);
@@ -133,7 +133,7 @@ int resize_object(int btn, int x, int y,void *param)
 int move_light_z(int btn, int x, int y,void *param)
 {
 	float vel = 0.05;
-	t_light *light = (t_light *)(((t_object *)g_minirt.current_light->content)->details);
+	t_light *light = (t_light *)(((t_obj *)g_rt.current_light->content)->details);
 	light->pos = vec_add(light->pos,vec_mult(vec_create(0,0,1), (btn == 4 ? -1 : 1) * vel));
 	re_render(btn, param);
 	return (1);
@@ -141,9 +141,9 @@ int move_light_z(int btn, int x, int y,void *param)
 int add_new_light(int button, int x, int y, void * param)
 {
 	//printf("btn = %d x = %d y = %d \n",button,x,y);
-	t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
+	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	t_ray ray = cast_ray(x,y,cam, -1);
-	t_intersection* closest = get_closest_intersection(g_minirt.objects, ray);
+	t_intersection* closest = get_closest_intersection(g_rt.objects, ray);
 	if (closest)
 	{
 		t_vector p = vec_add(closest->point,vec_mult(closest->normal,0.08));
@@ -156,8 +156,8 @@ int add_new_light(int button, int x, int y, void * param)
 int handle_mouse(int button, int x, int y, void *param)
 {	
 	if (button == 1 && y >= 0)
-		return ((g_minirt.current_light ? add_new_light(button,x,y,param) : select_object(button,x,y,param)));
+		return ((g_rt.current_light ? add_new_light(button,x,y,param) : select_obj(button,x,y,param)));
 	if ((button == 4 || button == 5) && y >= 0)
-		return ((g_minirt.current_light ? move_light_z(button, x,y,param) : (g_minirt.selected_object && resize_object(button,x,y,param))));
+		return ((g_rt.current_light ? move_light_z(button, x,y,param) : (g_rt.selected_object && resize_object(button,x,y,param))));
 	return (0);
 }

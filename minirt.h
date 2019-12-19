@@ -30,7 +30,7 @@ typedef struct					s_data
 typedef struct					s_menu
 {
 	int							on;
-	int							menu_w;
+	int							w;
 	float						opacity;
 }								t_menu;
 
@@ -39,13 +39,13 @@ typedef struct					s_minirt
 	t_data						data;
 	char						*g_supported_objects;
 	struct s_menu				g_menu;
-	struct s_resolution			g_resolution;
+	struct s_resolution			g_res;
 	struct s_ambient_light		g_ambient_light;
 	t_list						*objects;
 	t_list						*lights;
 	t_list						*current_light;
 	t_list						*cameras;
-	t_list						*current_camera;
+	t_list						*curr_cam;
 	struct s_object				*selected_object;
 }								t_minirt;
 typedef struct s_ray			t_ray;
@@ -58,7 +58,7 @@ int								get_diffuse_color(t_intersection *closest,
 int								get_specular_color(t_intersection *closest,
 									t_ray ray, t_ray shadow_ray,
 									t_light *light);
-void							init_objects(void);
+void							init_objs(void);
 int								re_render(int key, void *param);
 int								rotate_camera(int key, void *param);
 int								move_camera(int key, void *param);
@@ -68,7 +68,7 @@ int								toggle_menu(int key, void *param);
 int								edit_lights(int key, void *param);
 int								save_frame(int key, void *param);
 int								handle_keys(int key, void *param);
-int								select_object(int button,
+int								select_obj(int button,
 									int x, int y, void *param);
 int								resize_object(int btn,
 									int x, int y, void *param);
@@ -84,6 +84,6 @@ int								is_ray_blocked(t_ray shadow_ray);
 int								compute_pixel_color(t_intersection *closest,
 									t_ray ray, t_list *lights);
 t_ray							cast_ray(int x, int y,
-									t_camera *cam, float zoom);
-int								render(int part);
+									t_cam *cam, float zoom);
+int								render(int x,int y,int w, int h);
 #endif

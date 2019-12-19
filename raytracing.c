@@ -1,29 +1,44 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raytracing.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youkhart <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/12/19 21:40:38 by youkhart          #+#    #+#             */
+/*   Updated: 2019/12/19 21:42:22 by youkhart         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minirt.h"
 
-extern struct s_minirt g_minirt;
+extern struct s_minirt g_rt;
 
 t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 {
-	t_list *objs = objects;
-	t_intersection *closest = NULL;
-	t_intersection *inter = NULL;
-	float min_t = INFINITY;
+	t_list *objs;
+	t_intersection *closest;
+	t_intersection *inter;
+	float min_t;
 
+	objs = objects;
+	closest = NULL;
+	inter = NULL;
+	min_t = INFINITY;
 	while (objs)
 	{
-		t_object *sph = (t_object *)(objs->content);
-		if (!ft_memcmp(sph->type,"sp",2))
-		 	inter = intersects_with_sphere(ray, sph);
-		else if (!ft_strncmp(sph->type,"pl",2))
-			inter = intersects_with_plane(ray, sph);
-		else if (!ft_strncmp(sph->type,"tr",2))
-			inter = intersects_with_triangle(ray, sph);
-		 else if (!ft_strncmp(sph->type,"cy",2))
-		 	inter = intersects_with_cylinder(ray, sph);
-		else if (!ft_strncmp(sph->type,"sq",2))
-		 	inter = intersects_with_square(ray, sph);
-		// closest intersection
-		if(inter && inter->t < min_t && inter->t > 0.0000001)
+		t_obj *obj = (t_obj *)(objs->content);
+		if (!ft_memcmp(obj->type, "sp", 2))
+			inter = intersects_with_sphere(ray, obj);
+		else if (!ft_strncmp(obj->type, "pl", 2))
+			inter = intersects_with_plane(ray, obj);
+		else if (!ft_strncmp(obj->type, "tr", 2))
+			inter = intersects_with_triangle(ray, obj);
+		else if (!ft_strncmp(obj->type, "cy", 2))
+			inter = intersects_with_cylinder(ray, obj);
+		else if (!ft_strncmp(obj->type, "sq", 2))
+			inter = intersects_with_square(ray, obj);
+		if (inter && inter->t < min_t && inter->t > RAY_T_MIN)
 		{
 			min_t = inter->t;
 			closest = inter;
@@ -33,140 +48,119 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	return (closest);
 }
 
-int is_ray_blocked(t_ray shadow_ray)
+int		is_ray_blocked(t_ray shadow_ray)
 {
-	t_list *objs = g_minirt.objects;
+	t_list	*objs;
+	t_obj	*obj;
+
+	objs = g_rt.objects;
 	while (objs)
 	{
-		t_object *obj = (t_object *)(objs->content);
-	
-		if((!ft_memcmp(obj->type,"sp",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
-			|| (!ft_memcmp(obj->type,"pl",max(ft_strlen(obj->type),2)) && intersects_with_sphere(shadow_ray, obj))
-			|| (!ft_memcmp(obj->type,"tr",max(ft_strlen(obj->type),2)) && intersects_with_triangle(shadow_ray, obj))
-			|| (!ft_memcmp(obj->type,"cy",max(ft_strlen(obj->type),2)) && intersects_with_cylinder(shadow_ray, obj))
-			|| (!ft_memcmp(obj->type,"sq",max(ft_strlen(obj->type),2)) && intersects_with_square(shadow_ray, obj))
-			)
-		{
-			return(1);
-		}
+		obj = (t_obj *)(objs->content);
+		if ((!ft_memcmp(obj->type, "sp", max(ft_strlen(obj->type), 2))
+			&& intersects_with_sphere(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type, "pl", max(ft_strlen(obj->type), 2))
+			&& intersects_with_sphere(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type, "tr", max(ft_strlen(obj->type), 2))
+			&& intersects_with_triangle(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type, "cy", max(ft_strlen(obj->type), 2))
+			&& intersects_with_cylinder(shadow_ray, obj))
+			|| (!ft_memcmp(obj->type, "sq", max(ft_strlen(obj->type), 2))
+			&& intersects_with_square(shadow_ray, obj)))
+			return (1);
 		objs = objs->next;
 	}
 	return (0);
 }
 
-int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
+int		compute_pixel_color(t_intersection *closest, t_ray ray, t_list *lights)
 {
-	int blocked = 0;
-	float color,a_color,d_color,s_color = 0;
-	t_ray shadow_ray;
+	float		*color;
+	t_ray		shadow_ray;
+	t_light		*light;
 
-	//ambient lighting
-	a_color = get_ambient_color(closest);
-	color = a_color;
-	//cast shadow ray towards lights
+	color = ft_calloc(4, sizeof(float));
+	color[1] = get_ambient_color(closest);
+	color[0] = color[1];
 	while (lights)
 	{
-		t_light* light = ((t_light *)((t_object *)(lights->content))->details);
-		shadow_ray.pos = vec_add(vec_add(ray.pos,vec_mult(ray.dir, closest->t)),vec_mult(closest->normal, 0.00000001));
+		light = ((t_light *)((t_obj *)(lights->content))->details);
+		shadow_ray.pos = vec_add(vec_add(ray.pos, vec_mult(ray.dir, closest->t))
+			, vec_mult(closest->normal, RAY_T_MIN));
 		shadow_ray.dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
-		if(!is_ray_blocked(shadow_ray))
+		if (!is_ray_blocked(shadow_ray))
 		{
-			//diffuse lighting
-			d_color = add_colors(d_color, get_diffuse_color(closest, shadow_ray, light));
-			//specular lighting
-			s_color = add_colors(s_color, get_specular_color(closest, ray, shadow_ray, light));
+			color[2] = add_colors(color[2],
+				get_diffuse_color(closest, shadow_ray, light));
+			color[3] = add_colors(color[3],
+				get_specular_color(closest, ray, shadow_ray, light));
 		}
 		lights = lights->next;
 	}
-	color = add_colors(d_color, a_color);
-	color = add_colors(color ,s_color);
-	return (color);
+	color[0] = add_colors(color[2], color[1]);
+	color[0] = add_colors(color[0], color[3]);
+	return (color[0]);
 }
-t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
+
+t_ray	cast_ray(int x, int y, t_cam *cam, float zoom)
 {
-	t_ray ray;
-	float NDC_x = (x + 0.5) / g_minirt.g_resolution.x; //adding 0.5 to align with middle of the pixel ...
-	float NDC_y = (y + 0.5) / g_minirt.g_resolution.y;
+	t_ray	ray;
+	float	ndc[2];
+	float	screen[2];
+	float	world[2];
 
-	// //convert NDC to screen space   // values from -1 to 1
-	float screen_x =   2 * NDC_x - 1;  
-	float screen_y = -(2 * NDC_y - 1); // to make y values above x axis (screen space) positive .....
-
-	// //convert screen space to camera space, 
-	float Px = screen_x * tan(cam->fov / 2 * M_PI / 180) * g_minirt.g_resolution.x / g_minirt.g_resolution.y;
-	float Py = screen_y * tan(cam->fov / 2 * M_PI / 180);
-
-	//cast ray
+	ndc[0] = (x + 0.5) / g_rt.g_res.x;
+	ndc[1] = (y + 0.5) / g_rt.g_res.y;
+	screen[0] = 2 * ndc[0] - 1;
+	screen[1] = -(2 * ndc[1] - 1);
+	world[0] = screen[0] * tan(cam->fov / 2 * M_PI / 180)
+					* g_rt.g_res.x / g_rt.g_res.y;
+	world[1] = screen[1] * tan(cam->fov / 2 * M_PI / 180);
 	ray.pos = cam->pos;
-	ray.dir.x = Px;
-	ray.dir.y = Py;
-	ray.dir.z = zoom; // ZOOM
-	ray.dir = vec_normalize(ray.dir);
-
-	ray.dir = vec_rotate(ray.dir, cam->rot);
+	ray.dir.x = world[0];
+	ray.dir.y = world[1];
+	ray.dir.z = zoom;
+	ray.dir = vec_rotate(vec_normalize(ray.dir), cam->rot);
 	return (ray);
 }
-int render(int part)
+
+void	put_menu(int menu)
 {
-	int aspect_ratio = g_minirt.g_resolution.x / g_minirt.g_resolution.y;
-	t_ray ray;
-	t_camera *current_cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;	
-	int fov = current_cam->fov;
-	int w,h;
-	int x = 0;
-	int y = 0;
-	w = g_minirt.g_resolution.x;
-	h = g_minirt.g_resolution.y;
-	if (part == 1)
+	if (!menu)
 	{
-		w /= 2;
-		h /= 2;
-	}
-	else if (part == 2)
-	{
-		x = w / 2 + 1;
-		h /= 2;
-	}
-	else if (part == 3)
-	{
-		w /= 2;
-		y = h / 2 + 1;
-	}
-	else if (part == 4)
-	{
-		x = w / 2 + 1;
-		y = h / 2 + 1; 
-	}
-	//ft_printf("w %d h %d x %d y %d\n", w, h, x, y);
-	int tmp = x;
-	//mlx_clear_window(data.mlx_ptr, data.mlx_win);
-	while (y < h)
-	{
-		x = tmp;
-		while (x < w)
-		{	
-			//colors for different types of lighting
-			float color,a_color,d_color,s_color = 0;
-			//convert raster space to Normalized Device Coordinates (NDC)
-			ray = cast_ray(x,y,current_cam, -1);
-			t_intersection* closest = get_closest_intersection(g_minirt.objects, ray);
-			if (closest)
-				color = compute_pixel_color(closest,ray,g_minirt.lights);
-			else
-				color = 0;
-			if (g_minirt.g_menu.on && x < g_minirt.g_menu.menu_w)
-				color = mult_colors(color, g_minirt.g_menu.opacity);
-			(g_minirt.data.img_data)[y * w + x] = (int)color;
-			x++;
-		}
-		y++;
-	}
-	if (!part)
-	{
-		mlx_put_image_to_window(g_minirt.data.mlx_ptr,g_minirt.data.mlx_win, g_minirt.data.img_ptr, 0 ,0);
+		mlx_put_image_to_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win,
+			g_rt.data.img_ptr, 0, 0);
 		menu_toggle_msg();
 		show_menu();
 		selected_objects_msg();
 	}
+}
+
+int		render(int x, int y, int w, int h)
+{
+	t_ray			ray;
+	float			color;
+	int				menu;
+	t_intersection	*i;
+
+	menu = 0;
+	y = -1;
+	if (!x && !y && w == g_rt.g_res.x && h == g_rt.g_res.y)
+		menu = 1;
+	while (++y < h)
+	{
+		x = -1;
+		while (++x < w)
+		{
+			color = 0;
+			ray = cast_ray(x, y, (t_cam *)((t_obj *)g_rt.curr_cam->content)
+				->details, -1);
+			i = get_closest_intersection(g_rt.objects, ray);
+			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : 0);
+			(g_rt.data.img_data)[y * w + x] = (int)mult_colors(color,
+			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));
+		}
+	}
+	put_menu(menu);
 	return (1);
 }

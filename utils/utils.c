@@ -266,10 +266,10 @@ int mult_colors(int c1, float value)
 
 void free_object(void *object)
 {
-    t_object *obj;
+    t_obj *obj;
     char **tmp;
     int index;
-    obj = (t_object *)object;
+    obj = (t_obj *)object;
     free(obj->details);
     free(obj->type);
     free(obj);

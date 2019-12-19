@@ -14,7 +14,7 @@ int solveQuadraticSp(float a,float b,float c, float *t1, float *t2)
     return 1; 
 }
 
-t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
+t_intersection* intersects_with_sphere(t_ray ray, t_obj *obj)
 {
 	t_intersection *inter;
     t_sphere *sphere;
@@ -50,7 +50,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	return inter;
 }
 
-t_intersection *intersects_with_plane(t_ray ray, t_object *obj) 
+t_intersection *intersects_with_plane(t_ray ray, t_obj *obj) 
 {
 	t_intersection *inter;
     t_plane *plane;
@@ -77,7 +77,7 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	return inter;
 }
 
-t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
+t_intersection *intersects_with_triangle(t_ray ray, t_obj *obj)
 {
 	float t;
 	t_triangle *tri;
@@ -119,7 +119,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
 
 
 
-t_intersection *intersects_with_square(t_ray ray, t_object *obj)
+t_intersection *intersects_with_square(t_ray ray, t_obj *obj)
 {
 	float t;
 	t_square *sq;
@@ -176,7 +176,7 @@ t_vector cylinder_normal_at(t_vector point ,t_cylinder *cy)
 		? (vec_normalize(vec_create(normalIntersectionPoint.x, 0, normalIntersectionPoint.z)))
 		: vec_normalize(normalIntersectionPoint));
 		
-}t_intersection *intersects_with_cyelinder (t_ray ray, t_object *obj)
+}t_intersection *intersects_with_cyelinder (t_ray ray, t_obj *obj)
 {
 	float t,t1,t2;
 	t_cylinder *cy;
@@ -234,7 +234,7 @@ t_vector cylinder_normal_at(t_vector point ,t_cylinder *cy)
 	return inter;
 }
 
-t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
+t_intersection *intersects_with_cylinder (t_ray ray, t_obj *obj)
 {
 	t_cylinder *cy;
 	t_intersection* inter;

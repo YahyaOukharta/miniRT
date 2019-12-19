@@ -10,15 +10,15 @@ int selected_objects_msg(void);
 
 
 
-char **get_camera_details(t_object *obj);
-char **get_light_details(t_object *obj);
-char **get_sphere_details(t_object *obj);
-char **get_plane_details(t_object *obj);
-char **get_square_details(t_object *obj);
-char **get_cylinder_details(t_object *obj);
-char **get_triangle_details(t_object *obj);
+char **get_cam_details(t_obj *obj);
+char **get_light_details(t_obj *obj);
+char **get_sphere_details(t_obj *obj);
+char **get_plane_details(t_obj *obj);
+char **get_square_details(t_obj *obj);
+char **get_cylinder_details(t_obj *obj);
+char **get_triangle_details(t_obj *obj);
 
-typedef char**(*t_obj_details)(t_object *);
+typedef char**(*t_obj_details)(t_obj *);
 t_obj_details g_obj_details[8];
 
 void init_obj_details(void);

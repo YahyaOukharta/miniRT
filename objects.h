@@ -23,7 +23,7 @@ typedef struct s_object
 {
 	char *type;
 	void *details;
-}				t_object;
+}				t_obj;
 
 typedef struct	s_ambient_light
 {
@@ -37,7 +37,7 @@ typedef struct	s_camera
 	t_vector dir;
 
 	int		fov; //probably
-}				t_camera;
+}				t_cam;
 
 typedef struct	s_light
 {
@@ -92,13 +92,13 @@ typedef struct	s_triangle
 	int		color;
 }				t_triangle;
 
-struct g_resolution
+struct g_res
 {
 	int x;
 	int y;
 };
 
-t_object	*g_objects;
+t_obj	*g_objects;
 
 
 #endif

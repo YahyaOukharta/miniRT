@@ -1,11 +1,11 @@
 #include "menu.h"
 
-extern struct s_minirt g_minirt;
+extern struct s_minirt g_rt;
 #define PRECISION 2
 
 void init_obj_details()
 {
-    g_obj_details[0] = get_camera_details;
+    g_obj_details[0] = get_cam_details;
     g_obj_details[1] = get_light_details;
     g_obj_details[2] = get_sphere_details;
     g_obj_details[3] = get_plane_details;
@@ -14,7 +14,7 @@ void init_obj_details()
     g_obj_details[6] = get_triangle_details;
 
 }
-char **get_light_details(t_object *obj)
+char **get_light_details(t_obj *obj)
 {
     int n_details = 4; //type pos dir fov;
     t_light *light = (t_light *)obj->details;
@@ -26,10 +26,10 @@ char **get_light_details(t_object *obj)
     tab[4] = 0;
     return (tab);
 }
-char **get_camera_details(t_object *obj)
+char **get_cam_details(t_obj *obj)
 {
     int n_details = 4; //type pos dir fov;
-    t_camera *cam = (t_camera *)obj->details;
+    t_cam *cam = (t_cam *)obj->details;
     t_vector dir = vec_rotate(vec_create(0,0,-1),cam->rot);
     char **tab = (char **)malloc(sizeof(char *) * (n_details + 1));
     tab[0] = ft_strdup("Type = Camera");
@@ -39,7 +39,7 @@ char **get_camera_details(t_object *obj)
     tab[4] = 0;
     return (tab);
 }
-char **get_sphere_details(t_object *obj)
+char **get_sphere_details(t_obj *obj)
 {
     int n_details = 4; //type pos radius color
     t_sphere *sph = (t_sphere *)obj->details;
@@ -52,7 +52,7 @@ char **get_sphere_details(t_object *obj)
 
     return (tab);
 }
-char **get_plane_details(t_object *obj)
+char **get_plane_details(t_obj *obj)
 {
     int n_details = 4; //type pos dir color
     t_plane *plane = (t_plane *)obj->details;
@@ -64,7 +64,7 @@ char **get_plane_details(t_object *obj)
     tab[4] = 0;
     return (tab);
 }
-char **get_cylinder_details(t_object *obj)
+char **get_cylinder_details(t_obj *obj)
 {
     int n_details = 6; //type pos dir diameter height color
     t_cylinder *cylinder = (t_cylinder *)obj->details;
@@ -77,7 +77,7 @@ char **get_cylinder_details(t_object *obj)
     tab[5] = 0;
     return (tab);
 }
-char **get_triangle_details(t_object *obj)
+char **get_triangle_details(t_obj *obj)
 {
     int n_details = 5; //type p1 p2 p3 color
     t_triangle *tri = (t_triangle *)obj->details;
@@ -90,7 +90,7 @@ char **get_triangle_details(t_object *obj)
     tab[5] = 0;
     return (tab);
 }   
-char **get_square_details(t_object *obj)
+char **get_square_details(t_obj *obj)
 {
     int n_details = 5; //type pos dir side_size color
     t_square *square = (t_square *)obj->details;
@@ -105,36 +105,36 @@ char **get_square_details(t_object *obj)
 }
 int init_menu()
 {
-    g_minirt.g_menu.menu_w = 300;
-    g_minirt.g_menu.opacity = 0.6;
+    g_rt.g_menu.w = 300;
+    g_rt.g_menu.opacity = 0.6;
     init_obj_details();
     return (1);
 }
-char **get_object_details(t_object *obj)
+char **get_obj_details(t_obj *obj)
 {
     int index;
-    index = index_of_in_tab(obj->type, ft_split(g_minirt.g_supported_objects,';')) - 2;
+    index = index_of_in_tab(obj->type, ft_split(g_rt.g_supported_objects,';')) - 2;
     return (g_obj_details[index](obj));
 }
 int print_cam_obj_instructions()
 {
     char *title,*move,*rot,*change,*obj_scroll,*obj_select,*obj_move;
     title = "// Instructions //";
-    change = (g_minirt.selected_object ? "-> Press C to unselect object" : "-> Press C to change camera");
-    move = ft_strjoin("-> Press WASD to move ",(g_minirt.selected_object ? "object" : "camera"));
-    rot = ft_strjoin("-> Press Arrow keys to rotate ",(g_minirt.selected_object ? "object" : "camera"));
-    obj_scroll = (g_minirt.selected_object ? "-> Scroll mouse to resize object" : "");;
-    obj_select = (g_minirt.selected_object ? "Selected object details: " : "Click to select object from scene");
+    change = (g_rt.selected_object ? "-> Press C to unselect object" : "-> Press C to change camera");
+    move = ft_strjoin("-> Press WASD to move ",(g_rt.selected_object ? "object" : "camera"));
+    rot = ft_strjoin("-> Press Arrow keys to rotate ",(g_rt.selected_object ? "object" : "camera"));
+    obj_scroll = (g_rt.selected_object ? "-> Scroll mouse to resize object" : "");;
+    obj_select = (g_rt.selected_object ? "Selected object details: " : "Click to select object from scene");
 
     int i = 0;
-    if (g_minirt.g_menu.on)
+    if (g_rt.g_menu.on)
     {   // centered
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
         // instructions  
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), rot);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), obj_scroll);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,90, rgb_to_int("255,255,255"), change);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,110, rgb_to_int("255,255,255"), move);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,130, rgb_to_int("255,255,255"), rot);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,150, rgb_to_int("255,255,255"), obj_scroll);
     }
     return (0);
 }
@@ -149,14 +149,14 @@ int print_light_instructions()
     obj_select = "Selected object details:";
 
     int i = 0;
-    if (g_minirt.g_menu.on)
+    if (g_rt.g_menu.on)
     {   // centered
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
         // instructions  
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), obj_scroll);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), rot);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,90, rgb_to_int("255,255,255"), change);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,110, rgb_to_int("255,255,255"), move);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,130, rgb_to_int("255,255,255"), obj_scroll);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,150, rgb_to_int("255,255,255"), rot);
     }
     return (0);
 }
@@ -164,39 +164,39 @@ int show_menu()
 {   char *camera,*light;
     char **obj_details;
     char **cam_details;
-    char *obj_scroll = (g_minirt.selected_object ? "-> Scroll mouse to resize object" : "");;
-    char *obj_select = (g_minirt.selected_object ? "Selected object details: " : "Click to select object from scene");
+    char *obj_scroll = (g_rt.selected_object ? "-> Scroll mouse to resize object" : "");;
+    char *obj_select = (g_rt.selected_object ? "Selected object details: " : "Click to select object from scene");
     camera = "Current camera details:";
-    light = (g_minirt.current_light ? "-> Press L to edit next light" : "-> Press L to edit lights");
+    light = (g_rt.current_light ? "-> Press L to edit next light" : "-> Press L to edit lights");
     int i = 0;
-    if (g_minirt.g_menu.on)
+    if (g_rt.g_menu.on)
     {   // centered
-        if (g_minirt.current_light)
+        if (g_rt.current_light)
             print_light_instructions();
         else
             print_cam_obj_instructions();
         // objects
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 7,180, rgb_to_int("255,255,255"), obj_select);
-        if (g_minirt.selected_object)
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 7,180, rgb_to_int("255,255,255"), obj_select);
+        if (g_rt.selected_object)
         {
-            obj_details = get_object_details(g_minirt.selected_object);
+            obj_details = get_obj_details(g_rt.selected_object);
             while (obj_details[i])
             {
-                mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 4,200 + i * 20, rgb_to_int("255,255,255"), obj_details[i]);
+                mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 4,200 + i * 20, rgb_to_int("255,255,255"), obj_details[i]);
                 i++;
             }
         }
         //current camera
         i = 1;
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 7,300, rgb_to_int("255,255,255"), camera);
-        cam_details = get_object_details((t_object *)g_minirt.current_camera->content);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 7,300, rgb_to_int("255,255,255"), camera);
+        cam_details = get_obj_details((t_obj *)g_rt.curr_cam->content);
         while (cam_details[i])
         {
-            mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 4,320 + (i - 1) * 20, rgb_to_int("255,255,255"), cam_details[i]);
+            mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 4,320 + (i - 1) * 20, rgb_to_int("255,255,255"), cam_details[i]);
             i++;
         }
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,400, rgb_to_int("255,255,255"), light);
-        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,420, rgb_to_int("255,255,255"), "-> Press P to save as bitmap");
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,400, rgb_to_int("255,255,255"), light);
+        mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_menu.w / 8,420, rgb_to_int("255,255,255"), "-> Press P to save as bitmap");
 
     }
     return (1);
@@ -204,9 +204,9 @@ int show_menu()
 
 int menu_toggle_msg()
 {
-    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 150, g_minirt.g_resolution.y - 22,
-        rgb_to_int("255,255,255"), (g_minirt.g_menu.on ? "Press M to hide menu" : "Press M to show menu"));
-    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 150, g_minirt.g_resolution.y - 10,
+    mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 150, g_rt.g_res.y - 22,
+        rgb_to_int("255,255,255"), (g_rt.g_menu.on ? "Press M to hide menu" : "Press M to show menu"));
+    mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 150, g_rt.g_res.y - 10,
         rgb_to_int("255,255,255"), "Press ESC to quit");
     return (1);
 }
@@ -214,17 +214,17 @@ int selected_objects_msg()
 {
     char *str;
     int n;
-    str = (g_minirt.selected_object ? g_minirt.selected_object->type : "(null)");
-    if (g_minirt.selected_object && !ft_memcmp(g_minirt.selected_object->type,"l", max(ft_strlen(g_minirt.selected_object->type),1)))
+    str = (g_rt.selected_object ? g_rt.selected_object->type : "(null)");
+    if (g_rt.selected_object && !ft_memcmp(g_rt.selected_object->type,"l", max(ft_strlen(g_rt.selected_object->type),1)))
     {
-        n = ft_lstsize(g_minirt.lights) - ft_lstsize(g_minirt.current_light);
+        n = ft_lstsize(g_rt.lights) - ft_lstsize(g_rt.current_light);
         str = ft_strjoin("Selected light = L",ft_itoa(n + 1));
     }
     else
         str = ft_strjoin("Selected object = ",str);
-    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 180,34, rgb_to_int("255,255,255"), str);
-    n = ft_lstsize(g_minirt.cameras) - ft_lstsize(g_minirt.current_camera);
+    mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 180,34, rgb_to_int("255,255,255"), str);
+    n = ft_lstsize(g_rt.cameras) - ft_lstsize(g_rt.curr_cam);
     str = ft_strjoin("Current camera  = C",ft_itoa(n + 1));
-    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 180,20, rgb_to_int("255,255,255"), str);
+    mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 180,20, rgb_to_int("255,255,255"), str);
     return (1);
 }

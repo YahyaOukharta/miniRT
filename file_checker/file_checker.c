@@ -1,7 +1,7 @@
 #include "file_checker.h"
 
 
-extern struct s_minirt g_minirt;
+extern struct s_minirt g_rt;
 
 int check_element_details(char **tab, int n)
 {
@@ -9,7 +9,7 @@ int check_element_details(char **tab, int n)
 	int index;
 	char **tmp;
 
-	if (!exists_in_tab(tab[0], (tmp = ft_split(g_minirt.g_supported_objects,';'))))
+	if (!exists_in_tab(tab[0], (tmp = ft_split(g_rt.g_supported_objects,';'))))
 	{
 		ft_printf("Error\nWrong object identifier '%s'\n",tab[0]);
 		free_s_tab(tmp);
@@ -29,7 +29,7 @@ int store_element(char **tab)
 	int index;
 	char **tmp;
 
-	tmp = ft_split(g_minirt.g_supported_objects, ';');
+	tmp = ft_split(g_rt.g_supported_objects, ';');
 	index = index_of_in_tab(tab[0], tmp);
 	free_s_tab(tmp);
 	return (g_obj_constructor[index](tab));
@@ -64,7 +64,7 @@ int process_file(int ac, char **av)
 		return (0);
 	}
 	init_file_checker();
-	init_objects();
+	init_objs();
 	while (get_next_line(fd, &line))
 	{
 		if (ft_strlen(line))
@@ -74,7 +74,7 @@ int process_file(int ac, char **av)
 			{
 				free_s_tab(tab);
 				free(line);
-				ft_lstclear(&g_minirt.objects,free_object);
+				ft_lstclear(&g_rt.objects,free_object);
 				return(0);
 			}
 			if(!store_element(tab)) //treat malloc error cases 
@@ -94,7 +94,7 @@ int process_file(int ac, char **av)
 
 int check_info_resolution(char **tab, int n)
 {
-	if (g_minirt.g_resolution.is_set)
+	if (g_rt.g_res.is_set)
 	{
 		ft_printf("Error in line %d:\n [!] Resolution can only be defined once\n", n);
 		return (0);
@@ -124,7 +124,7 @@ int check_info_resolution(char **tab, int n)
 
 int check_info_ambient_light(char **tab, int n)
 {
-	if (g_minirt.g_ambient_light.is_set)
+	if (g_rt.g_ambient_light.is_set)
 	{
 		ft_printf("Error in line %d:\n [!] Ambient lightning can only be defined once\n", n);
 		return (0);
