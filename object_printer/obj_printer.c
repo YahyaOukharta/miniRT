@@ -1,6 +1,6 @@
 #include "obj_printer.h"
 
-extern char	*g_supported_objects;
+extern struct s_minirt g_minirt;
 
 int print_objects(t_list *objects)
 {
@@ -8,15 +8,15 @@ int print_objects(t_list *objects)
     int index;
     char **tmp;
 	
-    if (g_resolution.is_set)
-		ft_printf("Resolution    = %dx%d\t\t", g_resolution.x,g_resolution.y);
-	if (g_ambient_light.is_set)
-		printf("Ambient light = %.2f, %d\n\n", g_ambient_light.brightness, g_ambient_light.color);
+    if (g_minirt.g_resolution.is_set)
+		ft_printf("Resolution    = %dx%d\t\t", g_minirt.g_resolution.x,g_minirt.g_resolution.y);
+	if (g_minirt.g_ambient_light.is_set)
+		printf("Ambient light = %.2f, %d\n\n", g_minirt.g_ambient_light.brightness, g_minirt.g_ambient_light.color);
     init_object_printer();
     while (objects)
     {
-        obj = (t_object *)(objects->content);
-        index = index_of_in_tab(obj->type, (tmp = ft_split(g_supported_objects, ';'))) - 2;
+        obj = (t_object *)(g_minirt.objects->content);
+        index = index_of_in_tab(obj->type, (tmp = ft_split(g_minirt.g_supported_objects, ';'))) - 2;
         free_s_tab(tmp);
         g_obj_printer[index](obj->details);
         objects = objects->next;

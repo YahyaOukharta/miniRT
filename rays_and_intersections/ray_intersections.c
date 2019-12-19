@@ -27,18 +27,17 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 	tmp_ray.pos = vec_sub(ray.pos,sphere->pos);
 	//printf("(%.4f,%.4f,%.4f)\t",tmp_ray.dir.x,tmp_ray.dir.y,tmp_ray.dir.z);
 	// Calculate quadratic coefficients
-	float a = vec_len2(tmp_ray.dir); //tmp_ray.ray.dir.length2();
+	float a = vec_len2(tmp_ray.dir);
 	float b = 2 * vec_dot(tmp_ray.dir, tmp_ray.pos);
 	float c = vec_len2(tmp_ray.pos) - sphere->diameter * sphere->diameter;
 	if (!(solveQuadraticSp(a,b,c, &t1,&t2)))
-		return (0);
-	// Find two points of intersection, t1 close and t2 far
-	
-	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
+		return (0);	
+	t = 0;
+	if (t1 > RAY_T_MIN)
 		t = t1;
-	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
+	if (t2 < t1 && t2 > RAY_T_MIN)
 		t = t2;
-	else
+	if (!t)
 		return (0);
 	inter->obj = obj;
 	inter->point = vec_add(ray.pos,vec_mult(ray.dir , t));
@@ -52,8 +51,7 @@ t_intersection* intersects_with_sphere(t_ray ray, t_object *obj)
 }
 
 t_intersection *intersects_with_plane(t_ray ray, t_object *obj) 
-{ 
-
+{
 	t_intersection *inter;
     t_plane *plane;
 	float t;
@@ -62,7 +60,7 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj)
 	t_vector p_normal = vec_normalize(plane->orientation);
     // assuming vectors are all normalized
     float denom = vec_dot(p_normal, ray.dir); 
-    if (denom < 1e-6)
+    if (fabs(denom) < 1e-6)
 		return (0);
 	t_vector p_origin_dir = vec_sub(plane->pos, ray.pos); //plane origin
 	t = vec_dot(p_origin_dir, p_normal) / denom; 
@@ -93,7 +91,7 @@ t_intersection *intersects_with_triangle(t_ray ray, t_object *obj)
     float a,f,u,v;
     h = vec_cross(ray.dir,edge2);
     a = vec_dot(edge1,h);
-    if (a > -RAY_T_MIN && a < RAY_T_MIN)
+    if (fabs(a) < RAY_T_MIN)
         return 0;    // This ray is parallel to this triangle.
     f = 1.0/a;
     s = vec_sub(ray.pos,  tri->p1);
@@ -130,16 +128,16 @@ t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 	sq = (t_square *)obj->details;
 	t_vector tmp;
 
-	float Rx,Ry;
-	tmp = vec_normalize(sq->orientation);
-	tmp.x = 0;
-	tmp = vec_normalize(tmp);
-	Rx = acos(vec_dot(vec_create(0,0,1),tmp));
-	tmp = vec_normalize(sq->orientation);
-	tmp.y = 0;
-	tmp = vec_normalize(tmp);
-	Ry = acos(vec_dot(vec_create(0,0,1),tmp));
-	ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
+	// float Rx,Ry;
+	// tmp = vec_normalize(sq->orientation);
+	// tmp.x = 0;
+	// tmp = vec_normalize(tmp);
+	// Rx = acos(vec_dot(vec_create(0,0,1),tmp));
+	// tmp = vec_normalize(sq->orientation);
+	// tmp.y = 0;
+	// tmp = vec_normalize(tmp);
+	// Ry = acos(vec_dot(vec_create(0,0,1),tmp));
+	// ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
 
 	t_vector p_normal = vec_normalize(sq->orientation);
     // assuming vectors are all normalized
@@ -154,10 +152,10 @@ t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 	t_vector p = vec_add(ray.pos , vec_mult(ray.dir, t));
 
 	float l,r,u,d;
-	l = (p.x - sq->side_size / 2);
-	r = (p.x + sq->side_size / 2);
-	u = (p.y + sq->side_size / 2);
-	d = (p.y - sq->side_size / 2);
+	l = (sq->pos.x - sq->side_size / 2);
+	r = (sq->pos.x + sq->side_size / 2);
+	u = (sq->pos.y + sq->side_size / 2);
+	d = (sq->pos.y - sq->side_size / 2);
 
  	if (p.x < l || p.x > r || p.y < d || p.y > u)
 	 	return (0);
@@ -261,19 +259,20 @@ t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj)
 	float c = ray.pos.x * ray.pos.x + cy->pos.x * cy->pos.x + ray.pos.z * ray.pos.z + cy->pos.z * cy->pos.z -
 			2 * (ray.pos.x * cy->pos.x + ray.pos.z * cy->pos.z) - pow(cy->diameter/2, 2);
 
-	float discriminant = b * b - a * c;
+	float delta = b * b - a * c;
 
-	if (discriminant < RAY_T_MIN)
-	{
+	if (delta < RAY_T_MIN)
 		return 0;
-	}else {
-		float  t1 = (-b - sqrt(discriminant)) / a;
-		float  t2 = (-b + sqrt(discriminant)) / a;
+	else {
+		float  t1 = (-b - sqrt(delta)) / a;
+		float  t2 = (-b + sqrt(delta)) / a;
 
-		t = t1;
-		if (t1 < RAY_T_MIN)
+		t = 0;
+		if (t1 > RAY_T_MIN)
+			t = t1;
+		if (t2 < t1 && t2 > RAY_T_MIN)
 			t = t2;
-		if (t < RAY_T_MIN)
+		if (!t)
 			return (0);
 		//if (!(fabs(ray.pos.y + t * ray.dir.y - cy->pos.y) > cy->pos.z)) ///////
 		//	return 0;

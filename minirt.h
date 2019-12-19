@@ -18,6 +18,8 @@
 #define FONT_WIDTH	10
 #define	FONT_HEIGHT	20
 
+//global variable
+
 //mlx struct
 typedef struct    data_s
 {
@@ -36,18 +38,31 @@ typedef struct    s_menu
     int menu_w;
     float opacity;
 }               t_menu;
+typedef struct              s_minirt
+{
+    data_t                  data; // mlx struct 
+    char                    *g_supported_objects; // supported objects
+    struct s_menu           g_menu;
+    struct s_resolution     g_resolution;
+    struct s_ambient_light  g_ambient_light;
+    t_list                  *objects;
+    t_list                  *lights;
+    t_list                  *current_light;
+    t_list                  *cameras;
+    t_list                  *current_camera;
+    struct s_object         *selected_object;
+}                           t_minirt;
 typedef struct s_ray t_ray;
 
 typedef struct s_intersection t_intersection;
+
 int get_ambient_color(t_intersection *closest);
 int get_diffuse_color(t_intersection *closest, t_ray shadow_ray, t_light *light);
 int get_specular_color(t_intersection *closest, t_ray ray, t_ray shadow_ray, t_light *light);
 
 void init_objects(void);
-int save_frame(int key,void *param);
-t_ray cast_ray(int x, int y, t_camera *cam, float zoom);
-t_intersection *get_closest_intersection(t_list *objects, t_ray ray);
-int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int part);
+
+
 //events
 int	re_render(int key,void *param);
 int	rotate_camera(int key,void *param);
@@ -64,10 +79,11 @@ int move_light_z(int btn, int x, int y,void *param);
 int add_new_light(int button, int x, int y, void * param);
 int handle_mouse(int button, int x, int y, void *param);
 
+//ray tracing
 t_intersection *get_closest_intersection(t_list *objects, t_ray ray);
 int is_ray_blocked(t_ray shadow_ray);
 int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights);
 t_ray cast_ray(int x, int y, t_camera *cam, float zoom);
-int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int part);
+int render(int part);
 
 #endif

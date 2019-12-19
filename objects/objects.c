@@ -1,24 +1,20 @@
 #include "objects.h"
 
 #include "../minirt.h"
-extern t_list *objects;
-extern t_list *objects;
-extern t_list *lights;
-extern t_list *cameras;
-extern t_list *current_camera;
-extern t_object *selected_object;
+extern struct s_minirt g_minirt;
+
 int set_resolution(char **tab)
 {   
-    g_resolution.is_set = 1;
-    g_resolution.x = ft_atoi(tab[1]);
-    g_resolution.y = ft_atoi(tab[2]);
+    g_minirt.g_resolution.is_set = 1;
+    g_minirt.g_resolution.x = ft_atoi(tab[1]);
+    g_minirt.g_resolution.y = ft_atoi(tab[2]);
     return (1);
 }
 int set_ambient_light(char **tab)
 {   
-    g_ambient_light.is_set = 1;
-    g_ambient_light.brightness = ft_atof(tab[1]);
-    g_ambient_light.color = rgb_to_int(tab[2]);
+    g_minirt.g_ambient_light.is_set = 1;
+    g_minirt.g_ambient_light.brightness = ft_atof(tab[1]);
+    g_minirt.g_ambient_light.color = rgb_to_int(tab[2]);
     return (1);
 }
 
@@ -64,7 +60,7 @@ int add_camera(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_camera(tab);
-    ft_lstadd_back(&cameras, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.cameras, ft_lstnew(obj));
     return (1);
 }
 
@@ -92,7 +88,7 @@ int add_light(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_light(tab);
-    ft_lstadd_back(&lights, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.lights, ft_lstnew(obj));
     return (1);
 }
 
@@ -120,7 +116,7 @@ int add_sphere(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_sphere(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.objects, ft_lstnew(obj));
     return (1);
 }
 t_plane *new_plane(char **info)
@@ -152,7 +148,7 @@ int add_plane(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_plane(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.objects, ft_lstnew(obj));
     return (1);
 }
 t_square *new_square(char **info)
@@ -185,7 +181,7 @@ int add_square(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_square(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.objects, ft_lstnew(obj));
     return (1);
 }
 
@@ -221,7 +217,7 @@ int add_cylinder(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_cylinder(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.objects, ft_lstnew(obj));
     return (1);
 }
 t_triangle *new_triangle(char **info)
@@ -260,7 +256,7 @@ int add_triangle(char **tab)
     obj = (t_object *)malloc(sizeof(t_object));
     obj->type = ft_strdup(tab[0]);
     obj->details = (void *)new_triangle(tab);
-    ft_lstadd_back(&objects, ft_lstnew(obj));
+    ft_lstadd_back(&g_minirt.objects, ft_lstnew(obj));
     return (1);
 }
 
@@ -278,8 +274,8 @@ void init_obj_constructor(void){
 //
 int	transform_sphere(int key, void *param)
 {
-	t_sphere *sphere = (t_sphere *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_sphere *sphere = (t_sphere *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
@@ -293,8 +289,8 @@ int	transform_sphere(int key, void *param)
 }
 int	transform_plane(int key, void *param)
 {
-	t_plane *plane = (t_plane *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_plane *plane = (t_plane *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		plane->pos = vec_add(plane->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
@@ -316,8 +312,8 @@ int	transform_plane(int key, void *param)
 }
 int	transform_square(int key, void *param)
 {
-	t_square *square = (t_square *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_square *square = (t_square *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		square->pos = vec_add(square->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
@@ -339,8 +335,8 @@ int	transform_square(int key, void *param)
 }
 int	transform_triangle(int key, void *param)
 {
-	t_triangle *tri = (t_triangle *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_triangle *tri = (t_triangle *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
     t_vector dir;
 	if (key == KEY_D || key == KEY_A)
@@ -361,8 +357,8 @@ int	transform_triangle(int key, void *param)
 }
 int	transform_light(int key, void *param)
 {
-	t_light *light = (t_light *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_light *light = (t_light *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		light->pos = vec_add(light->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
@@ -376,8 +372,8 @@ int	transform_light(int key, void *param)
 }
 int	transform_cylinder(int key, void *param)
 {
-	t_cylinder *cylinder = (t_cylinder *)selected_object->details;
-    t_camera *cam = (t_camera *)((t_object *)current_camera->content)->details;
+	t_cylinder *cylinder = (t_cylinder *)g_minirt.selected_object->details;
+    t_camera *cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;
 	float vel = 0.1;
 	if (key == KEY_D)
 		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));

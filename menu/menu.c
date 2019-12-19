@@ -1,14 +1,6 @@
 #include "menu.h"
 
-extern struct    data_s data;
-extern struct    s_resolution g_resolution;
-extern char *g_supported_objects;
-extern struct s_menu g_menu;
-extern struct s_object *selected_object;
-extern t_list *cameras;
-extern t_list *current_camera;
-extern t_list *lights;
-extern t_list *current_light;
+extern struct s_minirt g_minirt;
 #define PRECISION 2
 
 void init_obj_details()
@@ -113,36 +105,36 @@ char **get_square_details(t_object *obj)
 }
 int init_menu()
 {
-    g_menu.menu_w = 300;
-    g_menu.opacity = 0.6;
+    g_minirt.g_menu.menu_w = 300;
+    g_minirt.g_menu.opacity = 0.6;
     init_obj_details();
     return (1);
 }
 char **get_object_details(t_object *obj)
 {
     int index;
-    index = index_of_in_tab(obj->type, ft_split(g_supported_objects,';')) - 2;
+    index = index_of_in_tab(obj->type, ft_split(g_minirt.g_supported_objects,';')) - 2;
     return (g_obj_details[index](obj));
 }
 int print_cam_obj_instructions()
 {
     char *title,*move,*rot,*change,*obj_scroll,*obj_select,*obj_move;
     title = "// Instructions //";
-    change = (selected_object ? "-> Press C to unselect object" : "-> Press C to change camera");
-    move = ft_strjoin("-> Press WASD to move ",(selected_object ? "object" : "camera"));
-    rot = ft_strjoin("-> Press Arrow keys to rotate ",(selected_object ? "object" : "camera"));
-    obj_scroll = (selected_object ? "-> Scroll mouse to resize object" : "");;
-    obj_select = (selected_object ? "Selected object details: " : "Click to select object from scene");
+    change = (g_minirt.selected_object ? "-> Press C to unselect object" : "-> Press C to change camera");
+    move = ft_strjoin("-> Press WASD to move ",(g_minirt.selected_object ? "object" : "camera"));
+    rot = ft_strjoin("-> Press Arrow keys to rotate ",(g_minirt.selected_object ? "object" : "camera"));
+    obj_scroll = (g_minirt.selected_object ? "-> Scroll mouse to resize object" : "");;
+    obj_select = (g_minirt.selected_object ? "Selected object details: " : "Click to select object from scene");
 
     int i = 0;
-    if (g_menu.on)
+    if (g_minirt.g_menu.on)
     {   // centered
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
         // instructions  
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), rot);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), obj_scroll);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), rot);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), obj_scroll);
     }
     return (0);
 }
@@ -157,14 +149,14 @@ int print_light_instructions()
     obj_select = "Selected object details:";
 
     int i = 0;
-    if (g_menu.on)
+    if (g_minirt.g_menu.on)
     {   // centered
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 2 - ft_strlen(title) * FONT_WIDTH / 3,40, rgb_to_int("255,255,255"), title);
         // instructions  
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), obj_scroll);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), rot);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,90, rgb_to_int("255,255,255"), change);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,110, rgb_to_int("255,255,255"), move);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,130, rgb_to_int("255,255,255"), obj_scroll);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,150, rgb_to_int("255,255,255"), rot);
     }
     return (0);
 }
@@ -172,39 +164,39 @@ int show_menu()
 {   char *camera,*light;
     char **obj_details;
     char **cam_details;
-    char *obj_scroll = (selected_object ? "-> Scroll mouse to resize object" : "");;
-    char *obj_select = (selected_object ? "Selected object details: " : "Click to select object from scene");
+    char *obj_scroll = (g_minirt.selected_object ? "-> Scroll mouse to resize object" : "");;
+    char *obj_select = (g_minirt.selected_object ? "Selected object details: " : "Click to select object from scene");
     camera = "Current camera details:";
-    light = (current_light ? "-> Press L to edit next light" : "-> Press L to edit lights");
+    light = (g_minirt.current_light ? "-> Press L to edit next light" : "-> Press L to edit lights");
     int i = 0;
-    if (g_menu.on)
+    if (g_minirt.g_menu.on)
     {   // centered
-        if (current_light)
+        if (g_minirt.current_light)
             print_light_instructions();
         else
             print_cam_obj_instructions();
         // objects
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 7,180, rgb_to_int("255,255,255"), obj_select);
-        if (selected_object)
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 7,180, rgb_to_int("255,255,255"), obj_select);
+        if (g_minirt.selected_object)
         {
-            obj_details = get_object_details(selected_object);
+            obj_details = get_object_details(g_minirt.selected_object);
             while (obj_details[i])
             {
-                mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 4,200 + i * 20, rgb_to_int("255,255,255"), obj_details[i]);
+                mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 4,200 + i * 20, rgb_to_int("255,255,255"), obj_details[i]);
                 i++;
             }
         }
         //current camera
         i = 1;
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 7,300, rgb_to_int("255,255,255"), camera);
-        cam_details = get_object_details((t_object *)current_camera->content);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 7,300, rgb_to_int("255,255,255"), camera);
+        cam_details = get_object_details((t_object *)g_minirt.current_camera->content);
         while (cam_details[i])
         {
-            mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 4,320 + (i - 1) * 20, rgb_to_int("255,255,255"), cam_details[i]);
+            mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 4,320 + (i - 1) * 20, rgb_to_int("255,255,255"), cam_details[i]);
             i++;
         }
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,400, rgb_to_int("255,255,255"), light);
-        mlx_string_put(data.mlx_ptr, data.mlx_win, g_menu.menu_w / 8,420, rgb_to_int("255,255,255"), "-> Press P to save as bitmap");
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,400, rgb_to_int("255,255,255"), light);
+        mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_menu.menu_w / 8,420, rgb_to_int("255,255,255"), "-> Press P to save as bitmap");
 
     }
     return (1);
@@ -212,9 +204,9 @@ int show_menu()
 
 int menu_toggle_msg()
 {
-    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 150, g_resolution.y - 22,
-        rgb_to_int("255,255,255"), (g_menu.on ? "Press M to hide menu" : "Press M to show menu"));
-    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 150, g_resolution.y - 10,
+    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 150, g_minirt.g_resolution.y - 22,
+        rgb_to_int("255,255,255"), (g_minirt.g_menu.on ? "Press M to hide menu" : "Press M to show menu"));
+    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 150, g_minirt.g_resolution.y - 10,
         rgb_to_int("255,255,255"), "Press ESC to quit");
     return (1);
 }
@@ -222,17 +214,17 @@ int selected_objects_msg()
 {
     char *str;
     int n;
-    str = (selected_object ? selected_object->type : "(null)");
-    if (selected_object && !ft_memcmp(selected_object->type,"l", max(ft_strlen(selected_object->type),1)))
+    str = (g_minirt.selected_object ? g_minirt.selected_object->type : "(null)");
+    if (g_minirt.selected_object && !ft_memcmp(g_minirt.selected_object->type,"l", max(ft_strlen(g_minirt.selected_object->type),1)))
     {
-        n = ft_lstsize(lights) - ft_lstsize(current_light);
+        n = ft_lstsize(g_minirt.lights) - ft_lstsize(g_minirt.current_light);
         str = ft_strjoin("Selected light = L",ft_itoa(n + 1));
     }
     else
         str = ft_strjoin("Selected object = ",str);
-    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 180,34, rgb_to_int("255,255,255"), str);
-    n = ft_lstsize(cameras) - ft_lstsize(current_camera);
+    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 180,34, rgb_to_int("255,255,255"), str);
+    n = ft_lstsize(g_minirt.cameras) - ft_lstsize(g_minirt.current_camera);
     str = ft_strjoin("Current camera  = C",ft_itoa(n + 1));
-    mlx_string_put(data.mlx_ptr, data.mlx_win, g_resolution.x - 180,20, rgb_to_int("255,255,255"), str);
+    mlx_string_put(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win, g_minirt.g_resolution.x - 180,20, rgb_to_int("255,255,255"), str);
     return (1);
 }

@@ -1,10 +1,11 @@
 #include "minirt.h"
 //lighting function
+extern struct s_minirt g_minirt;
+
 int get_ambient_color(t_intersection *closest)
 {
-	return (add_colors(mult_colors(g_ambient_light.color, g_ambient_light.brightness), mult_colors(closest->object_color, g_ambient_light.brightness)));
+	return (add_colors(mult_colors(g_minirt.g_ambient_light.color, g_minirt.g_ambient_light.brightness), mult_colors(closest->object_color, g_minirt.g_ambient_light.brightness)));
 }
-
 int get_diffuse_color(t_intersection *closest, t_ray shadow_ray, t_light *light)
 {	
 	t_vector light_dir = vec_normalize(vec_sub(light->pos,shadow_ray.pos));

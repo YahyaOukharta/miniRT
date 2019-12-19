@@ -1,7 +1,7 @@
 #include "minirt.h"
 
-extern t_list *objects;
-extern struct s_menu g_menu;
+extern struct s_minirt g_minirt;
+
 t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 {
 	t_list *objs = objects;
@@ -35,7 +35,7 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 
 int is_ray_blocked(t_ray shadow_ray)
 {
-	t_list *objs = objects;
+	t_list *objs = g_minirt.objects;
 	while (objs)
 	{
 		t_object *obj = (t_object *)(objs->content);
@@ -85,15 +85,15 @@ int compute_pixel_color(t_intersection *closest,t_ray ray, t_list *lights)
 t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
 {
 	t_ray ray;
-	float NDC_x = (x + 0.5) / g_resolution.x; //adding 0.5 to align with middle of the pixel ...
-	float NDC_y = (y + 0.5) / g_resolution.y;
+	float NDC_x = (x + 0.5) / g_minirt.g_resolution.x; //adding 0.5 to align with middle of the pixel ...
+	float NDC_y = (y + 0.5) / g_minirt.g_resolution.y;
 
 	// //convert NDC to screen space   // values from -1 to 1
 	float screen_x =   2 * NDC_x - 1;  
 	float screen_y = -(2 * NDC_y - 1); // to make y values above x axis (screen space) positive .....
 
 	// //convert screen space to camera space, 
-	float Px = screen_x * tan(cam->fov / 2 * M_PI / 180) * g_resolution.x / g_resolution.y;
+	float Px = screen_x * tan(cam->fov / 2 * M_PI / 180) * g_minirt.g_resolution.x / g_minirt.g_resolution.y;
 	float Py = screen_y * tan(cam->fov / 2 * M_PI / 180);
 
 	//cast ray
@@ -106,17 +106,17 @@ t_ray cast_ray(int x, int y, t_camera *cam, float zoom)
 	ray.dir = vec_rotate(ray.dir, cam->rot);
 	return (ray);
 }
-int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, int part)
+int render(int part)
 {
-	int aspect_ratio = g_resolution.x / g_resolution.y;
+	int aspect_ratio = g_minirt.g_resolution.x / g_minirt.g_resolution.y;
 	t_ray ray;
-	t_camera *current_cam = (t_camera *)((t_object *)current_camera->content)->details;	
+	t_camera *current_cam = (t_camera *)((t_object *)g_minirt.current_camera->content)->details;	
 	int fov = current_cam->fov;
 	int w,h;
 	int x = 0;
 	int y = 0;
-	w = g_resolution.x;
-	h = g_resolution.y;
+	w = g_minirt.g_resolution.x;
+	h = g_minirt.g_resolution.y;
 	if (part == 1)
 	{
 		w /= 2;
@@ -149,21 +149,21 @@ int render(data_t data,t_list *objects, t_list *lights, t_list* current_camera, 
 			float color,a_color,d_color,s_color = 0;
 			//convert raster space to Normalized Device Coordinates (NDC)
 			ray = cast_ray(x,y,current_cam, -1);
-			t_intersection* closest = get_closest_intersection(objects, ray);
+			t_intersection* closest = get_closest_intersection(g_minirt.objects, ray);
 			if (closest)
-				color = compute_pixel_color(closest,ray,lights);
+				color = compute_pixel_color(closest,ray,g_minirt.lights);
 			else
 				color = 0;
-			if (g_menu.on && x < g_menu.menu_w)
-				color = mult_colors(color, g_menu.opacity);
-			(data.img_data)[y * w + x] = (int)color;
+			if (g_minirt.g_menu.on && x < g_minirt.g_menu.menu_w)
+				color = mult_colors(color, g_minirt.g_menu.opacity);
+			(g_minirt.data.img_data)[y * w + x] = (int)color;
 			x++;
 		}
 		y++;
 	}
 	if (!part)
 	{
-		mlx_put_image_to_window(data.mlx_ptr,data.mlx_win, data.img_ptr, 0 ,0);
+		mlx_put_image_to_window(g_minirt.data.mlx_ptr,g_minirt.data.mlx_win, g_minirt.data.img_ptr, 0 ,0);
 		menu_toggle_msg();
 		show_menu();
 		selected_objects_msg();
