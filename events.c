@@ -11,20 +11,8 @@ void *render_thread(void *part)
 }
 int	re_render(int key,void *param)
 {
-	//pthread_t t1,t2,t3,t4;
 	mlx_clear_window(g_minirt.data.mlx_ptr, g_minirt.data.mlx_win);
-	// pthread_create(&t1, NULL, render_thread, (void *)1);
-	// pthread_create(&t2, NULL, render_thread, (void *)2);
-	// pthread_create(&t3, NULL, render_thread, (void *)3);
-	// pthread_create(&t4, NULL, render_thread, (void *)4);
-	// pthread_join(t1,NULL); 	
-	// pthread_join(t2,NULL); 	
-	// pthread_join(t3,NULL); 	
-	// pthread_join(t4,NULL);
-
 	render(0);
-	//mlx_put_image_to_window(g_minirt.data.mlx_ptr,g_minirt.data.mlx_win, g_minirt.data.img_ptr, 0, 0);
-
 	return (1);
 }
 //camera
@@ -134,9 +122,11 @@ int resize_object(int btn, int x, int y,void *param)
 	float ratio = 0.05;
 	char *type = g_minirt.selected_object->type;
 	if (!ft_memcmp(type,"sp",max(ft_strlen(type),2)))
-		((t_sphere *)g_minirt.selected_object->details)->diameter += (btn == 4 ? -1 : 1) * ratio;
+		((t_sphere *)g_minirt.selected_object->details)->diameter +=
+			(btn == 4 ? -1 : 1) * ratio;
 	if (!ft_memcmp(type,"sq",max(ft_strlen(type),2)))
-		((t_square *)g_minirt.selected_object->details)->side_size += (btn == 4 ? -1 : 1) * ratio;
+		((t_square *)g_minirt.selected_object->details)->side_size +=
+			(btn == 4 ? -1 : 1) * ratio;
 	re_render(btn, param);
 	return (1);
 }
@@ -156,7 +146,7 @@ int add_new_light(int button, int x, int y, void * param)
 	t_intersection* closest = get_closest_intersection(g_minirt.objects, ray);
 	if (closest)
 	{
-		t_vector p = closest->point;
+		t_vector p = vec_add(closest->point,vec_mult(closest->normal,0.08));
 		char *data = ft_strjoin_va(7,"l ",ft_ftoa(p.x,2),",",ft_ftoa(p.y,2),",",ft_ftoa(p.z,2)," 0.4 255,255,180");
 		add_light(ft_split(data,' '));
 		return (re_render(button, NULL));
