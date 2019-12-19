@@ -8,6 +8,7 @@
 // 'Infinite' distance, used as a default value
 #define RAY_T_MAX 100
 
+
 typedef struct s_ray
 {
     t_vector pos;
@@ -32,5 +33,6 @@ t_intersection *intersects_with_plane(t_ray ray, t_object *obj);
 t_intersection *intersects_with_triangle(t_ray ray, t_object *obj);
 t_intersection *intersects_with_square(t_ray ray, t_object *obj);
 t_intersection *intersects_with_cylinder (t_ray ray, t_object *obj);
+
 
 #endif

@@ -130,26 +130,38 @@ t_intersection *intersects_with_square(t_ray ray, t_object *obj)
 	sq = (t_square *)obj->details;
 	t_vector tmp;
 
+	float Rx,Ry;
+	tmp = vec_normalize(sq->orientation);
+	tmp.x = 0;
+	tmp = vec_normalize(tmp);
+	Rx = acos(vec_dot(vec_create(0,0,1),tmp));
+	tmp = vec_normalize(sq->orientation);
+	tmp.y = 0;
+	tmp = vec_normalize(tmp);
+	Ry = acos(vec_dot(vec_create(0,0,1),tmp));
+	ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
+
 	t_vector p_normal = vec_normalize(sq->orientation);
     // assuming vectors are all normalized
-    float denom = vec_dot(p_normal, ray.dir); 
-    if (denom < 1e-6)
+    float denom = vec_dot(p_normal, ray.dir);
+    if (fabs(denom) < RAY_T_MIN)
 		return (0);
 	t_vector p_origin_dir = vec_sub(sq->pos, ray.pos); //sq origin
-	t = vec_dot(p_origin_dir, p_normal) / denom; 
+	t = vec_dot(p_origin_dir, p_normal) / denom;
 	if (t < RAY_T_MIN)
 		return (0);
+
+	t_vector p = vec_add(ray.pos , vec_mult(ray.dir, t));
+
 	float l,r,u,d;
-	l = sq->pos.x - sq->side_size / 2;
-	r = sq->pos.x + sq->side_size / 2;
-	u = sq->pos.y + sq->side_size / 2;
-	d = sq->pos.y - sq->side_size / 2;
+	l = (p.x - sq->side_size / 2);
+	r = (p.x + sq->side_size / 2);
+	u = (p.y + sq->side_size / 2);
+	d = (p.y - sq->side_size / 2);
 
-	t_vector p = vec_add(ray.pos, vec_mult(ray.dir, t));
-	if (p.x < l || p.x > r || p.y > u || p.y < d)
-		return (0);
-
-	inter->point = p;
+ 	if (p.x < l || p.x > r || p.y < d || p.y > u)
+	 	return (0);
+	inter->point = vec_add(ray.pos, vec_mult(ray.dir, t));;
 	inter->t = t;
 	inter->diffuse = 0.4;
 	inter->specular = 0.2;
