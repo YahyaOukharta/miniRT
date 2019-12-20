@@ -1,4 +1,5 @@
 #include "minirt.h"
+
 extern struct s_minirt g_rt;
 
 //event handling
@@ -77,7 +78,7 @@ int edit_lights(int key, void *param)
 		g_rt.current_light = (g_rt.current_light->next ? g_rt.current_light->next : g_rt.lights);
 	else
 		g_rt.current_light = g_rt.lights;
-	g_rt.selected_object = (t_obj *)g_rt.current_light->content;
+	g_rt.selected_object = ((t_obj *)g_rt.current_light ? (t_obj *)g_rt.current_light->content : NULL);
 	return (re_render(key,NULL));
 }
 int save_frame(int key,void *param)
@@ -147,7 +148,7 @@ int add_new_light(int button, int x, int y, void * param)
 	if (closest)
 	{
 		t_vector p = vec_add(closest->point,vec_mult(closest->normal,0.08));
-		char *data = ft_strjoin_va(7,"l ",ft_ftoa(p.x,2),",",ft_ftoa(p.y,2),",",ft_ftoa(p.z,2)," 0.4 255,255,180");
+		char *data = ft_strjoin_va(7,"l ",ft_ftoa(p.x,2),",",ft_ftoa(p.y,2),",",ft_ftoa(p.z,2)," 0.7 255,255,180");
 		add_light(ft_split(data,' '));
 		return (re_render(button, NULL));
 	}

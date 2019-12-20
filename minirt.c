@@ -39,6 +39,7 @@ int		init_minirt(void)
 		&(g_rt.data.endian));
 	init_menu();
 	init_obj_transformer();
+	init_obj_intersector();
 	return (1);
 }
 
