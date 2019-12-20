@@ -167,42 +167,29 @@ t_intersection	*intersects_with_triangle(t_ray ray, t_obj *obj)
 
 t_intersection *intersects_with_square(t_ray ray, t_obj *obj)
 {
-	float t;
-	t_square *sq;
-	t_intersection* inter;
+	float			t;
+	t_square		*sq;
+	t_intersection	*inter;
+	t_vector		p_normal;
+	float			denom;
+	t_vector		p_origin,p;
+	float l,r,u,d;
+
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
 	sq = (t_square *)obj->details;
-	t_vector tmp;
-
-	// float Rx,Ry;
-	// tmp = vec_normalize(sq->orientation);
-	// tmp.x = 0;
-	// tmp = vec_normalize(tmp);
-	// Rx = acos(vec_dot(vec_create(0,0,1),tmp));
-	// tmp = vec_normalize(sq->orientation);
-	// tmp.y = 0;
-	// tmp = vec_normalize(tmp);
-	// Ry = acos(vec_dot(vec_create(0,0,1),tmp));
-	// ray.dir = vec_rotate(ray.dir,vec_create(Rx,Ry,0));
-
-	t_vector p_normal = vec_normalize(sq->orientation);
-	// assuming vectors are all normalized
-	float denom = vec_dot(p_normal, ray.dir);
+	p_normal = vec_normalize(sq->orientation);
+	denom = vec_dot(p_normal, ray.dir);
 	if (fabs(denom) < RAY_T_MIN)
 		return (0);
-	t_vector p_origin_dir = vec_sub(sq->pos, ray.pos); //sq origin
+	t_vector p_origin_dir = vec_sub(sq->pos, ray.pos);
 	t = vec_dot(p_origin_dir, p_normal) / denom;
 	if (t < RAY_T_MIN)
 		return (0);
-
-	t_vector p = vec_add(ray.pos , vec_mult(ray.dir, t));
-
-	float l,r,u,d;
+	p = vec_add(ray.pos, vec_mult(ray.dir, t));
 	l = (sq->pos.x - sq->side_size / 2);
 	r = (sq->pos.x + sq->side_size / 2);
 	u = (sq->pos.y + sq->side_size / 2);
 	d = (sq->pos.y - sq->side_size / 2);
-
  	if (p.x < l || p.x > r || p.y < d || p.y > u)
 	 	return (0);
 	inter->point = vec_add(ray.pos, vec_mult(ray.dir, t));;
@@ -226,53 +213,69 @@ t_vector	cylinder_normal_at(t_vector point, t_cylinder *cy)
 		: vec_normalize(vec));
 }
 
-int			bool_intersects_with_cylinder (t_ray ray, t_obj *obj, float *t)
+int	solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
 {
-	float d,t1,t2;
-	t_cylinder *cy;
-	cy = (t_cylinder *)obj->details;
-	t_vector p0 = vec_sub(ray.pos,cy->pos);
-	double a = ray.dir.x*ray.dir.x+ray.dir.z*ray.dir.z;
-	double b = ray.dir.x*p0.x +ray.dir.z*p0.z;
-	double c = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
-	double delta = b * b - a * c;
-	if (delta < RAY_T_MIN)
-			return 0;
-	t2 = (-b - sqrt (delta)) /a;
-	t1 = (-b + sqrt (delta)) /a;
+	float	discr;
+	float	q;
 
-	if (t1 > RAY_T_MIN && t1 < RAY_T_MAX)
-		d = t1;
-	if (t2 < t1 && t2 > RAY_T_MIN && t2 < RAY_T_MAX)
-		d = t2;
-	else
+	discr = coeffs[1] * coeffs[1] - coeffs[0] * coeffs[2];
+	if (discr < 0)
 		return (0);
-	t_vector point = vec_add(ray.pos,vec_mult(ray.dir,d));
-	if (point.y - cy->pos.y > cy->height || point.y - cy->pos.y < 0)
-		return(0);
-	if (t)
-		*t = d;
+	else
+	{
+		*t2 = (-coeffs[1] - sqrt(discr)) / coeffs[0];
+		*t1 = (-coeffs[1] + sqrt(discr)) / coeffs[0];
+	}
 	return (1);
 }
 
-t_intersection *intersects_with_cylinder (t_ray ray, t_obj *obj)
+int				bool_intersects_with_cylinder(t_ray ray,
+	t_obj *obj, float *dist)
 {
-	float t;
-	t_cylinder *cy;
-	t_intersection* inter;
+	float		t[3];
+	t_cylinder	*cy;
+	t_vector	p0;
+	float		coeffs[3];
 
-	if(!bool_intersects_with_cylinder(ray, obj, &t))
+	cy = (t_cylinder *)obj->details;
+	p0 = vec_sub(ray.pos, cy->pos);
+	coeffs[0] = ray.dir.x * ray.dir.x + ray.dir.z * ray.dir.z;
+	coeffs[1] = ray.dir.x * p0.x + ray.dir.z * p0.z;
+	coeffs[2] = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
+	if (!solve_quadratic_cy(coeffs, &t[1], &t[2]))
+		return (0);
+	if (t[1] > RAY_T_MIN && t[1] < RAY_T_MAX)
+		t[0] = t[1];
+	if (t[2] < t[1] && t[2] > RAY_T_MIN && t[2] < RAY_T_MAX)
+		t[0] = t[2];
+	else
+		return (0);
+	p0 = vec_add(ray.pos, vec_mult(ray.dir, t[0]));
+	if (p0.y - cy->pos.y > cy->height || p0.y - cy->pos.y < 0)
+		return (0);
+	if (dist)
+		*dist = t[0];
+	return (1);
+}
+
+t_intersection	*intersects_with_cylinder(t_ray ray, t_obj *obj)
+{
+	float			t;
+	t_cylinder		*cy;
+	t_intersection	*inter;
+
+	if (!bool_intersects_with_cylinder(ray, obj, &t))
 		return (0);
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
-	cy = (t_cylinder *)obj->details;	
-	inter->point = vec_add(ray.pos,vec_mult(ray.dir,t));
+	cy = (t_cylinder *)obj->details;
+	inter->point = vec_add(ray.pos, vec_mult(ray.dir, t));
 	inter->t = t;
 	inter->diffuse = 0.4;
 	inter->specular = 0.2;
 	inter->s_power = 16;
 	inter->obj = obj;
 	inter->object_color = cy->color;
-	inter->normal = cylinder_normal_at(inter->point,cy);
+	inter->normal = cylinder_normal_at(inter->point, cy);
 	return inter;
 }
 
