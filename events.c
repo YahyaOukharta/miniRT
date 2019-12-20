@@ -1,5 +1,5 @@
 #include "minirt.h"
-
+#include <time.h>
 extern struct s_minirt g_rt;
 
 //event handling
@@ -12,8 +12,13 @@ void *render_thread(void *part)
 }
 int	re_render(int key,void *param)
 {
+	clock_t t[2];
 	mlx_clear_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
+	t[0] = clock();
 	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
+	t[1] = clock();
+	ft_printf("Rendering time (s) : %s\n",
+		ft_ftoa((double)(t[1] - t[0]) / (double)CLOCKS_PER_SEC, 3));
 	return (1);
 }
 //camera
@@ -157,8 +162,13 @@ int add_new_light(int button, int x, int y, void * param)
 int handle_mouse(int button, int x, int y, void *param)
 {	
 	if (button == 1 && y >= 0)
-		return ((g_rt.current_light ? add_new_light(button,x,y,param) : select_obj(button,x,y,param)));
+		return ((g_rt.current_light ?
+		add_new_light(button, x, y, param)
+		: select_obj(button, x, y, param)));
 	if ((button == 4 || button == 5) && y >= 0)
-		return ((g_rt.current_light ? move_light_z(button, x,y,param) : (g_rt.selected_object && resize_object(button,x,y,param))));
+		return ((g_rt.current_light ?
+		move_light_z(button, x, y, param)
+		: (g_rt.selected_object
+			&& resize_object(button, x, y, param))));
 	return (0);
 }

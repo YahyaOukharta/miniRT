@@ -32,13 +32,11 @@ int             bool_intersects_with_sphere(t_ray ray, t_obj *obj, float *t);
 t_intersection *intersects_with_sphere(t_ray ray, t_obj *obj);
 int				bool_intersects_with_plane(t_ray ray, t_obj *obj, float *t);
 t_intersection *intersects_with_plane(t_ray ray, t_obj *obj);
+int             bool_intersects_with_triangle(t_ray ray, t_obj *obj, float *t);
 t_intersection *intersects_with_triangle(t_ray ray, t_obj *obj);
+int             bool_intersects_with_square(t_ray ray, t_obj *obj, float *t);
 t_intersection *intersects_with_square(t_ray ray, t_obj *obj);
+int             bool_intersects_with_cylinder(t_ray ray, t_obj *obj, float *t);
 t_intersection *intersects_with_cylinder (t_ray ray, t_obj *obj);
-
-typedef t_intersection*(*t_obj_intersector)(t_ray, t_obj *);
-t_obj_intersector g_obj_inter[5];
-
-void init_obj_intersector(void);
 
 #endif

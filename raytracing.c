@@ -73,8 +73,6 @@ t_intersection	*get_closest_intersection(t_list *objects, t_ray ray)
 
 int		is_ray_blocked(t_ray shadow_ray, t_vector light_pos, t_list *objs)
 {
-	t_list	*objs;
-	t_obj	*obj;
 	float	t;
 	float	light_dist;
 
@@ -158,13 +156,11 @@ int		render(int x, int y, int w, int h)
 	float			color;
 	int				menu;
 	t_intersection	*i;
-	clock_t			t[2];
 
 	menu = 0;
 	y = -1;
 	if (!x && !y && w == g_rt.g_res.x && h == g_rt.g_res.y)
 		menu = 1;
-	t[0] = clock();
 	while (++y < h)
 	{
 		x = -1;
@@ -179,9 +175,6 @@ int		render(int x, int y, int w, int h)
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));
 		}
 	}
-	t[1] = clock();
-	printf("Rendering time (s) : %f \n",
-		(double)(t[1] - t[0]) / (double)CLOCKS_PER_SEC);
 	put_menu(menu);
 	return (1);
 }

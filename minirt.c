@@ -39,7 +39,6 @@ int		init_minirt(void)
 		&(g_rt.data.endian));
 	init_menu();
 	init_obj_transformer();
-	init_obj_intersector();
 	return (1);
 }
 
@@ -56,7 +55,7 @@ int		main(int argc, char **argv)
 	init_minirt();
 	if (argc == 3)
 		return (save_frame(0, 0));
-	if (!render(0,0,g_rt.g_res.x,g_rt.g_res.y))
+	if (!render(0, 0, g_rt.g_res.x, g_rt.g_res.y))
 		return (0);
 	mlx_key_hook(g_rt.data.mlx_win, handle_keys, NULL);
 	mlx_mouse_hook(g_rt.data.mlx_win, handle_mouse, NULL);
