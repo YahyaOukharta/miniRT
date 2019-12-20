@@ -15,7 +15,7 @@
 
 extern struct s_minirt g_rt;
 
-t_intersection *test_intersection(t_obj *obj, t_ray ray)
+t_intersection	*test_intersection(t_obj *obj, t_ray ray)
 {
 	if (!ft_memcmp(obj->type, "sp", 2))
 		return (intersects_with_sphere(ray, obj));
@@ -30,23 +30,24 @@ t_intersection *test_intersection(t_obj *obj, t_ray ray)
 	else
 		return (0);
 }
-int 			intersects_with_any(t_obj *obj, t_ray ray, float *t)
+
+int				intersects_with_any(t_obj *obj, t_ray ray, float *t)
 {
 	if (!ft_memcmp(obj->type, "sp", 2))
 		return (bool_intersects_with_sphere(ray, obj, t));
 	else if (!ft_strncmp(obj->type, "pl", 2))
-	 	return (bool_intersects_with_plane(ray, obj, t));
-	// else if (!ft_strncmp(obj->type, "tr", 2))
-	// 	return (bool_intersects_with_triangle(ray, obj));
-	// else if (!ft_strncmp(obj->type, "cy", 2))
-	// 	return (bool_intersects_with_cylinder(ray, obj));
-	// else if (!ft_strncmp(obj->type, "sq", 2))
-	// 	return (bool_intersects_with_square(ray, obj));
+		return (bool_intersects_with_plane(ray, obj, t));
+	else if (!ft_strncmp(obj->type, "tr", 2))
+		return (bool_intersects_with_triangle(ray, obj, t));
+	else if (!ft_strncmp(obj->type, "cy", 2))
+		return (bool_intersects_with_cylinder(ray, obj, t));
+	//else if (!ft_strncmp(obj->type, "sq", 2))
+	//	return (bool_intersects_with_square(ray, obj));
 	else
 		return (0);
 }
 
-t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
+t_intersection	*get_closest_intersection(t_list *objects, t_ray ray)
 {
 	t_list			*objs;
 	t_intersection	*closest;
@@ -70,19 +71,18 @@ t_intersection *get_closest_intersection(t_list *objects, t_ray ray)
 	return (closest);
 }
 
-int		is_ray_blocked(t_ray shadow_ray, t_vector light_pos)
+int		is_ray_blocked(t_ray shadow_ray, t_vector light_pos, t_list *objs)
 {
 	t_list	*objs;
 	t_obj	*obj;
-	int		index;
-	objs = g_rt.objects;
-	float t;
-	float light_dist;
+	float	t;
+	float	light_dist;
 
 	light_dist = vec_len(vec_sub(shadow_ray.pos, light_pos));
 	while (objs)
 	{
-		if (intersects_with_any((t_obj *)objs->content, shadow_ray, &t) && t < light_dist)
+		if (intersects_with_any((t_obj *)objs->content, shadow_ray, &t)
+			&& t < light_dist)
 			return (1);
 		objs = objs->next;
 	}
@@ -104,7 +104,7 @@ int		compute_pixel_color(t_intersection *closest, t_ray ray, t_list *lights)
 		shadow_ray.pos = vec_add(vec_add(ray.pos, vec_mult(ray.dir, closest->t))
 			, vec_mult(closest->normal, RAY_T_MIN));
 		shadow_ray.dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
-		if (!is_ray_blocked(shadow_ray, light->pos))
+		if (!is_ray_blocked(shadow_ray, light->pos, g_rt.objects))
 		{
 			color[2] = add_colors(color[2],
 				get_diffuse_color(closest, shadow_ray, light));
@@ -158,12 +158,13 @@ int		render(int x, int y, int w, int h)
 	float			color;
 	int				menu;
 	t_intersection	*i;
-	clock_t t1,t2;	
+	clock_t			t[2];
+
 	menu = 0;
 	y = -1;
 	if (!x && !y && w == g_rt.g_res.x && h == g_rt.g_res.y)
 		menu = 1;
-	t1 = clock();
+	t[0] = clock();
 	while (++y < h)
 	{
 		x = -1;
@@ -178,8 +179,9 @@ int		render(int x, int y, int w, int h)
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));
 		}
 	}
-	t2 = clock();
-	printf("Rendering time (s) : %f \n",(double)(t2 - t1) / (double)CLOCKS_PER_SEC);
+	t[1] = clock();
+	printf("Rendering time (s) : %f \n",
+		(double)(t[1] - t[0]) / (double)CLOCKS_PER_SEC);
 	put_menu(menu);
 	return (1);
 }

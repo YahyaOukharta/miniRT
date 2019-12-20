@@ -85,7 +85,7 @@ t_intersection					*test_intersection(t_obj *obj, t_ray ray);
 int								intersects_with_any(t_obj *obj, t_ray ray, float *t);
 t_intersection					*get_closest_intersection(t_list *objects,
 									t_ray ray);
-int								is_ray_blocked(t_ray shadow_ray, t_vector light_pos);
+int								is_ray_blocked(t_ray shadow_ray, t_vector light_pos, t_list *objs);
 int								compute_pixel_color(t_intersection *closest,
 									t_ray ray, t_list *lights);
 t_ray							cast_ray(int x, int y,
