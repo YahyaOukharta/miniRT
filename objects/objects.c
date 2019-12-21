@@ -37,7 +37,6 @@ t_cam *new_camera(char **info)
     free_s_tab(tab);
 
     new_cam->fov = ft_atof(info[3]);
-    //calculate rotation angles around x and y axis
     t_vector tmp;
 
     tmp = vec_normalize(new_cam->dir);
