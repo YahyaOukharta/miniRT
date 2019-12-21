@@ -1,6 +1,5 @@
 #include "objects.h"
 #include "../minirt.h"
-
 extern struct s_minirt g_rt;
 
 t_cylinder	*new_cylinder(char **info)
@@ -35,26 +34,27 @@ int			add_cylinder(char **tab)
 	ft_lstadd_back(&g_rt.objects, ft_lstnew(obj));
 	return (1);
 }
+
 int			transform_cylinder(int key, void *param)
 {
-	t_cylinder *cylinder = (t_cylinder *)g_rt.selected_object->details;
-	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
-	float vel = 0.1;
-	if (key == KEY_D)
-		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
-	if (key == KEY_A)
-		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
-	if (key == KEY_W)
-		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
-	if (key == KEY_S)
-		cylinder->pos = vec_add(cylinder->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
+	t_cylinder *cy;
+	t_cam *cam;
+
+	cy = (t_cylinder *)g_rt.selected_object->details;
+	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
+	if (key == KEY_D || key == KEY_A)
+		cy->pos = vec_add(cy->pos,
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL * (key == KEY_D ? 1 : -1)));
+	if (key == KEY_W || key == KEY_S)
+		cy->pos = vec_add(cy->pos,
+			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL * (key == KEY_W ? 1 : -1)));
 	if (key == KEY_RIGHT)
-	   cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(0,0,vel));
+		cy->orientation = vec_rotate(cy->orientation, vec_create(0, 0, ROT_VEL));
 	if (key == KEY_LEFT)
-		cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(0,0,-vel));
+		cy->orientation = vec_rotate(cy->orientation, vec_create(0, 0, -ROT_VEL));
 	if (key == KEY_UP)
-		cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(vel,0,0));
+		cy->orientation = vec_rotate(cy->orientation, vec_create(ROT_VEL, 0, 0));
 	if (key == KEY_DOWN)
-		cylinder->orientation = vec_rotate(cylinder->orientation, vec_create(-vel,0,0));
+		cy->orientation = vec_rotate(cy->orientation, vec_create(-ROT_VEL, 0, 0));
 	return (0);
 }

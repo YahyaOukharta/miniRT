@@ -1,11 +1,11 @@
+#include "objects.h"
 #include "../minirt.h"
-
 extern struct s_minirt g_rt;
 
 t_sphere	*new_sphere(char **info)
 {
-	t_sphere    *new_sphere;
-	char        **tab;
+	t_sphere	*new_sphere;
+	char		**tab;
 
 	new_sphere = (t_sphere *)malloc(sizeof(t_sphere));
 	tab = ft_split(info[1], ',');
@@ -28,18 +28,26 @@ int			add_sphere(char **tab)
 	ft_lstadd_back(&g_rt.objects, ft_lstnew(obj));
 	return (1);
 }
+
 int			transform_sphere(int key, void *param)
 {
-	t_sphere *sphere = (t_sphere *)g_rt.selected_object->details;
-	t_cam *cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
-	float vel = 0.1;
+	t_sphere	*sphere;
+	t_cam		*cam;
+	float		vel;
+
+	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
+	sphere = (t_sphere *)g_rt.selected_object->details;
 	if (key == KEY_D)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),vel));
+		sphere->pos = vec_add(sphere->pos,
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL));
 	if (key == KEY_A)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(1,0,0), cam->rot),-vel));
+		sphere->pos = vec_add(sphere->pos,
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), -TRANS_VEL));
 	if (key == KEY_W)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),vel));
+		sphere->pos = vec_add(sphere->pos,
+			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL));
 	if (key == KEY_S)
-		sphere->pos = vec_add(sphere->pos,vec_mult(vec_rotate(vec_create(0,1,0), cam->rot),-vel));
+		sphere->pos = vec_add(sphere->pos,
+			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), -TRANS_VEL));
 	return (0);
 }

@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 #ifndef OBJECTS_H
 # define OBJECTS_H
+# define TRANS_VEL 0.1
+# define ROT_VEL 0.1
 
 typedef struct	s_vector
 {
@@ -29,7 +31,7 @@ typedef struct	s_camera
 {
 	t_vector	pos;
 	t_vector	dir;
-	t_vector 	rot;
+	t_vector	rot;
 	int			fov;
 }				t_cam;
 
@@ -97,12 +99,12 @@ typedef int(*t_obj_constr)(char **);
 t_obj_constr g_obj_constructor[10];
 typedef int(*t_obj_trans)(int, void *);
 t_obj_trans g_obj_transformer[10];
-void			init_obj_constructor(void);
-void			init_obj_transformer(void);
-t_cam			*new_camera(char **info);
-int				add_camera(char **tab);
-t_light			*new_light(char **info);
-int				add_light(char **tab);
+void		init_obj_constructor(void);
+void		init_obj_transformer(void);
+t_cam		*new_camera(char **info);
+int			add_camera(char **tab);
+t_light		*new_light(char **info);
+int			add_light(char **tab);
 int			transform_light(int key, void *param);
 t_sphere	*new_sphere(char **info);
 int			add_sphere(char **tab);
@@ -110,13 +112,17 @@ int			transform_sphere(int key, void *param);
 t_square	*new_square(char **info);
 int			add_square(char **tab);
 int			transform_square(int key, void *param);
-
 t_plane		*new_plane(char **info);
 int			add_plane(char **tab);
 int			transform_plane(int key, void *param);
 t_plane		*new_plane(char **info);
 int			add_plane(char **tab);
 int			transform_plane(int key, void *param);
-
+t_cylinder	*new_cylinder(char **info);
+int			add_cylinder(char **tab);
+int			transform_cylinder(int key, void *param);
+t_triangle	*new_triangle(char **info);
+int			add_triangle(char **tab);
+int			transform_triangle(int key, void *param);
 
 #endif

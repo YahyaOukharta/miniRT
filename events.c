@@ -100,11 +100,11 @@ int	edit_lights(int key, void *param)
 
 int	save_frame(int key, void *param)
 {
-	ft_printf("	[~] Saving...\n");
+	ft_printf("  [~] Saving...\n");
 	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
 	save_bmp("img.bmp", g_rt.g_res.x, g_rt.g_res.y,
 		72, (int *)g_rt.data.img_data);
-	ft_printf("	[+] Saved frame\n");
+	ft_printf("  [+] Saved frame\n");
 	return (0);
 }
 

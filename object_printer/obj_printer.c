@@ -16,7 +16,8 @@ int print_objs(t_list *objects)
     while (objects)
     {
         obj = (t_obj *)(g_rt.objects->content);
-        index = index_of_in_tab(obj->type, (tmp = ft_split(g_rt.g_supported_objects, ';'))) - 2;
+        index = index_of_in_tab(obj->type,
+            (tmp = ft_split(g_rt.g_supported_objects, ';'))) - 2;
         free_s_tab(tmp);
         g_obj_printer[index](obj->details);
         objects = objects->next;
