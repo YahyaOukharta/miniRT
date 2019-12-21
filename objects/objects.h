@@ -97,11 +97,26 @@ typedef int(*t_obj_constr)(char **);
 t_obj_constr g_obj_constructor[10];
 typedef int(*t_obj_trans)(int, void *);
 t_obj_trans g_obj_transformer[10];
+void			init_obj_constructor(void);
+void			init_obj_transformer(void);
 t_cam			*new_camera(char **info);
 int				add_camera(char **tab);
 t_light			*new_light(char **info);
 int				add_light(char **tab);
-void			init_obj_constructor(void);
-void			init_obj_transformer(void);
+int			transform_light(int key, void *param);
+t_sphere	*new_sphere(char **info);
+int			add_sphere(char **tab);
+int			transform_sphere(int key, void *param);
+t_square	*new_square(char **info);
+int			add_square(char **tab);
+int			transform_square(int key, void *param);
+
+t_plane		*new_plane(char **info);
+int			add_plane(char **tab);
+int			transform_plane(int key, void *param);
+t_plane		*new_plane(char **info);
+int			add_plane(char **tab);
+int			transform_plane(int key, void *param);
+
 
 #endif
