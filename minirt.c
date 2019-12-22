@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 struct s_minirt g_rt;
+int				g_saving;
 
 void	init_objs(void)
 {

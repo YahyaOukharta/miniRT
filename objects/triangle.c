@@ -59,7 +59,7 @@ int			transform_triangle(int key, void *param)
 	if (key == KEY_W || key == KEY_S)
 	{
 		dir = vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot),
-				(key == KEY_D ? 1 : -1) * TRANS_VEL);
+				(key == KEY_W ? 1 : -1) * TRANS_VEL);
 		tri->p1 = vec_add(tri->p1, dir);
 		tri->p2 = vec_add(tri->p2, dir);
 		tri->p3 = vec_add(tri->p3, dir);

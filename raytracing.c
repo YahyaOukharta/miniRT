@@ -13,7 +13,9 @@
 #include "minirt.h"
 #include <time.h>
 
-extern struct s_minirt g_rt;
+extern struct s_minirt	g_rt;
+extern int				g_saving;
+int						g_tmp_y;
 
 t_intersection	*test_intersection(t_obj *obj, t_ray ray)
 {
@@ -138,7 +140,7 @@ t_ray	cast_ray(int x, int y, t_cam *cam, float zoom)
 	return (ray);
 }
 
-void	put_menu(int menu)
+int	put_menu(int menu)
 {
 	if (!menu)
 	{
@@ -148,6 +150,8 @@ void	put_menu(int menu)
 		show_menu();
 		selected_objects_msg();
 	}
+	g_saving = 0;
+	return (1);
 }
 
 int		render(int x, int y, int w, int h)
@@ -171,10 +175,10 @@ int		render(int x, int y, int w, int h)
 				->details, -1);
 			i = get_closest_intersection(g_rt.objects, ray);
 			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : 0);
-			(g_rt.data.img_data)[y * w + x] = (int)mult_colors(color,
+			g_tmp_y = (g_saving ? h - y - 1 : y);
+			(g_rt.data.img_data)[g_tmp_y * w + x] = (int)mult_colors(color,
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));
 		}
 	}
-	put_menu(menu);
-	return (1);
+	return (put_menu(menu));
 }

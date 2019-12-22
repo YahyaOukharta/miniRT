@@ -216,22 +216,15 @@ int add_colors(int c1, int c2)
     c1 /=256;    
     r1 = c1 % 256;
     c1 /=256;
-    
     b2 = c2 % 256;
     c2 /=256;    
     g2 = c2 % 256;
     c2 /=256;    
     r2 = c2 % 256;
     c2 /=256;
-
-    // r3 = (r1 + r2) / 2;
-    // g3 = (g1 + g2) / 2;
-    // b3 = (b1 + b2) / 2;
-    
     r3 = min((r1 + r2), 255);
     g3 = min((g1 + g2), 255);
     b3 = min((b1 + b2), 255);
-
     result = r3 * 256;
     result = (result + g3) * 256;     
     result = result + b3;
@@ -285,45 +278,37 @@ void save_bmp (const char *filename, int w, int h, int dpi, int *image) {
 	
 	int ppm = dpi*m;
 	
-	unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0,0,0, 54,0,0,0};
-	unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0};
-	
-	bmpfileheader[ 2] = (unsigned char)(filesize);
-	bmpfileheader[ 3] = (unsigned char)(filesize>>8);
-	bmpfileheader[ 4] = (unsigned char)(filesize>>16);
-	bmpfileheader[ 5] = (unsigned char)(filesize>>24);
-	
-	bmpinfoheader[ 4] = (unsigned char)(w);
-	bmpinfoheader[ 5] = (unsigned char)(w>>8);
-	bmpinfoheader[ 6] = (unsigned char)(w>>16);
-	bmpinfoheader[ 7] = (unsigned char)(w>>24);
-	
-	bmpinfoheader[ 8] = (unsigned char)(h);
-	bmpinfoheader[ 9] = (unsigned char)(h>>8);
+	unsigned char bmpfileheader[14] = {'B', 'M', 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0};
+	unsigned char bmpinfoheader[40] = {40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 24, 0};
+	bmpfileheader[2] = (unsigned char)(filesize);
+	bmpfileheader[3] = (unsigned char)(filesize>>8);
+	bmpfileheader[4] = (unsigned char)(filesize>>16);
+	bmpfileheader[5] = (unsigned char)(filesize>>24);
+	bmpinfoheader[4] = (unsigned char)(w);
+	bmpinfoheader[5] = (unsigned char)(w>>8);
+	bmpinfoheader[6] = (unsigned char)(w>>16);
+	bmpinfoheader[7] = (unsigned char)(w>>24);
+	bmpinfoheader[8] = (unsigned char)(h);
+	bmpinfoheader[9] = (unsigned char)(h>>8);
 	bmpinfoheader[10] = (unsigned char)(h>>16);
 	bmpinfoheader[11] = (unsigned char)(h>>24);
-	
 	bmpinfoheader[21] = (unsigned char)(s);
 	bmpinfoheader[22] = (unsigned char)(s>>8);
 	bmpinfoheader[23] = (unsigned char)(s>>16);
 	bmpinfoheader[24] = (unsigned char)(s>>24);
-	
 	bmpinfoheader[25] = (unsigned char)(ppm);
 	bmpinfoheader[26] = (unsigned char)(ppm>>8);
 	bmpinfoheader[27] = (unsigned char)(ppm>>16);
 	bmpinfoheader[28] = (unsigned char)(ppm>>24);
-	
 	bmpinfoheader[29] = (unsigned char)(ppm);
 	bmpinfoheader[30] = (unsigned char)(ppm>>8);
 	bmpinfoheader[31] = (unsigned char)(ppm>>16);
 	bmpinfoheader[32] = (unsigned char)(ppm>>24);
-	
 	f = fopen(filename,"wb");
-	
-	fwrite(bmpfileheader,1,14,f);
-	fwrite(bmpinfoheader,1,40,f);
-	
-	for (int i = 0; i < k; i++) {
+	fwrite(bmpfileheader, 1, 14, f);
+	fwrite(bmpinfoheader, 1, 40, f);
+	for (int i = 0; i < k; i++)
+    {
 		int rgb = image[i];
 		double blue = rgb % 256;
         rgb /= 256;
