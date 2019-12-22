@@ -128,6 +128,8 @@ int	handle_keys(int key, void *param)
 		return (edit_lights(key, param));
 	else if (key == KEY_P)
 		return (save_frame(key, param));
+	else if (key == KEY_ONE)
+		return (print_objs());
 	return (0);
 }
 

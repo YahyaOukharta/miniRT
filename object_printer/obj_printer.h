@@ -15,7 +15,7 @@ int print_triangle(void *obj);
 typedef int(*t_obj_printer)(void *);
 t_obj_printer g_obj_printer[8];
 
-int print_objs(t_list *objects);
+int print_objs(void);
 void init_obj_printer(void);
 
 #endif

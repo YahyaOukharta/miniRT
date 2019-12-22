@@ -48,7 +48,7 @@ int	bool_intersects_with_sphere(t_ray ray, t_obj *obj, float *dist)
 	return (1);
 }
 
-t_intersection*	intersects_with_sphere(t_ray ray,	t_obj *obj)
+t_intersection	*intersects_with_sphere(t_ray ray, t_obj *obj)
 {
 	t_intersection	*inter;
 	t_sphere		*sphere;
@@ -68,7 +68,7 @@ t_intersection*	intersects_with_sphere(t_ray ray,	t_obj *obj)
 	inter->diffuse = 0.4;
 	inter->specular = 0.4;
 	inter->s_power = 20;
-	return inter;
+	return (inter);
 }
 
 int				bool_intersects_with_plane(t_ray ray, t_obj *obj, float *t)
@@ -111,7 +111,7 @@ t_intersection	*intersects_with_plane(t_ray ray, t_obj *obj)
 	inter->diffuse = 0.4;
 	inter->specular = 0.4;
 	inter->s_power = 2;
-	return inter;
+	return (inter);
 }
 
 int				bool_intersects_with_triangle(t_ray ray, t_obj *obj, float *t)
@@ -162,7 +162,7 @@ t_intersection	*intersects_with_triangle(t_ray ray, t_obj *obj)
 	inter->diffuse = 0.4;
 	inter->specular = 0.2;
 	inter->s_power = 4;
-	return inter;
+	return (inter);
 }
 
 t_intersection *intersects_with_square(t_ray ray, t_obj *obj)
@@ -200,7 +200,7 @@ t_intersection *intersects_with_square(t_ray ray, t_obj *obj)
 	inter->obj = obj;
 	inter->object_color = sq->color;
 	inter->normal = sq->orientation;
-	return inter;
+	return (inter);
 }
 
 t_vector	cylinder_normal_at(t_vector point, t_cylinder *cy)
@@ -276,6 +276,6 @@ t_intersection	*intersects_with_cylinder(t_ray ray, t_obj *obj)
 	inter->obj = obj;
 	inter->object_color = cy->color;
 	inter->normal = cylinder_normal_at(inter->point, cy);
-	return inter;
+	return (inter);
 }
 

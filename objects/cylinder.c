@@ -1,5 +1,6 @@
 #include "objects.h"
 #include "../minirt.h"
+
 extern struct s_minirt g_rt;
 
 t_cylinder	*new_cylinder(char **info)
@@ -37,24 +38,29 @@ int			add_cylinder(char **tab)
 
 int			transform_cylinder(int key, void *param)
 {
-	t_cylinder *cy;
-	t_cam *cam;
+	t_cylinder	*cy;
+	t_cam		*cam;
 
+	(void)param;
 	cy = (t_cylinder *)g_rt.selected_object->details;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D || key == KEY_A)
-		cy->pos = vec_add(cy->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL * (key == KEY_D ? 1 : -1)));
+		cy->pos = vec_add(cy->pos, vec_mult(vec_rotate(vec_create(1, 0, 0),
+				cam->rot), (key == KEY_D ? 1 : -1) * TRANS_VEL));
 	if (key == KEY_W || key == KEY_S)
-		cy->pos = vec_add(cy->pos,
-			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL * (key == KEY_W ? 1 : -1)));
+		cy->pos = vec_add(cy->pos, vec_mult(vec_rotate(vec_create(0, 1, 0),
+				cam->rot), (key == KEY_W ? 1 : -1) * TRANS_VEL));
 	if (key == KEY_RIGHT)
-		cy->orientation = vec_rotate(cy->orientation, vec_create(0, 0, ROT_VEL));
+		cy->orientation = vec_rotate(cy->orientation,
+			vec_create(0, 0, ROT_VEL));
 	if (key == KEY_LEFT)
-		cy->orientation = vec_rotate(cy->orientation, vec_create(0, 0, -ROT_VEL));
+		cy->orientation = vec_rotate(cy->orientation,
+			vec_create(0, 0, -ROT_VEL));
 	if (key == KEY_UP)
-		cy->orientation = vec_rotate(cy->orientation, vec_create(ROT_VEL, 0, 0));
+		cy->orientation = vec_rotate(cy->orientation,
+			vec_create(ROT_VEL, 0, 0));
 	if (key == KEY_DOWN)
-		cy->orientation = vec_rotate(cy->orientation, vec_create(-ROT_VEL, 0, 0));
+		cy->orientation = vec_rotate(cy->orientation,
+			vec_create(-ROT_VEL, 0, 0));
 	return (0);
 }

@@ -38,8 +38,8 @@ int			transform_plane(int key, void *param)
 {
 	t_plane		*plane;
 	t_cam		*cam;
-	float		vel;
 
+	(void)param;
 	plane = (t_plane *)g_rt.selected_object->details;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D)
@@ -56,9 +56,9 @@ int			transform_plane(int key, void *param)
 			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), -TRANS_VEL));
 	if (key == KEY_RIGHT || key == KEY_LEFT)
 		rotate_y(&plane->orientation.x, &plane->orientation.z,
-			ROT_VEL * (key == KEY_RIGHT ? 1 : -1));
-	if (key == KEY_UP | key == KEY_DOWN)
+			(key == KEY_RIGHT ? 1 : -1) * ROT_VEL);
+	if (key == KEY_UP || key == KEY_DOWN)
 		rotate_x(&plane->orientation.y, &plane->orientation.z,
-			ROT_VEL * (key == KEY_UP ? 1 : -1));
+			(key == KEY_UP ? 1 : -1) * ROT_VEL);
 	return (0);
 }

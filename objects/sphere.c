@@ -1,5 +1,6 @@
 #include "objects.h"
 #include "../minirt.h"
+
 extern struct s_minirt g_rt;
 
 t_sphere	*new_sphere(char **info)
@@ -35,6 +36,7 @@ int			transform_sphere(int key, void *param)
 	t_cam		*cam;
 	float		vel;
 
+	(void)param;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	sphere = (t_sphere *)g_rt.selected_object->details;
 	if (key == KEY_D)

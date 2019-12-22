@@ -1,5 +1,6 @@
 #include "objects.h"
 #include "../minirt.h"
+
 extern struct s_minirt g_rt;
 
 t_light		*new_light(char **info)
@@ -34,6 +35,7 @@ int			transform_light(int key, void *param)
 	t_light	*light;
 	t_cam	*cam;
 
+	(void)param;
 	light = (t_light *)g_rt.selected_object->details;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D)

@@ -44,9 +44,10 @@ int		init_minirt(void)
 
 int		main(int argc, char **argv)
 {
-	//init_objs();
+	init_objs();
 	if (argc < 2 || argc > 3)
-		return (ft_printf(take_out(ft_strdup("Error\n [!] Wrong numbers of arguments, \
+		return (ft_printf(take_out(ft_strdup("Error\n \
+		[!] Wrong numbers of arguments, \
 		Enter path for scene file as first argument, \
 		and --save as second argument (optional) \
 		to save rendered image as .bmp\n"), '\t')) ? 0 : 0);

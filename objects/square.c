@@ -40,20 +40,17 @@ int			transform_square(int key, void *param)
 	t_square	*square;
 	t_cam		*cam;
 
+	(void)param;
 	square = (t_square *)g_rt.selected_object->details;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
-	if (key == KEY_D)
+	if (key == KEY_D || key == KEY_A)
 		square->pos = vec_add(square->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL));
-	if (key == KEY_A)
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot),
+				(key == KEY_D ? 1 : -1) * TRANS_VEL));
+	if (key == KEY_W || key == KEY_S)
 		square->pos = vec_add(square->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), -TRANS_VEL));
-	if (key == KEY_W)
-		square->pos = vec_add(square->pos,
-			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL));
-	if (key == KEY_S)
-		square->pos = vec_add(square->pos,
-			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), -TRANS_VEL));
+			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot),
+				(key == KEY_W ? 1 : -1) * TRANS_VEL));
 	if (key == KEY_RIGHT)
 		rotate_y(&square->orientation.x, &square->orientation.z, ROT_VEL);
 	if (key == KEY_LEFT)

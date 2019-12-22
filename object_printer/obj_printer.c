@@ -2,20 +2,22 @@
 
 extern struct s_minirt g_rt;
 
-int print_objs(t_list *objects)
+int print_objs()
 {
-    t_obj *obj;
-    int index;
-    char **tmp;
-	
+    t_obj   *obj;
+    int     index;
+    char    **tmp;
+	t_list  *objects;
+
     if (g_rt.g_res.is_set)
 		ft_printf("Resolution    = %dx%d\t\t", g_rt.g_res.x,g_rt.g_res.y);
 	if (g_rt.g_ambient_light.is_set)
 		printf("Ambient light = %.2f, %d\n\n", g_rt.g_ambient_light.brightness, g_rt.g_ambient_light.color);
     init_obj_printer();
+    objects = g_rt.objects;
     while (objects)
     {
-        obj = (t_obj *)(g_rt.objects->content);
+        obj = (t_obj *)(objects->content);
         index = index_of_in_tab(obj->type,
             (tmp = ft_split(g_rt.g_supported_objects, ';'))) - 2;
         free_s_tab(tmp);

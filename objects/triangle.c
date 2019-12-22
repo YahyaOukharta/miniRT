@@ -45,6 +45,7 @@ int			transform_triangle(int key, void *param)
 	t_cam		*cam;
 	t_vector	dir;
 
+	(void)param;
 	tri = (t_triangle *)g_rt.selected_object->details;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D || key == KEY_A)
