@@ -43,8 +43,8 @@ int				intersects_with_any(t_obj *obj, t_ray ray, float *t)
 		return (bool_intersects_with_triangle(ray, obj, t));
 	else if (!ft_strncmp(obj->type, "cy", 2))
 		return (bool_intersects_with_cylinder(ray, obj, t));
-	//else if (!ft_strncmp(obj->type, "sq", 2))
-	//	return (bool_intersects_with_square(ray, obj));
+	// else if (!ft_strncmp(obj->type, "sq", 2))
+	// 	return (bool_intersects_with_square(ray, obj, t));
 	else
 		return (0);
 }
@@ -144,8 +144,9 @@ int	put_menu(int menu)
 {
 	if (!menu)
 	{
-		mlx_put_image_to_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win,
-			g_rt.data.img_ptr, 0, 0);
+		if (!g_saving)
+			mlx_put_image_to_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win,
+				g_rt.data.img_ptr, 0, 0);
 		menu_toggle_msg();
 		show_menu();
 		selected_objects_msg();

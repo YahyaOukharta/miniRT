@@ -1,5 +1,6 @@
 #include "minirt.h"
 #include <time.h>
+#include "save_bmp/bmp.h"
 
 extern struct s_minirt	g_rt;
 extern int				g_saving;
@@ -39,7 +40,7 @@ int	move_camera(int key, void *param)
 	t_cam *cam;
 	float vel;
 
-	vel = 0.1;
+	vel = 0.8;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D)
 		cam->pos = vec_add(cam->pos,
@@ -105,7 +106,7 @@ int	save_frame(int key, void *param)
 	g_saving = 1;
 	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
 	save_bmp("img.bmp", g_rt.g_res.x, g_rt.g_res.y,
-		72, (int *)g_rt.data.img_data);
+			(int *)g_rt.data.img_data);
 	ft_printf("  [+] Saved frame\n");
 	re_render(key, NULL);
 	return (0);
