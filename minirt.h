@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minirt.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/12/25 22:09:10 by youkhart          #+#    #+#             */
+/*   Updated: 2019/12/25 22:52:41 by youkhart         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINIRT_H
 # define MINIRT_H
 # include "mlx.h"
@@ -51,7 +63,6 @@ typedef struct					s_minirt
 typedef struct s_ray			t_ray;
 typedef struct s_intersection	t_intersection;
 
-//lighting functions
 int								get_ambient_color(t_intersection *closest);
 int								get_diffuse_color(t_intersection *closest,
 									t_ray shadow_ray,
@@ -60,7 +71,6 @@ int								get_specular_color(t_intersection *closest,
 									t_ray ray, t_ray shadow_ray,
 									t_light *light);
 void							init_objs(void);
-//events
 int								re_render(int key, void *param);
 int								rotate_camera(int key, void *param);
 int								move_camera(int key, void *param);
@@ -80,7 +90,6 @@ int								add_new_light(int button,
 									int x, int y, void *param);
 int								handle_mouse(int button,
 									int x, int y, void *param);
-//raytracing
 t_intersection					*test_intersection(t_obj *obj, t_ray ray);
 int								intersects_with_any(t_obj *obj, t_ray ray,
 									float *t);
@@ -92,5 +101,7 @@ int								compute_pixel_color(t_intersection *closest,
 									t_ray ray, t_list *lights);
 t_ray							cast_ray(int x, int y,
 									t_cam *cam, float zoom);
-int								render(int x,int y,int w, int h);
+int								render(int x, int y, int w, int h);
+int								put_menu(int menu);
+int								exit_program(void);
 #endif

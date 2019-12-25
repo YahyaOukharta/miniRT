@@ -2,10 +2,10 @@ NAME = miniRT
 
 GNL_SRCS = gnl/get_next_line.c gnl/get_next_line_utils.c
 
-SRCS = minirt.c utils/utils.c ft_atof.c parser/*.c \
+SRCS = minirt.c utils/*.c ft_atof.c parser/*.c \
 	objects/*.c object_printer/obj_printer.c  vector_math/vector_math.c \
-	rays_and_intersections/ray_intersections.c menu/menu.c lighting.c events.c \
-	raytracing.c save_bmp/bmp.c
+	rays_and_intersections/ray_intersections.c menu/menu.c lighting.c \
+	raytracing.c raytracing_utils.c save_bmp/bmp.c events_one.c events_two.c events_three.c
 
 all: $(NAME)
 

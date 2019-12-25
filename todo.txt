@@ -2,17 +2,10 @@ add ft_atof to libft
 
 add 42 headers 
 
-split events.c
-split raytracing.c
 split vector_math/
 split intersections file
-split file_checker file
 
-norme utils/
-norme save_bmp/
-norme objects/
 norme menu/
-norme file_checker/
 
 
 fix square intersection functions
