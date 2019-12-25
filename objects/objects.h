@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   objects.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youkhart <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/11/17 02:30:54 by youkhart          #+#    #+#             */
-/*   Updated: 2019/11/17 02:49:24 by youkhart         ###   ########.fr       */
+/*   Created: 2019/12/25 22:00:16 by youkhart          #+#    #+#             */
+/*   Updated: 2019/12/25 22:02:14 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #ifndef OBJECTS_H
 # define OBJECTS_H
 # define TRANS_VEL 0.1
@@ -90,39 +91,38 @@ struct			s_resolution
 
 struct			s_ambient_light
 {
-	int         is_set;
+	int			is_set;
 	float		brightness;
 	int			color;
 };
 
-typedef int(*t_obj_constr)(char **);
+void			init_obj_constructor(void);
+void			init_obj_transformer(void);
+t_cam			*new_camera(char **info);
+int				add_camera(char **tab);
+t_light			*new_light(char **info);
+int				add_light(char **tab);
+int				transform_light(int key, void *param);
+t_sphere		*new_sphere(char **info);
+int				add_sphere(char **tab);
+int				transform_sphere(int key, void *param);
+t_square		*new_square(char **info);
+int				add_square(char **tab);
+int				transform_square(int key, void *param);
+t_plane			*new_plane(char **info);
+int				add_plane(char **tab);
+int				transform_plane(int key, void *param);
+t_plane			*new_plane(char **info);
+int				add_plane(char **tab);
+int				transform_plane(int key, void *param);
+t_cylinder		*new_cylinder(char **info);
+int				add_cylinder(char **tab);
+int				transform_cylinder(int key, void *param);
+t_triangle		*new_triangle(char **info);
+int				add_triangle(char **tab);
+int				transform_triangle(int key, void *param);
+typedef	int(*t_obj_constr)(char **);
 t_obj_constr g_obj_constructor[10];
-typedef int(*t_obj_trans)(int, void *);
+typedef	int(*t_obj_trans)(int, void *);
 t_obj_trans g_obj_transformer[10];
-void		init_obj_constructor(void);
-void		init_obj_transformer(void);
-t_cam		*new_camera(char **info);
-int			add_camera(char **tab);
-t_light		*new_light(char **info);
-int			add_light(char **tab);
-int			transform_light(int key, void *param);
-t_sphere	*new_sphere(char **info);
-int			add_sphere(char **tab);
-int			transform_sphere(int key, void *param);
-t_square	*new_square(char **info);
-int			add_square(char **tab);
-int			transform_square(int key, void *param);
-t_plane		*new_plane(char **info);
-int			add_plane(char **tab);
-int			transform_plane(int key, void *param);
-t_plane		*new_plane(char **info);
-int			add_plane(char **tab);
-int			transform_plane(int key, void *param);
-t_cylinder	*new_cylinder(char **info);
-int			add_cylinder(char **tab);
-int			transform_cylinder(int key, void *param);
-t_triangle	*new_triangle(char **info);
-int			add_triangle(char **tab);
-int			transform_triangle(int key, void *param);
-
 #endif
