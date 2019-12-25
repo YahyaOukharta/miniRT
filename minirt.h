@@ -3,7 +3,7 @@
 # include "mlx.h"
 # include "keys.h"
 # include "utils/utils.h"
-# include "file_checker/file_checker.h"
+# include "parser/parser.h"
 # include "objects/objects.h"
 # include "vector_math/vector_math.h"
 # include "rays_and_intersections/ray.h"

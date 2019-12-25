@@ -142,11 +142,11 @@ t_ray	cast_ray(int x, int y, t_cam *cam, float zoom)
 
 int	put_menu(int menu)
 {
+	if (!g_saving)
+		mlx_put_image_to_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win,
+			g_rt.data.img_ptr, 0, 0);
 	if (!menu)
 	{
-		if (!g_saving)
-			mlx_put_image_to_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win,
-				g_rt.data.img_ptr, 0, 0);
 		menu_toggle_msg();
 		show_menu();
 		selected_objects_msg();
@@ -181,5 +181,6 @@ int		render(int x, int y, int w, int h)
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));
 		}
 	}
+	printf("saving = %d\n",g_saving);
 	return (put_menu(menu));
 }

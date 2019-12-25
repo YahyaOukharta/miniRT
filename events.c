@@ -134,6 +134,8 @@ int	handle_keys(int key, void *param)
 		return (save_frame(key, param));
 	else if (key == KEY_ONE)
 		return (print_objs());
+//	else if (key == 53)
+//		return (exit_program(key,param));
 	return (0);
 }
 
@@ -222,3 +224,9 @@ int	handle_mouse(int button, int x, int y, void *param)
 	else
 		return (0);
 }
+
+// int exit_program(int ket, void *param)
+// {
+// 	exit(1);
+// 	return (0);
+// }

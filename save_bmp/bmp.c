@@ -1,18 +1,19 @@
 #include "bmp.h"
 #include "../ft_printf/ft_printf.h"
 
-void	little_endian_fill_int(unsigned char *dest, int value)
+void			little_endian_fill_int(unsigned char *dest, int value)
 {
 	int		i;
 
 	i = 0;
 	while (i < 4)
 	{
-		dest[i]= (unsigned char)(value >> (8 * i));
+		dest[i] = (unsigned char)(value >> (8 * i));
 		i++;
 	}
 }
-unsigned char *bmp_file_header(int filesize)
+
+unsigned char	*bmp_file_header(int filesize)
 {
 	unsigned char *f_header;
 
@@ -24,7 +25,7 @@ unsigned char *bmp_file_header(int filesize)
 	return (f_header);
 }
 
-unsigned char *bmp_info_header(int w, int h)
+unsigned char	*bmp_info_header(int w, int h)
 {
 	unsigned char *i_header;
 
@@ -40,12 +41,13 @@ unsigned char *bmp_info_header(int w, int h)
 	return (i_header);
 }
 
-int save_bmp(const char *filename, int w, int h, int *image)
+int				save_bmp(const char *filename, int w, int h, int *image)
 {
 	int				fd;
 	unsigned char	*header[2];
 	int				i;
 	unsigned char	color[3];
+
 	if ((fd = open(filename, O_CREAT | O_WRONLY)) < 0)
 	{
 		ft_printf("Error opening file");
@@ -60,10 +62,6 @@ int save_bmp(const char *filename, int w, int h, int *image)
 	free(header[1]);
 	while (++i < w * h)
 	{
-	// 	color[0] = (unsigned char)(image[i]);
-	// 	color[1] = (unsigned char)(image[i]>>8);
-	// 	color[2] = (unsigned char)(image[i]>>16);
-
 		little_endian_fill_int((unsigned char *)color, image[i]);
 		write(fd, color, 3);
 	}
