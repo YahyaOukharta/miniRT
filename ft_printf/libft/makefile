@@ -26,6 +26,7 @@ SRC = ft_memset.c\
 		  ft_tolower.c\
 		  ft_strdup.c\
 		  ft_ftoa.c\
+		  ft_atof.c\
 		  ft_calloc.c\
 		  ft_substr.c\
 		  ft_putchar_fd.c\
@@ -66,6 +67,7 @@ OBG = ft_memset.o\
 		  ft_itoa_base.o\
 		  ft_utoa.o\
 		  ft_ftoa.o\
+		  ft_atof.o\
 		  ft_isalpha.o\
 		  ft_isdigit.o\
 		  ft_isalnum.o\

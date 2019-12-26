@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youkhart <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/12 14:17:00 by youkhart          #+#    #+#             */
-/*   Updated: 2019/11/02 20:55:58 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/26 16:12:04 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
-
 
 int					ft_isalnum(int c);
 int					ft_isalpha(int c);
@@ -44,11 +43,13 @@ void				*ft_calloc(size_t nitems, size_t size);
 int					ft_atoi(const char *str);
 char				*ft_itoa(int nbr);
 char				*ft_utoa(unsigned int nbr);
-char 				*ft_ftoa(float n, size_t precision);
+char				*ft_ftoa(float n, size_t precision);
+float				ft_atof(char *str);
+float				ft_set_precision(float n, int prec);
 char				*ft_itoa_base(long nbr, const char *base);
 char				*ft_substr(const char *s, unsigned int i, size_t len);
 char				*ft_strjoin(const char *s1, const char *s2);
-char 				*ft_strjoin_va(size_t n, ...);
+char				*ft_strjoin_va(size_t n, ...);
 char				*ft_strtrim(const char *str, const char *set);
 char				**ft_split(const char *str, char c);
 char				*ft_strmapi(const char *str, char (*f)(unsigned int, char));

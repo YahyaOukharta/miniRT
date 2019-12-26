@@ -4,11 +4,11 @@ GNL_SRCS = gnl/get_next_line.c gnl/get_next_line_utils.c
 
 FLAGS = #-Wall -Werror -Wextra
 
-SRCS = minirt.c utils/*.c ft_atof.c parser/*.c \
+SRCS = minirt.c utils/*.c parser/*.c \
 	objects/*.c   vector_math/*.c \
 	rays_and_intersections/*.c menu/*.c lighting.c \
 	raytracing.c raytracing_utils.c save_bmp/bmp.c events_one.c events_two.c events_three.c \
-	#object_printer/obj_printer.c
+	#object_printer/obj_printer.c ft_atof.c
 
 all: $(NAME)
 
