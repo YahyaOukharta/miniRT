@@ -1,12 +1,7 @@
 add ft_atof to libft
+norme libft 
 
 add 42 headers 
-
-split vector_math/
-split intersections file
-
-norme menu/
-
 
 fix square intersection functions
 

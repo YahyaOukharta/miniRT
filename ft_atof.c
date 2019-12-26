@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_atof.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youkhart <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 15:36:56 by youkhart          #+#    #+#             */
-/*   Updated: 2019/11/17 02:26:04 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/26 08:46:30 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf/ft_printf.h"
+
 #include <math.h>
 
-static	int count_digits(const char *str)
+static int	count_digits(const char *str)
 {
 	int i;
 	int flag;
@@ -21,7 +21,7 @@ static	int count_digits(const char *str)
 	while (ft_isdigit(*str))
 	{
 		i++;
-		str++;		
+		str++;
 	}
 	if (*str == '.')
 		str++;
@@ -30,20 +30,20 @@ static	int count_digits(const char *str)
 	while (ft_isdigit(*str))
 	{
 		i++;
-		str++;		
+		str++;
 	}
 	return (i);
 }
 
-float	ft_atof(const char *str)
+float		ft_atof(const char *str)
 {
-	float res;
-	int	sign;
-	int n_digits;
-	int expo;
-	int i;
+	float	res;
+	int		sign;
+	int		n_digits;
+	int		expo;
+	int		i;
 
-	i = 0;	
+	i = 0;
 	sign = 1;
 	res = 0;
 	while ((*str > 8 && *str < 14) || *str == 32)

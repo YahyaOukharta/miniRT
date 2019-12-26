@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:52:05 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/26 07:28:03 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 struct s_minirt g_rt;
 int				g_saving;
 
-int	exit_program(void)
+int		exit_program(void)
 {
+	ft_lstclear(&(g_rt.objects), free_object);
 	exit(1);
 	return (0);
 }
