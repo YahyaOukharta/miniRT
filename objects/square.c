@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:00:25 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:00:41 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/14 18:47:43 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ t_square	*new_square(char **info)
 	new_square->pos.z = ft_atof(tab[2]);
 	free_s_tab(tab);
 	tab = ft_split(info[2], ',');
-	new_square->orientation.x = ft_atof(tab[0]);
-	new_square->orientation.y = ft_atof(tab[1]);
-	new_square->orientation.z = ft_atof(tab[2]);
+	new_square->orientation.x = ft_atof(tab[0]) * M_PI;
+	new_square->orientation.y = ft_atof(tab[1]) * M_PI;
+	new_square->orientation.z = ft_atof(tab[2]) * M_PI;
 	free_s_tab(tab);
 	new_square->side_size = ft_atof(info[3]);
 	new_square->color = rgb_to_int(info[4]);
