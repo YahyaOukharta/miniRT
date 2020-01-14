@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:40:04 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/14 18:18:37 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/14 18:20:34 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,3 +105,69 @@ t_intersection	*intersects_with_square(t_ray ray, t_obj *obj)
 	inter->normal = sq_normal;
 	return (inter);
 }
+
+
+// void		place_points(t_square **new)
+// {
+// 	t_vector	*vector[4];
+
+// 	vector[0] = new_vector((*new)->size / 2, (*new)->size / 2, 0);
+// 	vector[1] = new_vector(-(*new)->size / 2, (*new)->size / 2, 0);
+// 	vector[2] = new_vector((*new)->size / 2, -(*new)->size / 2, 0);
+// 	vector[3] = new_vector(-(*new)->size / 2, -(*new)->size / 2, 0);
+// 	rot(vector[0], (*new)->orientation);
+// 	rot(vector[1], (*new)->orientation);
+// 	rot(vector[2], (*new)->orientation);
+// 	rot(vector[3], (*new)->orientation);
+// 	(*new)->a = add_vectors(*vector[0], *(*new)->center);
+// 	(*new)->b = add_vectors(*vector[1], *(*new)->center);
+// 	(*new)->c = add_vectors(*vector[2], *(*new)->center);
+// 	(*new)->d = add_vectors(*vector[3], *(*new)->center);
+// }
+
+// float		intersect_square2(float t, t_vector origin, t_vector direction,
+// t_square *object)
+// {
+// 	t_vector	*point;
+// 	t_vector	*temp;
+// 	t_vector	*ap;
+// 	float		alpha;
+// 	float		beta;
+
+// 	temp = multiply_vectors(t, direction);
+// 	point = add_vectors(origin, *temp);
+// 	free(temp);
+// 	ap = subtract_vectors(*point, *object->a);
+// 	alpha = product_vectors(*ap, *object->ab) /
+// product_vectors(*object->ab, *object->ab);
+// 	beta = product_vectors(*ap, *object->ac) /
+// product_vectors(*object->ac, *object->ac);
+// 	free(ap);
+// 	free(point);
+// 	if (alpha >= 0 && alpha <= 1 && beta >= 0 && beta <= 1)
+// 		return (t);
+// 	return (0);
+// }
+
+// float		intersect_square(t_vector origin, t_vector direction,
+// t_square *object)
+// {
+// 	float denom;
+// 	float alpha;
+// 	float beta;
+
+// 	beta = 0;
+// 	if (!object->prev_origin || !is_equal(object->prev_origin, &origin))
+// 	{
+// 		if (object->prev_origin)
+// 			free(object->prev_origin);
+// 		denom = -(product_vectors(*object->normal, *object->center));
+// 		object->calcul_a = product_vectors(origin, *object->normal) + denom;
+// 		object->prev_origin = cpy_vector(&origin);
+// 	}
+// 	alpha = product_vectors(direction, *object->normal);
+// 	beta = -(object->calcul_a / alpha);
+// 	if (beta <= 0)
+// 		return (0);
+// 	return (intersect_square2(beta, origin, direction, object));
+// }

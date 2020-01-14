@@ -12,7 +12,7 @@
 
 #ifndef MINIRT_H
 # define MINIRT_H
-# include "mlx.h"
+# include "../mlx/mlx.h"
 # include "keys.h"
 # include "utils/utils.h"
 # include "parser/parser.h"
