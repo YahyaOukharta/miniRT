@@ -1,7 +1,4 @@
-add ft_atof to libft
-norme libft 
-
-add 42 headers 
+make sure adding lights works zhen there are no lights
 
 fix square intersection functions
 
@@ -10,3 +7,5 @@ add escape event (destroy notify)
 check if everything compiles with error flags
 
 check if all prototypes are in the header files
+
+free everything

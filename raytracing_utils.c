@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:06:48 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:46:50 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/14 17:24:25 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int				intersects_with_any(t_obj *obj, t_ray ray, float *t)
 		return (bool_intersects_with_triangle(ray, obj, t));
 	else if (!ft_strncmp(obj->type, "cy", 2))
 		return (bool_intersects_with_cylinder(ray, obj, t));
-	// else if (!ft_strncmp(obj->type, "sq", 2))
-	// 	return (bool_intersects_with_square(ray, obj, t));
+	else if (!ft_strncmp(obj->type, "sq", 2))
+		return (bool_intersects_with_square(ray, obj, t));
 	else
 		return (0);
 }
@@ -79,8 +79,12 @@ t_intersection	*get_closest_intersection(t_list *objects, t_ray ray)
 		if (inter && inter->t < min_t && inter->t > RAY_T_MIN)
 		{
 			min_t = inter->t;
+			if (closest)
+				free(closest);
 			closest = inter;
 		}
+		else if (inter)
+			free(inter);
 		objs = objs->next;
 	}
 	return (closest);

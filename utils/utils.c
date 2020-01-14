@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 23:14:10 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 23:14:11 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/27 16:07:24 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,10 @@ void	free_object(void *object)
 	free(obj->details);
 	free(obj->type);
 	free(obj);
+}
+
+void	*free_and_return(void *ptr, void *ret)
+{
+	free(ptr);
+	return (ret);
 }

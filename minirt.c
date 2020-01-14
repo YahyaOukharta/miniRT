@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 07:28:03 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/27 16:06:56 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int				g_saving;
 int		exit_program(void)
 {
 	ft_lstclear(&(g_rt.objects), free_object);
+	mlx_destroy_image(g_rt.data.mlx_ptr, g_rt.data.img_ptr);
+	mlx_destroy_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
 	exit(1);
 	return (0);
 }
@@ -63,7 +65,10 @@ int		main(int argc, char **argv)
 		return (0);
 	init_minirt();
 	if (argc == 3)
-		return (save_frame(0, 0));
+	{
+		save_frame(0, 0);
+		exit_program();
+	}
 	if (!render(0, 0, g_rt.g_res.x, g_rt.g_res.y))
 		return (0);
 	mlx_key_hook(g_rt.data.mlx_win, handle_keys, NULL);

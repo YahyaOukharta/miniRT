@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 21:40:38 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:07:01 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/27 16:11:40 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ int		compute_pixel_color(t_intersection *closest, t_ray ray, t_list *lights)
 	float		*color;
 	t_ray		shadow_ray;
 	t_light		*light;
+	int			tmp;
 
 	color = ft_calloc(4, sizeof(float));
 	color[1] = get_ambient_color(closest);
-	color[0] = color[1];
 	while (lights)
 	{
 		light = ((t_light *)((t_obj *)(lights->content))->details);
@@ -56,9 +56,9 @@ int		compute_pixel_color(t_intersection *closest, t_ray ray, t_list *lights)
 		}
 		lights = lights->next;
 	}
-	color[0] = add_colors(color[2], color[1]);
-	color[0] = add_colors(color[0], color[3]);
-	return (color[0]);
+	tmp = add_colors(add_colors(color[2], color[1]), color[3]);
+	free(color);
+	return (tmp);
 }
 
 t_ray	cast_ray(int x, int y, t_cam *cam, float zoom)

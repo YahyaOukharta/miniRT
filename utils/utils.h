@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 23:15:34 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 16:20:01 by youkhart         ###   ########.fr       */
+/*   Updated: 2019/12/27 16:07:38 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,5 @@ int		rgb_to_int(char *rgb);
 int		add_colors(int c1, int c2);
 int		mult_colors(int c1, float value);
 void	free_object(void *object);
+void    *free_and_return(void *ptr, void *ret);
 #endif
