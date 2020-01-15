@@ -104,6 +104,7 @@ int		render(int x, int y, int w, int h)
 				->details, -1);
 			i = get_closest_intersection(g_rt.objects, ray);
 			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : 0);
+			free(i);
 			g_tmp_y = (g_saving ? h - y - 1 : y);
 			(g_rt.data.img_data)[g_tmp_y * w + x] = (int)mult_colors(color,
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));

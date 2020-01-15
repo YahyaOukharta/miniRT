@@ -12,8 +12,6 @@
 
 #include "ray.h"
 
-
-
 t_vector		*get_square_vertices(float side_size, t_vector orientation)
 {
 	t_vector *out;
@@ -91,7 +89,7 @@ t_intersection	*intersects_with_square(t_ray ray, t_obj *obj)
 	t_vector		sq_normal;
 
 	sq = (t_square *)obj->details;
-	sq_normal = vec_rotate(vec_create(0, 0, -1), sq->orientation);
+	sq_normal = vec_rotate(vec_create(0, 0, 1), sq->orientation);
 	if (!bool_intersects_with_square(ray, obj,&t))
 		return (0);
 	inter = (t_intersection *)malloc(sizeof(t_intersection));
