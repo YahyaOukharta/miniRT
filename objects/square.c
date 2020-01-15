@@ -64,12 +64,12 @@ int			transform_square(int key, void *param)
 			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot),
 				(key == KEY_W ? 1 : -1) * TRANS_VEL));
 	if (key == KEY_RIGHT)
-		rotate_y(&square->orientation.x, &square->orientation.z, ROT_VEL);
+		square->orientation.y = square->orientation.y + ROT_VEL;
 	if (key == KEY_LEFT)
-		rotate_y(&square->orientation.x, &square->orientation.z, -ROT_VEL);
+		square->orientation.y = square->orientation.y - ROT_VEL;
 	if (key == KEY_UP)
-		rotate_x(&square->orientation.y, &square->orientation.z, ROT_VEL);
+		square->orientation.x = square->orientation.x + ROT_VEL;
 	if (key == KEY_DOWN)
-		rotate_x(&square->orientation.y, &square->orientation.z, -ROT_VEL);
+		square->orientation.x = square->orientation.x - ROT_VEL;
 	return (0);
 }
