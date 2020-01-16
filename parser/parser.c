@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:58:40 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 21:58:44 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 21:56:43 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int				process_file(int ac, char **av)
 {
 	int		n;
 	char	*line;
-	char	**tab;
 	int		fd;
 
 	if (!(fd = open_file(ac, av)))

@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 08:33:37 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 08:37:55 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 22:01:04 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int		put_camera_info(void)
 int		show_menu(void)
 {
 	char	*light;
-	int		i;
 
 	light = (g_rt.current_light ?
 		"-> Press L to edit next light" : "-> Press L to edit lights");

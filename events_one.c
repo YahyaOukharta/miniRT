@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:23:24 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:56:24 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 23:30:08 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	re_render(int key, void *param)
 {
 	clock_t t[2];
 
+	(void)param;
+	(void)key;
 	mlx_clear_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
 	t[0] = clock();
 	render(0, 0, g_rt.g_res.x, g_rt.g_res.y);
@@ -32,6 +34,7 @@ int	re_render(int key, void *param)
 
 int	toggle_menu(int key, void *param)
 {
+	(void)param;
 	g_rt.g_menu.on = !g_rt.g_menu.on;
 	re_render(key, NULL);
 	return (0);
@@ -41,6 +44,8 @@ int	save_frame(int key, void *param)
 {
 	clock_t t[2];
 
+	(void)param;
+	(void)key;
 	ft_printf(" [~] Saving...\n");
 	g_saving = 1;
 	t[0] = clock();

@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 08:33:20 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 08:33:21 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 22:00:44 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int		put_selected_obj_info(void)
 	if (g_rt.selected_object)
 	{
 		obj_details = get_obj_details(g_rt.selected_object);
+		i = 0;
 		while (obj_details[i])
 		{
 			mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win,

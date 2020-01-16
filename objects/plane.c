@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:00:20 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:00:21 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 23:00:26 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,10 @@ int			transform_plane(int key, void *param)
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	if (key == KEY_D)
 		plane->pos = vec_add(plane->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL));
+			vec_mult(vec_rotate(vec_create(0, 0, 1), cam->rot), TRANS_VEL));
 	if (key == KEY_A)
 		plane->pos = vec_add(plane->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), -TRANS_VEL));
+			vec_mult(vec_rotate(vec_create(0, 0, 1), cam->rot), -TRANS_VEL));
 	if (key == KEY_W)
 		plane->pos = vec_add(plane->pos,
 			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL));

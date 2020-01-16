@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:37:43 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/14 17:28:20 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 22:53:17 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int				bool_intersects_with_plane(t_ray ray, t_obj *obj, float *t)
 	plane = (t_plane *)obj->details;
 	p_normal = vec_normalize(plane->orientation);
 	denom = vec_dot(p_normal, ray.dir);
-	if (fabs(denom) < 1e-6)
+	if (denom < 1e-6)
 		return (0);
 	p_origin_dir = vec_sub(plane->pos, ray.pos);
 	d = vec_dot(p_origin_dir, p_normal) / denom;

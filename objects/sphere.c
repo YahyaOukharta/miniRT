@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:00:22 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:00:23 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 23:00:59 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,16 @@ int			transform_sphere(int key, void *param)
 {
 	t_sphere	*sphere;
 	t_cam		*cam;
-	float		vel;
 
 	(void)param;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	sphere = (t_sphere *)g_rt.selected_object->details;
 	if (key == KEY_D)
 		sphere->pos = vec_add(sphere->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL));
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), -TRANS_VEL));
 	if (key == KEY_A)
 		sphere->pos = vec_add(sphere->pos,
-			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), -TRANS_VEL));
+			vec_mult(vec_rotate(vec_create(1, 0, 0), cam->rot), TRANS_VEL));
 	if (key == KEY_W)
 		sphere->pos = vec_add(sphere->pos,
 			vec_mult(vec_rotate(vec_create(0, 1, 0), cam->rot), TRANS_VEL));

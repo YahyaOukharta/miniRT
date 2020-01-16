@@ -6,13 +6,13 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:30:49 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 07:30:50 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/15 21:21:09 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector_math.h"
 
-void		rotate_x(float *y, float *z, double angle)
+void		rotate_x(float *y, float *z, float angle)
 {
 	float previous_y;
 
@@ -21,7 +21,7 @@ void		rotate_x(float *y, float *z, double angle)
 	*z = -previous_y * sin(angle) + *z * cos(angle);
 }
 
-void		rotate_y(float *x, float *z, double angle)
+void		rotate_y(float *x, float *z, float angle)
 {
 	float previous_x;
 
@@ -30,7 +30,7 @@ void		rotate_y(float *x, float *z, double angle)
 	*z = -previous_x * sin(angle) + *z * cos(angle);
 }
 
-void		rotate_z(float *x, float *y, double angle)
+void		rotate_z(float *x, float *y, float angle)
 {
 	float previous_x;
 	float previous_y;

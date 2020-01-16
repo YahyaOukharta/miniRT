@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:21:31 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:21:32 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 22:11:02 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	select_obj(int button, int x, int y, void *param)
 	t_intersection	*closest;
 	t_obj			*tmp;
 
+	(void)param;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	ray = cast_ray(x, y, cam, -1);
 	closest = get_closest_intersection(g_rt.objects, ray);
@@ -38,6 +39,9 @@ int	resize_object(int btn, int x, int y, void *param)
 	float	ratio;
 	char	*type;
 
+	(void)param;
+	(void)x;
+	(void)y;
 	ratio = 0.05;
 	type = g_rt.selected_object->type;
 	if (!ft_memcmp(type, "sp", max(ft_strlen(type), 2)))
@@ -55,6 +59,8 @@ int	move_light_z(int btn, int x, int y, void *param)
 	float	vel;
 	t_light	*light;
 
+	(void)x;
+	(void)y;
 	vel = 0.05;
 	light = (t_light *)(((t_obj *)g_rt.current_light->content)->details);
 	light->pos = vec_add(light->pos,
@@ -71,6 +77,7 @@ int	add_new_light(int button, int x, int y, void *param)
 	char			*data;
 	t_vector		p;
 
+	(void)param;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
 	ray = cast_ray(x, y, cam, -1);
 	closest = get_closest_intersection(g_rt.objects, ray);

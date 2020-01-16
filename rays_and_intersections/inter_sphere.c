@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:37:03 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 07:37:04 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 21:59:51 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ t_intersection	*intersects_with_sphere(t_ray ray, t_obj *obj)
 {
 	t_intersection	*inter;
 	t_sphere		*sphere;
-	t_ray			tmp_ray;
 	float			t;
 
 	if (!bool_intersects_with_sphere(ray, obj, &t))

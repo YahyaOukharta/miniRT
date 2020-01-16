@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 23:14:10 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/27 16:07:24 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 21:56:09 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int		max(int a, int b)
 void	free_object(void *object)
 {
 	t_obj	*obj;
-	char	**tmp;
-	int		index;
 
 	obj = (t_obj *)object;
 	free(obj->details);

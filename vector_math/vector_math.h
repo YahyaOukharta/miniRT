@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:32:53 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 07:46:21 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/15 21:39:19 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ float		vec_len(t_vector v);
 t_vector	vec_normalize(t_vector v);
 t_vector	vec_rotate(t_vector vec, t_vector rot);
 t_vector	vec_create(float x, float y, float z);
-void		rotate_x(float *y, float *z, double alpha);
-void		rotate_y(float *x, float *z, double beta);
-void		rotate_z(float *x, float *y, double gamma);
+void		rotate_x(float *y, float *z, float alpha);
+void		rotate_y(float *x, float *z, float beta);
+void		rotate_z(float *x, float *y, float gamma);
 
 #endif

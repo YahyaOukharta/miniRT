@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 21:40:38 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/27 16:11:40 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 22:14:23 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ int		compute_pixel_color(t_intersection *closest, t_ray ray, t_list *lights)
 		lights = lights->next;
 	}
 	tmp = add_colors(add_colors(color[2], color[1]), color[3]);
-	free(color);
-	return (tmp);
+	return ((int)free_and_return(color, free_and_return(closest,
+		(void *)(long)tmp)));
 }
 
 t_ray	cast_ray(int x, int y, t_cam *cam, float zoom)
@@ -104,7 +104,6 @@ int		render(int x, int y, int w, int h)
 				->details, -1);
 			i = get_closest_intersection(g_rt.objects, ray);
 			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : 0);
-			free(i);
 			g_tmp_y = (g_saving ? h - y - 1 : y);
 			(g_rt.data.img_data)[g_tmp_y * w + x] = (int)mult_colors(color,
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));

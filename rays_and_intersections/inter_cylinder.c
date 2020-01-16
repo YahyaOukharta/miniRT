@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:39:53 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/27 15:56:14 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/16 21:58:18 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ t_vector		cylinder_normal_at(t_vector point, t_cylinder *cy)
 int				solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
 {
 	float	discr;
-	float	q;
 
 	discr = coeffs[1] * coeffs[1] - coeffs[0] * coeffs[2];
 	if (discr < 0)
