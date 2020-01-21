@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:09:10 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/15 21:22:33 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/20 22:05:22 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,17 @@ typedef struct					s_data
 	void						*img_ptr;
 }								t_data;
 
+typedef struct					s_skybox
+{
+	int							bpp;
+	int							size_line;
+	int							endian;
+	int							*img_data;
+	int							width;
+	int							height;
+	void						*img_ptr;
+}								t_skybox;
+
 typedef struct					s_menu
 {
 	int							on;
@@ -59,6 +70,7 @@ typedef struct					s_minirt
 	t_list						*cameras;
 	t_list						*curr_cam;
 	struct s_object				*selected_object;
+	t_skybox					skybox;
 }								t_minirt;
 typedef struct s_ray			t_ray;
 typedef struct s_intersection	t_intersection;
@@ -102,6 +114,7 @@ int								compute_pixel_color(t_intersection *closest,
 t_ray							cast_ray(int x, int y,
 									t_cam *cam, float zoom);
 int								render(int x, int y, int w, int h);
+int								get_sky_color(int x, int y);
 int								put_menu(int menu);
 int								exit_program(void);
 #endif

@@ -6,12 +6,11 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/27 16:06:56 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/20 22:42:57 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include <pthread.h>
 
 struct s_minirt g_rt;
 int				g_saving;
@@ -47,6 +46,12 @@ int		init_minirt(void)
 		&(g_rt.data.bpp),
 		&(g_rt.data.size_line),
 		&(g_rt.data.endian));
+	g_rt.skybox.img_ptr = mlx_xpm_file_to_image(g_rt.data.mlx_ptr,
+		"./skybox.xpm", &(g_rt.skybox.width), &(g_rt.skybox.height));
+	g_rt.skybox.img_data = (int *)mlx_get_data_addr(g_rt.skybox.img_ptr,
+		&(g_rt.skybox.bpp),
+		&(g_rt.skybox.size_line),
+		&(g_rt.skybox.endian));
 	init_menu();
 	init_obj_transformer();
 	return (1);

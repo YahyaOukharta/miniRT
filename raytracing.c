@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 21:40:38 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/16 22:14:23 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/20 22:01:20 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int		render(int x, int y, int w, int h)
 			ray = cast_ray(x, y, (t_cam *)((t_obj *)g_rt.curr_cam->content)
 				->details, -1);
 			i = get_closest_intersection(g_rt.objects, ray);
-			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : 0);
+			color = (i ? compute_pixel_color(i, ray, g_rt.lights) : get_sky_color(x, y));
 			g_tmp_y = (g_saving ? h - y - 1 : y);
 			(g_rt.data.img_data)[g_tmp_y * w + x] = (int)mult_colors(color,
 			(g_rt.g_menu.on && x < g_rt.g_menu.w ? g_rt.g_menu.opacity : 1));

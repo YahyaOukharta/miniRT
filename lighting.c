@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:10:46 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/17 19:48:12 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/20 01:30:11 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ int						get_ambient_color(t_intersection *i)
 int						get_diffuse_color(t_intersection *i,
 							t_ray shadow_ray, t_light *light)
 {
-	t_vector	light_dir;
-	float		dot;
+	t_vector		light_dir;
+	float			dot;
 
 	light_dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
-	dot = fmax(vec_dot(i->normal, light_dir), 0);
+	dot = fmax(fabs(vec_dot(i->normal, light_dir)), 0);
 	return (mult_colors(light->color, dot * i->diffuse * light->brightness));
 }
 

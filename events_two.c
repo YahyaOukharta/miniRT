@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:21:31 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/16 22:11:02 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/20 21:38:45 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ int	resize_object(int btn, int x, int y, void *param)
 	if (!ft_memcmp(type, "sq", max(ft_strlen(type), 2)))
 		((t_square *)g_rt.selected_object->details)->side_size +=
 			(btn == 4 ? -1 : 1) * ratio;
+	if (!ft_memcmp(type, "cy", max(ft_strlen(type), 2)))
+		((t_cylinder *)g_rt.selected_object->details)->height +=
+			(btn == 4 ? -1 : 1) * ratio * 2;
 	re_render(btn, param);
 	return (1);
 }

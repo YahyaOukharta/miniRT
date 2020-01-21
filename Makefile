@@ -8,6 +8,7 @@ SRCS = minirt.c utils/*.c parser/*.c \
 	objects/*.c   vector_math/*.c \
 	rays_and_intersections/inter_*.c menu/*.c lighting.c \
 	raytracing.c raytracing_utils.c save_bmp/bmp.c events_one.c events_two.c events_three.c \
+	skybox.c
 
 all: $(NAME)
 
