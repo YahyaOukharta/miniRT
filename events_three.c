@@ -69,10 +69,12 @@ int	transform_object(int key, void *param)
 {
 	t_obj	*obj;
 	int		index;
+	char	**tab;
 
 	obj = g_rt.selected_object;
-	index = index_of_in_tab(obj->type,
-		ft_split(g_rt.g_supported_objects, ';')) - 3;
+	tab = ft_split(g_rt.g_supported_objects, ';');
+	index = index_of_in_tab(obj->type, tab) - 3;
+	free_s_tab(tab);
 	g_obj_transformer[index](key, param);
 	re_render(key, param);
 	return (0);

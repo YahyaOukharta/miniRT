@@ -70,22 +70,26 @@ int		menu_toggle_msg(void)
 int		selected_objects_msg(void)
 {
 	char	*str;
-	int		n;
+	char	*tmp;
 
 	str = (g_rt.selected_object ? g_rt.selected_object->type : "(null)");
 	if (g_rt.selected_object && !ft_memcmp(g_rt.selected_object->type,
 		"l", max(ft_strlen(g_rt.selected_object->type), 1)))
 	{
-		n = ft_lstsize(g_rt.lights) - ft_lstsize(g_rt.current_light);
-		str = ft_strjoin("Selected light = L", ft_itoa(n + 1));
+		tmp = ft_itoa(ft_lstsize(g_rt.lights) - ft_lstsize(g_rt.current_light) + 1);
+		str = ft_strjoin("Selected light = L", tmp);
+		free(tmp);
 	}
 	else
 		str = ft_strjoin("Selected object = ", str);
 	mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 180,
 		34, rgb_to_int("255,255,255"), str);
-	n = ft_lstsize(g_rt.cameras) - ft_lstsize(g_rt.curr_cam);
-	str = ft_strjoin("Current camera  = C", ft_itoa(n + 1));
+	free(str);
+	tmp = ft_itoa(ft_lstsize(g_rt.cameras) - ft_lstsize(g_rt.curr_cam) + 1);
+	str = ft_strjoin("Current camera  = C", tmp);
 	mlx_string_put(g_rt.data.mlx_ptr, g_rt.data.mlx_win, g_rt.g_res.x - 180,
 		20, rgb_to_int("255,255,255"), str);
+	free(str);
+	free(tmp);
 	return (1);
 }

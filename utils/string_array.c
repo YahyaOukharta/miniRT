@@ -63,3 +63,16 @@ int		free_s_tab(char **tab)
 	}
 	return (0);
 }
+char	**vec_to_ascii(t_vector vec)
+
+{
+	char	**data;
+
+	if(!(data = (char **)malloc(sizeof(char *) * 4)))
+		return (0);
+	data[0] = ft_ftoa(vec.x, 2);
+	data[1] = ft_ftoa(vec.y, 2);
+	data[2] = ft_ftoa(vec.z, 2);
+	data[3] = 0;
+	return (data);
+}

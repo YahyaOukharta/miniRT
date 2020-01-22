@@ -25,6 +25,7 @@ int		tab_len(char **tab);
 int		exists_in_tab(char *s, char **tab);
 int		index_of_in_tab(char *s, char **tab);
 int		how_many_in(char c, char *str);
+char	**vec_to_ascii(t_vector vec);
 int		free_s_tab(char **tab);
 int		rgb_to_int(char *rgb);
 int		add_colors(int c1, int c2);

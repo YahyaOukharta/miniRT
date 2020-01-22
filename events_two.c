@@ -78,7 +78,7 @@ int	add_new_light(int button, int x, int y, void *param)
 	t_ray			ray;
 	t_intersection	*closest;
 	char			*data;
-	t_vector		p;
+	char			**vec;
 
 	(void)param;
 	cam = (t_cam *)((t_obj *)g_rt.curr_cam->content)->details;
@@ -86,10 +86,13 @@ int	add_new_light(int button, int x, int y, void *param)
 	closest = get_closest_intersection(g_rt.objects, ray);
 	if (closest)
 	{
-		p = vec_add(closest->point, vec_mult(closest->normal, 0.08));
-		data = ft_strjoin_va(7, "l ", ft_ftoa(p.x, 2), ",", ft_ftoa(p.y, 2),
-			",", ft_ftoa(p.z, 2), " 0.7 255,255,180");
+		vec = vec_to_ascii(vec_add(closest->point,
+			vec_mult(closest->normal, 0.08)));
+		data = ft_strjoin_va(7, "l ", vec[0], ",", vec[1],
+			",", vec[2], " 0.7 255,255,180");
 		add_light(ft_split(data, ' '));
+		free(data);
+		free_s_tab(vec);
 		return (re_render(button, NULL));
 	}
 	return (1);
