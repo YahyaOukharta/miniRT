@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:39:53 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/22 00:40:53 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/22 01:13:33 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,23 @@ t_vector		cylinder_normal_at(t_vector point, t_cylinder *cy)
 int				solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
 {
 	float	discr;
+	float	q;
 
-	discr = coeffs[1] * coeffs[1] - coeffs[0] * coeffs[2];
+	discr = coeffs[1] * coeffs[1] - 4 * coeffs[0] * coeffs[2];
 	if (discr < 0)
 		return (0);
+	else if (!discr)
+	{
+		*t1 = -0.5 * (float)(coeffs[1] / coeffs[0]);
+		*t2 = *t1;
+	}
 	else
 	{
-		*t2 = (-coeffs[1] - sqrt(discr)) / coeffs[0];
-		*t1 = (-coeffs[1] + sqrt(discr)) / coeffs[0];
+		q = (coeffs[1] > 0) ?
+			(-0.5 * (coeffs[1] + sqrt(discr)))
+			: (-0.5 * (coeffs[1] - sqrt(discr)));
+		*t1 = q / coeffs[0];
+		*t2 = coeffs[2] / q;
 	}
 	return (1);
 }
@@ -48,7 +57,7 @@ int				bool_intersects_with_cylinder(t_ray ray,
 	cy = (t_cylinder *)obj->details;
 	p0 = vec_sub(ray.pos, cy->pos);
 	coeffs[0] = ray.dir.x * ray.dir.x + ray.dir.z * ray.dir.z;
-	coeffs[1] = ray.dir.x * p0.x + ray.dir.z * p0.z;
+	coeffs[1] = 2 * (ray.dir.x * p0.x + ray.dir.z * p0.z);
 	coeffs[2] = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
 	if (!solve_quadratic_cy(coeffs, &t[1], &t[2]))
 		return (0);
