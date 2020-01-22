@@ -79,7 +79,5 @@ int		main(int argc, char **argv)
 	mlx_key_hook(g_rt.data.mlx_win, handle_keys, NULL);
 	mlx_mouse_hook(g_rt.data.mlx_win, handle_mouse, NULL);
 	mlx_loop(g_rt.data.mlx_ptr);
-	ft_lstclear(&(g_rt.objects), free_object);
-	ft_printf("[ GOOD ]");
 	return (EXIT_SUCCESS);
 }

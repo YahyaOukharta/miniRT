@@ -19,6 +19,7 @@ char	*ft_ftoa(float n, size_t precision)
 	int		i_part;
 	float	f_part;
 	char	*sign;
+	char	*tmp;
 
 	i_part = (int)n;
 	f_part = (float)i_part - (float)n;
@@ -30,9 +31,15 @@ char	*ft_ftoa(float n, size_t precision)
 		sign = ft_strdup("-");
 	else
 		sign = ft_strdup("");
-	res = ft_itoa(i_part);
+	tmp = ft_itoa(i_part);
+	res = ft_strjoin(sign, tmp);
+	free(tmp);
+	free(sign);
 	if (precision)
-		res = ft_strjoin_va(4, sign, res, ".",
-		ft_itoa((int)(f_part * pow(10, precision))));
+	{
+		tmp = ft_itoa((int)(f_part * pow(10, precision)));
+		res = ft_strjoin_va(3, res, ".", tmp);
+		free(tmp);
+	}
 	return (res);
 }
