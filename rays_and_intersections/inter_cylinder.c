@@ -17,9 +17,7 @@ t_vector		cylinder_normal_at(t_vector point, t_cylinder *cy)
 	t_vector vec;
 
 	vec = vec_sub(point, cy->pos);
-	return ((fabs(vec.y) < cy->height)
-		? (vec_normalize(vec_create(vec.x, 0, vec.z)))
-		: vec_normalize(vec));
+	return (vec_normalize(vec_create(vec.x, 0, vec.z)));
 }
 
 int				solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
@@ -61,11 +59,12 @@ int				bool_intersects_with_cylinder(t_ray ray,
 	coeffs[2] = p0.x * p0.x + p0.z * p0.z - pow(cy->diameter / 2, 2);
 	if (!solve_quadratic_cy(coeffs, &t[1], &t[2]))
 		return (0);
-	if (t[1] > RAY_T_MIN && t[1] < RAY_T_MAX)
+	t[0] = 0;
+	if (t[1] > RAY_T_MIN)
 		t[0] = t[1];
-	if (t[2] < t[1] && t[2] > RAY_T_MIN && t[2] < RAY_T_MAX)
+	if (t[2] < t[1] && t[2] > RAY_T_MIN)
 		t[0] = t[2];
-	else
+	if (!t[0])
 		return (0);
 	p0 = vec_add(ray.pos, vec_mult(ray.dir, t[0]));
 	if (p0.y - cy->pos.y > cy->height || p0.y - cy->pos.y < 0)
