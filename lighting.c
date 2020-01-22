@@ -30,7 +30,7 @@ int						get_diffuse_color(t_intersection *i,
 	float			dot;
 
 	light_dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
-	dot = fmax(fabs(vec_dot(i->normal, light_dir)), 0);
+	dot = fmax(vec_dot(i->normal, light_dir), 0);
 	return (mult_colors(light->color, dot * i->diffuse * light->brightness));
 }
 

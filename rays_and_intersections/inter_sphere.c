@@ -12,7 +12,7 @@
 
 #include "ray.h"
 
-int				solve_quadratic_sp(float coeffs[3], float *t1, float *t2)
+static int		solve_quadratic_sp(float coeffs[3], float *t1, float *t2)
 {
 	float	discr;
 	float	q;

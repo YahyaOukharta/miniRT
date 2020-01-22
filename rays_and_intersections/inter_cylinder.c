@@ -12,7 +12,7 @@
 
 #include "ray.h"
 
-t_vector		cylinder_normal_at(t_vector point, t_cylinder *cy)
+static t_vector	cylinder_normal_at(t_vector point, t_cylinder *cy)
 {
 	t_vector vec;
 
@@ -20,7 +20,7 @@ t_vector		cylinder_normal_at(t_vector point, t_cylinder *cy)
 	return (vec_normalize(vec_create(vec.x, 0, vec.z)));
 }
 
-int				solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
+static int		solve_quadratic_cy(float coeffs[3], float *t1, float *t2)
 {
 	float	discr;
 	float	q;

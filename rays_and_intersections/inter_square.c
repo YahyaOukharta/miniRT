@@ -14,7 +14,7 @@
 
 extern struct s_minirt g_rt;
 
-t_vector		*get_square_vertices(float side_size, t_vector orientation)
+static t_vector	*get_square_vertices(float side_size, t_vector orientation)
 {
 	t_vector *out;
 
@@ -30,12 +30,12 @@ t_vector		*get_square_vertices(float side_size, t_vector orientation)
 	return (out);
 }
 
-float			orient(t_vector a, t_vector b, t_vector c, t_vector n)
+static float	orient(t_vector a, t_vector b, t_vector c, t_vector n)
 {
 	return (vec_dot(vec_cross(vec_sub(b, a), vec_sub(c, a)), n));
 }
 
-int				is_point_inside_square(t_vector p, t_vector *vxs, t_vector n)
+static int		is_point_inside_square(t_vector p, t_vector *vxs, t_vector n)
 {
 	int		sign;
 	float	o[4];
