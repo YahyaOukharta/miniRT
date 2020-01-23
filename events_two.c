@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:21:31 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/20 21:38:45 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 18:18:13 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,4 +96,12 @@ int	add_new_light(int button, int x, int y, void *param)
 		return (re_render(button, NULL));
 	}
 	return (1);
+}
+
+int	cross_button(int key, void *param)
+{
+	(void)param;
+	(void)key;
+	exit_program();
+	return (0);
 }

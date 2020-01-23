@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:59:16 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 21:59:17 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 18:03:42 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ static int		check_res2(char **tab, int n)
 should be non-zero unsigned integers\n", n);
 		return (0);
 	}
-	if (ft_atoi(tab[1]) > 1920 || ft_atoi(tab[2]) > 1080)
+	if (ft_atoi(tab[1]) > MAX_RES_X || ft_atoi(tab[2]) > MAX_RES_Y)
 	{
 		ft_printf("Error in line %d:\n\
 	[!] Incorrect values for resolution, \
-shouldn't be greater than (1920, 1080)\n", n);
+shouldn't be greater than (%d, %d)\n", n, MAX_RES_X, MAX_RES_Y);
 		return (0);
 	}
 	return (1);

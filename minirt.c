@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/20 22:42:57 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 18:17:57 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,25 @@ int		init_minirt(void)
 	return (1);
 }
 
+int		print_argc_error(void)
+{
+	char *tmp;
+
+	tmp = take_out(ft_strdup("Error\n \
+		[!] Wrong numbers of arguments, \
+		Enter path for scene file as first argument, \
+		and --save as second argument (optional) \
+		to save rendered image as .bmp\n"), '\t');
+	ft_printf(tmp);
+	free(tmp);
+	return (0);
+}
+
 int		main(int argc, char **argv)
 {
 	init_objs();
 	if (argc < 2 || argc > 3)
-		return (ft_printf(take_out(ft_strdup("Error\n \
-		[!] Wrong numbers of arguments, \
-		Enter path for scene file as first argument, \
-		and --save as second argument (optional) \
-		to save rendered image as .bmp\n"), '\t')) ? 0 : 0);
+		return (print_argc_error());
 	if (!process_file(argc, argv))
 		return (0);
 	init_minirt();
@@ -78,6 +88,7 @@ int		main(int argc, char **argv)
 		return (0);
 	mlx_key_hook(g_rt.data.mlx_win, handle_keys, NULL);
 	mlx_mouse_hook(g_rt.data.mlx_win, handle_mouse, NULL);
+	mlx_hook(g_rt.data.mlx_win, 17, 1L << 0, cross_button, NULL);
 	mlx_loop(g_rt.data.mlx_ptr);
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:09:10 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/21 02:01:27 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 18:26:43 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <math.h>
 # include "gnl/get_next_line.h"
 # include "ft_printf/ft_printf.h"
-# include "object_printer/obj_printer.h"
 # include "menu/menu.h"
 # define FONT_WIDTH 10
 # define FONT_HEIGHT 20
@@ -117,4 +116,5 @@ int								render(int x, int y, int w, int h);
 int								get_sky_color(int x, int y);
 int								put_menu(int menu);
 int								exit_program(void);
+int								cross_button(int key, void *param);
 #endif

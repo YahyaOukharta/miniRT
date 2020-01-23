@@ -27,7 +27,7 @@ re: fclean all
 
 c : re
 	clear
-	./$(NAME) asdf.rt
+	./$(NAME) scenes/objects.rt
 
 n :
 	norminette $(SRCS) 
