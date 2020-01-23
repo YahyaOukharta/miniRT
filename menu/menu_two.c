@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 08:33:37 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/16 22:01:04 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/22 21:12:57 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ int		selected_objects_msg(void)
 	if (g_rt.selected_object && !ft_memcmp(g_rt.selected_object->type,
 		"l", max(ft_strlen(g_rt.selected_object->type), 1)))
 	{
-		tmp = ft_itoa(ft_lstsize(g_rt.lights) - ft_lstsize(g_rt.current_light) + 1);
+		tmp = ft_itoa(ft_lstsize(g_rt.lights) -
+			ft_lstsize(g_rt.current_light) + 1);
 		str = ft_strjoin("Selected light = L", tmp);
 		free(tmp);
 	}

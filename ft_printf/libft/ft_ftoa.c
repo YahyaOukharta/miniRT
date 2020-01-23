@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:22:20 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/26 16:22:21 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 01:26:42 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,16 @@ char	*ft_ftoa(float n, size_t precision)
 		i_part *= -1;
 	if (f_part < 0)
 		f_part *= -1.0;
-	if (n < 0)
-		sign = ft_strdup("-");
-	else
-		sign = ft_strdup("");
+	sign = (n < 0 ? "-" : "");
 	tmp = ft_itoa(i_part);
 	res = ft_strjoin(sign, tmp);
 	free(tmp);
-	free(sign);
 	if (precision)
 	{
 		tmp = ft_itoa((int)(f_part * pow(10, precision)));
+		sign = res;
 		res = ft_strjoin_va(3, res, ".", tmp);
+		free(sign);
 		free(tmp);
 	}
 	return (res);

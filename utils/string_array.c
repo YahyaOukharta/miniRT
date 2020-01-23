@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 23:12:32 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 23:14:34 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/22 21:10:40 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ int		free_s_tab(char **tab)
 	}
 	return (0);
 }
-char	**vec_to_ascii(t_vector vec)
 
+char	**vec_to_ascii(t_vector vec)
 {
 	char	**data;
 
-	if(!(data = (char **)malloc(sizeof(char *) * 4)))
+	if (!(data = (char **)malloc(sizeof(char *) * 4)))
 		return (0);
 	data[0] = ft_ftoa(vec.x, 2);
 	data[1] = ft_ftoa(vec.y, 2);
