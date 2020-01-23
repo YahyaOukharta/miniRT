@@ -6,13 +6,13 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:09:10 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/23 18:26:43 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 19:55:23 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
-# include "../mlx/mlx.h"
+# include "mlx/mlx.h"
 # include "keys.h"
 # include "parser/parser.h"
 # include "objects/objects.h"
@@ -113,7 +113,7 @@ int								compute_pixel_color(t_intersection *closest,
 t_ray							cast_ray(int x, int y,
 									t_cam *cam, float zoom);
 int								render(int x, int y, int w, int h);
-int								get_sky_color(int x, int y);
+int								sky(int x, int y);
 int								put_menu(int menu);
 int								exit_program(void);
 int								cross_button(int key, void *param);

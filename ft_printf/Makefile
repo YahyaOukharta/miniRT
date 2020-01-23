@@ -36,5 +36,6 @@ fclean: clean
 	make -C libft/ fclean
 	rm -f $(LIBFTNAME)
 	rm -f $(NAME)
+	rm -f "__.SYMDEF SORTED"
 
 re: fclean all

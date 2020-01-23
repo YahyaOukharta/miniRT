@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:59:57 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 21:59:58 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/23 19:42:08 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_cam		*new_camera(char **info)
 	tab = ft_split(info[2], ',');
 	new_cam->dir.x = ft_atof(tab[0]);
 	new_cam->dir.y = ft_atof(tab[1]);
-	new_cam->dir.z = ft_atof(tab[2]);
+	new_cam->dir.z = (!ft_atof(tab[2]) ? -0.001 : ft_atof(tab[2]));
 	free_s_tab(tab);
 	new_cam->fov = ft_atof(info[3]);
 	new_cam->rot = vec_create(0, 0, 0);
