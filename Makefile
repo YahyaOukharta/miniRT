@@ -22,7 +22,7 @@ SRCS = minirt.c utils/colors.c utils/parser_utils.c utils/string_array.c utils/u
 	lighting.c raytracing.c raytracing_utils.c \
 	save_bmp/bmp.c \
 	events_one.c events_two.c events_three.c \
-	skybox.c \
+	skybox.c 
 
 all: $(NAME)
 
@@ -46,9 +46,5 @@ fclean: clean
 
 re: fclean all
 
-c : re
-	clear
-	./$(NAME) scenes/objects.rt
-
 n : fclean
-	norminette $(FT_PRINTF_PATH) utils/ vector_math/ scenes/ parser/ objects/ menu/ *.c *.h
+	norminette $(FT_PRINTF_PATH) gnl/ utils/ vector_math/ parser/ objects/ menu/ rays_and_intersections/ save_bmp/ *.c *.h

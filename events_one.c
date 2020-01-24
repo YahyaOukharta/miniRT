@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:23:24 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/16 23:30:08 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/24 18:36:21 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	handle_keys(int key, void *param)
 	else if (key == KEY_P)
 		return (save_frame(key, param));
 	else if (key == KEY_ESC)
-		return (exit_program());
+		return (exit_program(0));
 	return (0);
 }
 

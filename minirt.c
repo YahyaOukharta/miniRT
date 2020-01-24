@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/23 18:17:57 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/24 18:36:00 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 struct s_minirt g_rt;
 int				g_saving;
 
-int		exit_program(void)
+int		exit_program(int argc)
 {
 	ft_lstclear(&(g_rt.objects), free_object);
 	mlx_destroy_image(g_rt.data.mlx_ptr, g_rt.data.img_ptr);
-	mlx_destroy_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
+	if (argc != 3)
+		mlx_destroy_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
 	exit(1);
 	return (0);
 }
@@ -32,14 +33,15 @@ void	init_objs(void)
 	init_obj_constructor();
 }
 
-int		init_minirt(void)
+int		init_minirt(int argc)
 {
 	g_rt.curr_cam = g_rt.cameras;
 	if (!(g_rt.data.mlx_ptr = mlx_init()))
 		return (EXIT_FAILURE);
-	if (!(g_rt.data.mlx_win = mlx_new_window(g_rt.data.mlx_ptr,
-		g_rt.g_res.x, g_rt.g_res.y, "miniRT")))
-		return (EXIT_FAILURE);
+	if (argc != 3)
+		if (!(g_rt.data.mlx_win = mlx_new_window(g_rt.data.mlx_ptr,
+			g_rt.g_res.x, g_rt.g_res.y, "miniRT")))
+			return (EXIT_FAILURE);
 	g_rt.data.img_ptr = mlx_new_image(g_rt.data.mlx_ptr,
 		g_rt.g_res.x, g_rt.g_res.y);
 	g_rt.data.img_data = (int *)mlx_get_data_addr(g_rt.data.img_ptr,
@@ -78,11 +80,12 @@ int		main(int argc, char **argv)
 		return (print_argc_error());
 	if (!process_file(argc, argv))
 		return (0);
-	init_minirt();
+	init_minirt(argc);
 	if (argc == 3)
 	{
 		save_frame(0, 0);
-		exit_program();
+		exit_program(argc);
+		return (EXIT_SUCCESS);
 	}
 	if (!render(0, 0, g_rt.g_res.x, g_rt.g_res.y))
 		return (0);
