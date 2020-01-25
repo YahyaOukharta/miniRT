@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:58:40 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/16 21:56:43 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/25 21:04:44 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,23 @@ static int		process_line(char *line, int n)
 	return (1);
 }
 
+int				check_required_elements(void)
+{
+	if (!g_rt.g_res.is_set)
+	{
+		ft_printf("Error\n\
+	[!] Missing 'Resolution' in format 'R 1200 964'\n");
+		return (0);
+	}
+	if (!g_rt.g_ambient_light.is_set)
+	{
+		ft_printf("Error\n\
+	[!] Missing 'Ambient light' in format 'A 0.2 255,255,255'\n");
+		return (0);
+	}
+	return (1);
+}
+
 int				process_file(int ac, char **av)
 {
 	int		n;
@@ -69,5 +86,5 @@ int				process_file(int ac, char **av)
 		free(line);
 	}
 	free(line);
-	return (1);
+	return (check_required_elements());
 }
