@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:00:00 by youkhart          #+#    #+#             */
-/*   Updated: 2019/12/25 22:00:50 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/27 21:54:46 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_cylinder	*new_cylinder(char **info)
 	free_s_tab(tab);
 	tab = ft_split(info[2], ',');
 	new_cylinder->orientation.x = ft_atof(tab[0]);
-	new_cylinder->orientation.y = ft_atof(tab[1]);
+	new_cylinder->orientation.y = (!ft_atof(tab[1]) ? 0.001 : ft_atof(tab[1]));
 	new_cylinder->orientation.z = ft_atof(tab[2]);
 	free_s_tab(tab);
 	new_cylinder->diameter = ft_atof(info[3]);
