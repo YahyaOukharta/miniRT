@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:39:53 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/27 21:36:58 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 21:35:45 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int		rotate_cy(t_ray *ray, t_vector *vec, t_cylinder *cy, int dir)
 
 	tmp = vec_normalize(cy->orientation);
 	tmp.x = 0;
-	rot.x = -acos(vec_dot(vec_create(0, 1, 0), vec_normalize(tmp)));
+	rot.x = acos(vec_dot(vec_create(0, 1, 0), vec_normalize(tmp)));
 	tmp = vec_normalize(cy->orientation);
 	tmp.z = 0;
 	rot.z = acos(vec_dot(vec_create(0, 1, 0), vec_normalize(tmp)));
@@ -41,6 +41,7 @@ static t_vector	cylinder_normal_at(t_vector point, t_cylinder *cy)
 	rotate_cy(NULL, &point, cy, -1);
 	vec = vec_sub(point, cy->pos);
 	vec = vec_normalize(vec_create(vec.x, 0, vec.z));
+	rotate_cy(NULL, &vec, cy, 1);
 	return (vec);
 }
 
