@@ -6,15 +6,13 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:59:32 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/23 18:11:11 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 04:17:14 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 # include "../minirt.h"
-# define MAX_RES_X 2560
-# define MAX_RES_Y 1320
 
 int			open_file(int ac, char **av);
 int			check_element_details(char **tab, int n);

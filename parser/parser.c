@@ -6,13 +6,14 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:58:40 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/25 21:04:44 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 04:16:20 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-extern struct s_minirt g_rt;
+extern struct s_minirt	g_rt;
+extern int				g_saving;
 
 static int		store_element(char **tab)
 {
@@ -76,6 +77,8 @@ int				process_file(int ac, char **av)
 	if (!(fd = open_file(ac, av)))
 		return (0);
 	n = 1;
+	if (ac == 3)
+		g_saving = 1;
 	init_file_checker();
 	init_objs();
 	while (get_next_line(fd, &line))

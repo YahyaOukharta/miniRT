@@ -48,3 +48,6 @@ re: fclean all
 
 n : fclean
 	norminette $(FT_PRINTF_PATH) gnl/ utils/ vector_math/ parser/ objects/ menu/ rays_and_intersections/ save_bmp/ *.c *.h
+
+c : re
+	./miniRT scenes/room.rt --save

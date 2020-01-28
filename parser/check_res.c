@@ -6,13 +6,14 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 21:59:16 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/23 18:03:42 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 04:31:02 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-extern struct s_minirt g_rt;
+extern struct s_minirt	g_rt;
+extern int				g_saving;
 
 static int		check_res1(char **tab, int n)
 {

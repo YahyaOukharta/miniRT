@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:09:10 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/24 18:37:37 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 04:30:43 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # include "menu/menu.h"
 # define FONT_WIDTH 10
 # define FONT_HEIGHT 20
+# define MAX_RES_X (g_saving ? 1000000 : 2560)
+# define MAX_RES_Y (g_saving ? 1000000 : 1320)
 
 typedef struct					s_data
 {

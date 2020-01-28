@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 07:37:43 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/25 22:19:58 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/27 23:51:48 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_intersection	*intersects_with_plane(t_ray ray, t_obj *obj)
 	inter->t = t;
 	inter->object_color = plane->color;
 	inter->normal = vec_mult(vec_normalize(plane->orientation), 1);
-	inter->diffuse = 0.4;
+	inter->diffuse = 0.1;
 	inter->specular = 0.1;
 	inter->s_power = 2;
 	return (inter);

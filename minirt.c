@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 21:37:07 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/24 18:36:00 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/28 04:06:59 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		exit_program(int argc)
 	mlx_destroy_image(g_rt.data.mlx_ptr, g_rt.data.img_ptr);
 	if (argc != 3)
 		mlx_destroy_window(g_rt.data.mlx_ptr, g_rt.data.mlx_win);
-	exit(1);
+	exit(0);
 	return (0);
 }
 
