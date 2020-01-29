@@ -6,7 +6,7 @@
 /*   By: youkhart <youkhart@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/25 22:10:46 by youkhart          #+#    #+#             */
-/*   Updated: 2020/01/20 01:30:11 by youkhart         ###   ########.fr       */
+/*   Updated: 2020/01/29 20:46:08 by youkhart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ int						get_diffuse_color(t_intersection *i,
 	float			dot;
 
 	light_dir = vec_normalize(vec_sub(light->pos, shadow_ray.pos));
-	dot = fmax(vec_dot(i->normal, light_dir), 0);
+	if (!(dot = fmax(vec_dot(i->normal, light_dir), 0)))
+		return (0);
 	return (mult_colors(light->color, dot * i->diffuse * light->brightness));
 }
 
@@ -46,7 +47,8 @@ int						get_specular_color(t_intersection *i,
 	reflection_dir = vec_sub(ray.dir,
 		vec_mult(i->normal, 2 * vec_dot(ray.dir, i->normal)));
 	view_dir = vec_mult(ray.dir, -1);
-	dot = fmax(vec_dot(reflection_dir, light_dir), 0);
+	if (!(dot = fmax(vec_dot(reflection_dir, light_dir), 0)))
+		return (0);
 	return (mult_colors(light->color,
 		i->specular * pow(dot, i->s_power) * light->brightness));
 }
